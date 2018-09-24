@@ -34,7 +34,4 @@ class InventoryManifest:
                                    "", ""]
                         item_info.append(element)
 
-        item_info = [element for element in item_info if "Emotes" not in element
-                                                and "Clan Banner" not in element]
-
         return item_info

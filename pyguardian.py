@@ -37,8 +37,7 @@ class PyGuardian:
         item_hashes = []
         for char in chars:
             items = char_equip["Response"]["characterEquipment"]["data"][char]["items"]
-            for item in items:
-                item_hashes.append(item["itemHash"])
+            item_hashes += [item["itemHash"] for item in items[:7]]
 
         return item_hashes
 
@@ -82,10 +81,8 @@ class PyGuardian:
 
         char_stats = []
         for char in chars:
-            element = []
             stats = char_info["Response"]["characters"]["data"][char]["stats"]
-            for v in stats.values():
-                element.append(v)
+            element = [v for v in stats.values()]
             stats = char_info["Response"]["characters"]["data"][char]["levelProgression"]
             element.append(stats["level"])
             char_stats.append(element)
@@ -108,7 +105,11 @@ class PyGuardian:
             print("API is down!")
             sys.exit()
 
-        self.mem_id = r["Response"][0]["membershipId"]
+        try:
+            self.mem_id = r["Response"][0]["membershipId"]
+        except IndexError:
+            print("Can't find that player")
+            sys.exit()
 
         char_info_url = (self.root
                        + self.profile
