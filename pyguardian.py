@@ -13,18 +13,24 @@ logging.disable()
 class PyGuardian:
 
     HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
-    root = "https://www.bungie.net/Platform/"
-    component_schema = "/?components="
-    platforms = {"xbox": "1", "playstation": "2", "pc": "4"}
+    PLATFORMS = {"xbox": "1", "playstation": "2", "pc": "4"}
+    COMPONENTS = ["200", "201", "102", "205"]
 
     def __init__(self, gamertag, platform):
         self.player_name = gamertag
+        if not self.player_name:
+            print("Must enter gamertag")
+            sys.exit()
 
-        if platform.lower() in self.platforms:
-            platform = self.platforms[platform.lower()]
+        try:
+            self.platform = self.PLATFORMS[platform.lower()]
+        except KeyError:
+            print("No such platform")
+            sys.exit()
 
-        self.profile = "Destiny2/" + platform + "/Profile/"
-        self.player_search = "Destiny2/SearchDestinyPlayer/" + platform + "/"
+        self.base = "https://www.bungie.net/Platform/Destiny2/"
+        self.root = self.base + self.platform + "/Profile/"
+        self.player_search = self.base + "SearchDestinyPlayer/" + self.platform + "/"
 
     async def fetch_eq(self):
         ''' Grab item hashes for all equipment '''
@@ -32,7 +38,11 @@ class PyGuardian:
 
         char_equip = data[3]
 
-        chars = list(char_equip["Response"]["characterEquipment"]["data"].keys())
+        try:
+            chars = list(char_info["Response"]["characters"]["data"].keys())
+        except KeyError:
+            print("No Destiny 2 information for this character")
+            sys.exit()
 
         item_hashes = []
         for char in chars:
@@ -59,7 +69,11 @@ class PyGuardian:
 
         char_info = data[0]
 
-        chars = list(char_info["Response"]["characters"]["data"].keys())
+        try:
+            chars = list(char_info["Response"]["characters"]["data"].keys())
+        except KeyError:
+            print("No Destiny 2 information for this character")
+            sys.exit()
 
         char_mins = [char_info["Response"]["characters"]["data"][char]["minutesPlayedTotal"]
                                                                           for char in chars]
@@ -77,7 +91,11 @@ class PyGuardian:
 
         char_info = data[0]
 
-        chars = list(char_info["Response"]["characters"]["data"].keys())
+        try:
+            chars = list(char_info["Response"]["characters"]["data"].keys())
+        except KeyError:
+            print("No Destiny 2 information for this character")
+            sys.exit()
 
         char_stats = []
         for char in chars:
@@ -94,12 +112,8 @@ class PyGuardian:
         if player is None:
             player = self.player_name
 
-        r = requests.get(self.root
-                       + self.player_search
-                       + self.player_name,
-                       headers=self.HEADERS)
-
-        r = r.json()
+        r = requests.get(self.player_search + player,
+                         headers=self.HEADERS).json()
 
         if r["ErrorStatus"] == "SystemDisabled":
             print("API is down!")
@@ -111,31 +125,9 @@ class PyGuardian:
             print("Can't find that player")
             sys.exit()
 
-        char_info_url = (self.root
-                       + self.profile
-                       + self.mem_id
-                       + self.component_schema
-                       + "200")
+        data_url = self.root + self.mem_id + "/?components="
 
-        inventory_url = (self.root
-                       + self.profile
-                       + self.mem_id
-                       + self.component_schema
-                       + "201")
-
-        vault_info_url = (self.root
-                        + self.profile
-                        + self.mem_id
-                        + self.component_schema
-                        + "102")
-
-        char_equip_url = (self.root
-                        + self.profile
-                        + self.mem_id
-                        + self.component_schema
-                        + "205")
-
-        urls = [char_info_url, inventory_url, vault_info_url, char_equip_url]
+        urls = [data_url + comp for comp in self.COMPONENTS]
 
         responses = await PyGuardian.gather(urls, self.HEADERS)
 
