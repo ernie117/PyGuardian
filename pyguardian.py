@@ -14,7 +14,7 @@ class PyGuardian:
 
     HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
     PLATFORMS = {"xbox": "1", "playstation": "2", "pc": "4"}
-    COMPONENTS = ["200", "201", "102", "205"]
+    COMPONENTS = ["200", "102", "205"]
 
     def __init__(self, gamertag, platform):
         self.player_name = gamertag
@@ -34,9 +34,10 @@ class PyGuardian:
 
     async def fetch_eq(self):
         ''' Grab item hashes for all equipment '''
-        data = await self.grab_player_data()
+        await self.grab_player_data()
 
-        char_equip = data[3]
+        char_equip = self.char_equip
+        char_info = self.char_info
 
         try:
             chars = list(char_info["Response"]["characters"]["data"].keys())
@@ -47,15 +48,16 @@ class PyGuardian:
         item_hashes = []
         for char in chars:
             items = char_equip["Response"]["characterEquipment"]["data"][char]["items"]
-            item_hashes += [item["itemHash"] for item in items[:7]]
+            # Slice to cut out banner, emblem and emote
+            item_hashes += [item["itemHash"] for item in items[:12]]
 
         return item_hashes
 
     async def fetch_vault(self):
         ''' Get all contents in the player's vault '''
-        data = await self.grab_player_data()
+        await self.grab_player_data()
 
-        vault_info = data[2]
+        vault_info = self.vault_info
 
         items = vault_info["Response"]["profileInventory"]["data"]["items"]
 
@@ -65,9 +67,9 @@ class PyGuardian:
 
     async def fetch_play_time(self):
         ''' Return character playtime and total playtime '''
-        data = await self.grab_player_data()
+        await self.grab_player_data()
 
-        char_info = data[0]
+        char_info = self.char_info
 
         try:
             chars = list(char_info["Response"]["characters"]["data"].keys())
@@ -87,9 +89,9 @@ class PyGuardian:
 
     async def fetch_char_info(self):
         ''' Get basic character information like power, mobility, etc '''
-        data = await self.grab_player_data()
+        await self.grab_player_data()
 
-        char_info = data[0]
+        char_info = self.char_info
 
         try:
             chars = list(char_info["Response"]["characters"]["data"].keys())
@@ -131,19 +133,19 @@ class PyGuardian:
 
         responses = await PyGuardian.gather(urls, self.HEADERS)
 
-        return responses
+        self.char_info = responses[0]
+        self.vault_info = responses[1]
+        self.char_equip = responses[2]
 
     async def write_data(self):
         data = await self.grab_player_data()
 
         with open("player_JSON/" + self.player_name + "_ch_eq.json", "w") as f,\
              open("player_JSON/" + self.player_name + "_va_in.json", "w") as f2,\
-             open("player_JSON/" + self.player_name + "_ch_in.json", "w") as f3,\
-             open("player_JSON/" + self.player_name + "_inv_in.json", "w") as f4:
-            json.dump(data[3], f, indent=4)
-            json.dump(data[2], f2, indent=4)
+             open("player_JSON/" + self.player_name + "_ch_in.json", "w") as f3:
+            json.dump(data[2], f, indent=4)
+            json.dump(data[1], f2, indent=4)
             json.dump(data[0], f3, indent=4)
-            json.dump(data[1], f4, indent=4)
 
     @staticmethod
     async def fetch_url(url, headers, session):
