@@ -12,9 +12,6 @@ async def main():
 
     char_stats = await player.fetch_char_info()
 
-    for idx, char in enumerate(char_stats):
-        char.insert(0, "Char " + str(idx + 1))
-
     print(tabulate(char_stats, ["", "Light",
                                 "Mobility",
                                 "Resilience",

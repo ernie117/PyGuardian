@@ -37,7 +37,7 @@ class PyGuardian:
         await self.grab_player_data()
 
         char_equip = self.char_equip
-        char_info = self.char_info
+        char_info = self.chars_info
 
         try:
             chars = list(char_info["Response"]["characters"]["data"].keys())
@@ -59,6 +59,10 @@ class PyGuardian:
 
         vault_info = self.vault_info
 
+        if len(vault_info["Response"]["profileInventory"]) == 1:
+            print("No vault information available")
+            sys.exit()
+
         items = vault_info["Response"]["profileInventory"]["data"]["items"]
 
         item_hashes = [item["itemHash"] for item in items]
@@ -69,7 +73,7 @@ class PyGuardian:
         ''' Return character playtime and total playtime '''
         await self.grab_player_data()
 
-        char_info = self.char_info
+        char_info = self.chars_info
 
         try:
             chars = list(char_info["Response"]["characters"]["data"].keys())
@@ -91,7 +95,11 @@ class PyGuardian:
         ''' Get basic character information like power, mobility, etc '''
         await self.grab_player_data()
 
-        char_info = self.char_info
+        char_info = self.chars_info
+
+        gens = {0: "Male", 1: "Female", 2: "Unknown"}
+        races = {0: "Human", 1: "Awoken", 2: "Exo", 3: "Unknown"}
+        classes = {0: "Titan", 1: "Hunter", 2: "Warlock", 3: "Unknown"}
 
         try:
             chars = list(char_info["Response"]["characters"]["data"].keys())
@@ -101,8 +109,13 @@ class PyGuardian:
 
         char_stats = []
         for char in chars:
+            stats = char_info["Response"]["characters"]["data"][char]
+            char_attr = [gens[stats["genderType"]],
+                         races[stats["raceType"]],
+                         classes[stats["classType"]]]
+            element = [" ".join(char_attr)]
             stats = char_info["Response"]["characters"]["data"][char]["stats"]
-            element = [v for v in stats.values()]
+            element += [v for v in stats.values()]
             stats = char_info["Response"]["characters"]["data"][char]["levelProgression"]
             element.append(stats["level"])
             char_stats.append(element)
@@ -133,7 +146,7 @@ class PyGuardian:
 
         responses = await PyGuardian.gather(urls, self.HEADERS)
 
-        self.char_info = responses[0]
+        self.chars_info = responses[0]
         self.vault_info = responses[1]
         self.char_equip = responses[2]
 

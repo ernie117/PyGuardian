@@ -9,15 +9,15 @@ async def main():
     gamertag = input("Enter gamertag: ")
     platform = input("Enter platform: ")
 
-    sort_prompt = input("Sort vault items? ")
-    if sort_prompt.startswith('y'):
-        sorter = input("Sort by name, tier or type? ")
-
     player = PyGuardian(gamertag, platform)
 
     item_hashes = await player.fetch_vault()
 
     player_vault = InventoryManifest(item_hashes)
+
+    sort_prompt = input("Sort vault items? ")
+    if sort_prompt.startswith('y'):
+        sorter = input("Sort by name, tier or type? ")
 
     if sorter == "name":
         item_info = player_vault.get_items()
