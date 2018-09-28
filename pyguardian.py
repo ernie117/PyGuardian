@@ -17,6 +17,11 @@ class PyGuardian:
     COMPONENTS = ["200", "102", "205"]
 
     def __init__(self, gamertag, platform):
+
+        self.chars_info = None
+        self.vault_info = None
+        self.char_equip = None
+
         self.player_name = gamertag
         if not self.player_name:
             print("Must enter gamertag")
@@ -34,10 +39,13 @@ class PyGuardian:
 
     async def fetch_eq(self):
         ''' Grab item hashes for all equipment '''
-        await self.grab_player_data()
-
-        char_equip = self.char_equip
-        char_info = self.chars_info
+        if self.char_equip and self.chars_info:
+            char_equip = self.char_equip
+            char_info = self.chars_info
+        else:
+            await self.grab_player_data()
+            char_equip = self.char_equip
+            char_info = self.chars_info
 
         try:
             chars = list(char_info["Response"]["characters"]["data"].keys())
@@ -55,9 +63,11 @@ class PyGuardian:
 
     async def fetch_vault(self):
         ''' Get all contents in the player's vault '''
-        await self.grab_player_data()
-
-        vault_info = self.vault_info
+        if self.vault_info:
+            vault_info = self.vault_info
+        else:
+            await self.grab_player_data()
+            vault_info = self.vault_info
 
         if len(vault_info["Response"]["profileInventory"]) == 1:
             print("No vault information available")
@@ -71,9 +81,11 @@ class PyGuardian:
 
     async def fetch_play_time(self):
         ''' Return character playtime and total playtime '''
-        await self.grab_player_data()
-
-        char_info = self.chars_info
+        if self.chars_info:
+            char_info = self.chars_info
+        else:
+            await self.grab_player_data()
+            char_info = self.chars_info
 
         try:
             chars = list(char_info["Response"]["characters"]["data"].keys())
@@ -93,7 +105,11 @@ class PyGuardian:
 
     async def fetch_char_info(self):
         ''' Get basic character information like power, mobility, etc '''
-        await self.grab_player_data()
+        if self.chars_info:
+            char_info = self.chars_info
+        else:
+            await self.grab_player_data()
+            char_info = self.chars_info
 
         char_info = self.chars_info
 

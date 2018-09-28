@@ -3,11 +3,11 @@ import sqlite3
 import json
 
 
-manifest_dir_ = "Destiny_Manifest/"
-json_dir = "DDB-Files/"
-sql = manifest_dir_ + os.listdir("Destiny_Manifest")[0]
+MANIFEST_DIR = "Destiny_Manifest/"
+JSON_DIR = "DDB-Files/"
+SQL = MANIFEST_DIR + os.listdir("Destiny_Manifest")[0]
 
-conn = sqlite3.connect(sql)
+conn = sqlite3.connect(SQL)
 
 with conn:
     cur = conn.cursor()
@@ -23,11 +23,9 @@ with conn:
 
             data = ((str(table[0]), json.loads(table[1])) for table in tables)
 
-            table_dict = {}
-            for element in data:
-                table_dict[element[0]] = element[1]
+            table_dict = {element[0]: element[1] for element in data}
 
-            with open(json_dir + entry + ".json", "w") as f:
+            with open(JSON_DIR + entry + ".json", "w") as f:
                 json.dump(table_dict, f, indent=4)
 
             print(entry + " JSON file written...")
