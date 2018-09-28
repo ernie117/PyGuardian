@@ -47,6 +47,10 @@ class PyGuardian:
             char_equip = self.char_equip
             char_info = self.chars_info
 
+        gens = {0: "Male", 1: "Female", 2: "Unknown"}
+        races = {0: "Human", 1: "Awoken", 2: "Exo", 3: "Unknown"}
+        classes = {0: "Titan", 1: "Hunter", 2: "Warlock", 3: "Unknown"}
+
         try:
             chars = list(char_info["Response"]["characters"]["data"].keys())
         except KeyError:
@@ -57,6 +61,10 @@ class PyGuardian:
         for char in chars:
             items = char_equip["Response"]["characterEquipment"]["data"][char]["items"]
             # Slice to cut out banner, emblem and emote
+            stats = char_info["Response"]["characters"]["data"][char]
+            item_hashes.append([gens[stats["genderType"]].upper(),
+                               races[stats["raceType"]].upper(),
+                               classes[stats["classType"]].upper()])
             item_hashes += [item["itemHash"] for item in items[:12]]
 
         return item_hashes

@@ -1,5 +1,4 @@
 from pyguardian import PyGuardian
-from manifest import InventoryManifest
 from tabulate import tabulate
 import asyncio
 
