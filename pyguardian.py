@@ -158,8 +158,8 @@ class PyGuardian:
         if r["ErrorStatus"] == "SystemDisabled":
             print("API is down!")
             sys.exit()
-        else:
-            print(r["ErrorStatus"] + " \u2713")
+
+        print("Player found" + " \u2713")
 
         try:
             self.mem_id = r["Response"][0]["membershipId"]
@@ -171,12 +171,14 @@ class PyGuardian:
 
         urls = [data_url + comp for comp in self.COMPONENTS]
 
+        print("Player data downloading...", end="")
+        sys.stdout.flush()
         responses = await PyGuardian.gather(urls, self.HEADERS)
 
         self.chars_info = responses[0]
         self.vault_info = responses[1]
         self.char_equip = responses[2]
-        print("Data downloaded... \u2713")
+        print(" \u2713")
 
     async def write_data(self):
         data = await self.grab_player_data()
