@@ -17,7 +17,6 @@ class InventoryManifest:
         for item in self.hashes:
             if isinstance(item, list):
                 final_hashes.append(item)
-                continue
             elif (item & (1 << (32 - 1))) != 0:
                 item = item - (1 << 32)
                 final_hashes.append(str(item))

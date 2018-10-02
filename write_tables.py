@@ -3,6 +3,23 @@ import sqlite3
 import json
 
 
+#TODO refactor
+def main():
+    pass
+
+
+def check_dirs():
+    pass
+
+
+def get_tables():
+    pass
+
+
+def write_tables():
+    pass
+
+
 MANIFEST_DIR = "Destiny_Manifest/"
 JSON_DIR = "DDB-Files/"
 SQL = MANIFEST_DIR + os.listdir("Destiny_Manifest")[0]

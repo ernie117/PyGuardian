@@ -6,6 +6,27 @@ import sys
 import os
 
 
+#TODO refactor
+def main():
+    pass
+
+
+def check_dirs():
+    pass
+
+
+def get_manifest_url():
+    pass
+
+
+def get_manifest():
+    pass
+
+
+def unzipping():
+    pass
+
+
 HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
 r = requests.get("https://www.bungie.net/Platform/Destiny2/Manifest/",
                  headers=HEADERS).json()
@@ -38,6 +59,4 @@ with open("Destiny2ManifestZip.zip", "wb") as f:
 
 with zipfile.ZipFile("Destiny2ManifestZip.zip", "r") as f:
     f.extractall("Destiny_Manifest")
-    archive_name = f.namelist()[0]
-
-
+    # delete zipfile after

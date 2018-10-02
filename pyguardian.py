@@ -7,6 +7,7 @@ import sys
 import os
 
 
+# Needed to prevent illegal cookie key messages
 logging.disable()
 
 
@@ -96,13 +97,13 @@ class PyGuardian:
             char_info = self.chars_info
 
         try:
-            chars = list(char_info["Response"]["characters"]["data"].keys())
+            self.chars = list(char_info["Response"]["characters"]["data"].keys())
         except KeyError:
             print("No Destiny 2 information for this character")
             sys.exit()
 
         char_mins = [char_info["Response"]["characters"]["data"][char]["minutesPlayedTotal"]
-                                                                          for char in chars]
+                                                                     for char in self.chars]
 
         char_mins = [int(element) for element in char_mins]
 
@@ -157,6 +158,8 @@ class PyGuardian:
         if r["ErrorStatus"] == "SystemDisabled":
             print("API is down!")
             sys.exit()
+        else:
+            print(r["ErrorStatus"] + " \u2713")
 
         try:
             self.mem_id = r["Response"][0]["membershipId"]
@@ -173,6 +176,7 @@ class PyGuardian:
         self.chars_info = responses[0]
         self.vault_info = responses[1]
         self.char_equip = responses[2]
+        print("Data downloaded... \u2713")
 
     async def write_data(self):
         data = await self.grab_player_data()

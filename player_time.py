@@ -11,15 +11,14 @@ async def main():
 
     times, total = await player.fetch_play_time()
 
-    if len(times) == 1:
-        table = [[times[0], total]]
-        print(tabulate(table, ["Char. 1", "Total"], tablefmt="psql"))
-    elif len(times) == 2:
-        table = [[times[0], times[1], total]]
-        print(tabulate(table, ["Char. 1", "Char. 2", "Total"], tablefmt="psql"))
-    else:
-        table = [[times[0], times[1], times[2], total]]
-        print(tabulate(table, ["Char. 1", "Char. 2", "Char. 3", "Total"], tablefmt="psql"))
+    table = [[*times, total]]
+
+    table_title = ["Char. " + str(i + 1)
+                   for char, i in zip(player.chars, range(len(player.chars)))]
+
+    table_title.append("Total")
+
+    print(tabulate(table, table_title, tablefmt="psql"))
 
 
 asyncio.run(main())
