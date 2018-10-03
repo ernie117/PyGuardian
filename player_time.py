@@ -21,5 +21,6 @@ async def main():
     print(tabulate(table, table_title, tablefmt="psql"))
 
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())
 

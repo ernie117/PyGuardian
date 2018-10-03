@@ -15,8 +15,10 @@ class InventoryManifest:
         item_info = []
         final_hashes = []
         for item in self.hashes:
+            # Adding character attributes as section titles
             if isinstance(item, list):
                 final_hashes.append(item)
+            # Converting hash if it needs to be
             elif (item & (1 << (32 - 1))) != 0:
                 item = item - (1 << 32)
                 final_hashes.append(str(item))
@@ -29,6 +31,8 @@ class InventoryManifest:
                 continue
             for k, v in self.data.items():
                 if hash_ == k:
+                    # Not all manifest entries for player equipment
+                    # have the same structure
                     if "itemTypeDisplayName" in v:
                         element = [v["displayProperties"]["name"],
                                    v["itemTypeDisplayName"],

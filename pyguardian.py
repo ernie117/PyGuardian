@@ -16,6 +16,9 @@ class PyGuardian:
     HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
     PLATFORMS = {"xbox": "1", "playstation": "2", "pc": "4"}
     COMPONENTS = ["200", "102", "205"]
+    GENS = {0: "Male", 1: "Female", 2: "Unknown"}
+    RACES = {0: "Human", 1: "Awoken", 2: "Exo", 3: "Unknown"}
+    CLASSES = {0: "Titan", 1: "Hunter", 2: "Warlock", 3: "Unknown"}
 
     def __init__(self, gamertag, platform):
 
@@ -27,6 +30,9 @@ class PyGuardian:
         if not self.player_name:
             print("Must enter gamertag")
             sys.exit()
+        # "#" must be replaced otherwise it breaks urls
+        if "#" in self.player_name:
+            self.player_name = self.player_name.replace("#", "%23")
 
         try:
             self.platform = self.PLATFORMS[platform.lower()]
@@ -48,10 +54,6 @@ class PyGuardian:
             char_equip = self.char_equip
             char_info = self.chars_info
 
-        gens = {0: "Male", 1: "Female", 2: "Unknown"}
-        races = {0: "Human", 1: "Awoken", 2: "Exo", 3: "Unknown"}
-        classes = {0: "Titan", 1: "Hunter", 2: "Warlock", 3: "Unknown"}
-
         try:
             chars = list(char_info["Response"]["characters"]["data"].keys())
         except KeyError:
@@ -63,9 +65,9 @@ class PyGuardian:
             items = char_equip["Response"]["characterEquipment"]["data"][char]["items"]
             # Slice to cut out banner, emblem and emote
             stats = char_info["Response"]["characters"]["data"][char]
-            item_hashes.append([gens[stats["genderType"]].upper(),
-                               races[stats["raceType"]].upper(),
-                               classes[stats["classType"]].upper()])
+            item_hashes.append([self.GENS[stats["genderType"]].upper(),
+                               self.RACES[stats["raceType"]].upper(),
+                               self.CLASSES[stats["classType"]].upper()])
             item_hashes += [item["itemHash"] for item in items[:12]]
 
         return item_hashes
@@ -78,6 +80,7 @@ class PyGuardian:
             await self.grab_player_data()
             vault_info = self.vault_info
 
+        # Default privacy settings block vault access
         if len(vault_info["Response"]["profileInventory"]) == 1:
             print("No vault information available")
             sys.exit()
@@ -122,10 +125,6 @@ class PyGuardian:
 
         char_info = self.chars_info
 
-        gens = {0: "Male", 1: "Female", 2: "Unknown"}
-        races = {0: "Human", 1: "Awoken", 2: "Exo", 3: "Unknown"}
-        classes = {0: "Titan", 1: "Hunter", 2: "Warlock", 3: "Unknown"}
-
         try:
             chars = list(char_info["Response"]["characters"]["data"].keys())
         except KeyError:
@@ -135,9 +134,9 @@ class PyGuardian:
         char_stats = []
         for char in chars:
             stats = char_info["Response"]["characters"]["data"][char]
-            char_attr = [gens[stats["genderType"]],
-                         races[stats["raceType"]],
-                         classes[stats["classType"]]]
+            char_attr = [self.GENS[stats["genderType"]],
+                         self.RACES[stats["raceType"]],
+                         self.CLASSES[stats["classType"]]]
             element = [" ".join(char_attr)]
             stats = char_info["Response"]["characters"]["data"][char]["stats"]
             element += [v for v in stats.values()]
@@ -159,13 +158,13 @@ class PyGuardian:
             print("API is down!")
             sys.exit()
 
-        print("Player found" + " \u2713")
-
         try:
             self.mem_id = r["Response"][0]["membershipId"]
-        except IndexError:
+        except indexerror:
             print("Can't find that player")
             sys.exit()
+
+        print("Player found" + " \u2713")
 
         data_url = self.root + self.mem_id + "/?components="
 
@@ -181,14 +180,14 @@ class PyGuardian:
         print(" \u2713")
 
     async def write_data(self):
-        data = await self.grab_player_data()
+        await self.grab_player_data()
 
         with open("player_JSON/" + self.player_name + "_ch_eq.json", "w") as f,\
              open("player_JSON/" + self.player_name + "_va_in.json", "w") as f2,\
              open("player_JSON/" + self.player_name + "_ch_in.json", "w") as f3:
-            json.dump(data[2], f, indent=4)
-            json.dump(data[1], f2, indent=4)
-            json.dump(data[0], f3, indent=4)
+            json.dump(self.char_equip, f, indent=4)
+            json.dump(self.vault_info, f2, indent=4)
+            json.dump(self.chars_info, f3, indent=4)
 
     @staticmethod
     async def fetch_url(url, headers, session):

@@ -10,7 +10,8 @@ async def main():
 
     await player.write_data()
 
-    print("Player data written to JSON")
+    print("Player data written to JSON \u2713")
 
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())
