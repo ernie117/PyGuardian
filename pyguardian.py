@@ -44,7 +44,7 @@ class PyGuardian:
         self.root = self.base + self.platform + "/Profile/"
         self.player_search = self.base + "SearchDestinyPlayer/" + self.platform + "/"
 
-    async def fetch_eq(self):
+    async def fetch_eq(self, length=12):
         ''' Grab item hashes for all equipment '''
         if self.char_equip and self.chars_info:
             char_equip = self.char_equip
@@ -55,22 +55,57 @@ class PyGuardian:
             char_info = self.chars_info
 
         try:
-            chars = list(char_info["Response"]["characters"]["data"].keys())
+            self.chars = list(char_info["Response"]["characters"]["data"].keys())
         except KeyError:
             print("No Destiny 2 information for this character")
             sys.exit()
 
         item_hashes = []
-        for char in chars:
+        for char in self.chars:
             items = char_equip["Response"]["characterEquipment"]["data"][char]["items"]
             # Slice to cut out banner, emblem and emote
             stats = char_info["Response"]["characters"]["data"][char]
             item_hashes.append([self.GENS[stats["genderType"]].upper(),
                                self.RACES[stats["raceType"]].upper(),
                                self.CLASSES[stats["classType"]].upper()])
-            item_hashes += [item["itemHash"] for item in items[:12]]
+            item_hashes += [item["itemHash"] for item in items[:length]]
 
         return item_hashes
+
+    async def fetch_instance_ids(self):
+        ''' Grab iteminstanceids for weapons '''
+        if self.char_equip and self.chars_info:
+            char_equip = self.char_equip
+            char_info = self.chars_info
+        else:
+            await self.grab_player_data()
+            char_equip = self.char_equip
+            char_info = self.chars_info
+
+        try:
+            self.chars = list(char_info["Response"]["characters"]["data"].keys())
+        except KeyError:
+            print("No Destiny 2 information for this character")
+            sys.exit()
+
+        instance_ids = []
+        for char in self.chars:
+            items = char_equip["Response"]["characterEquipment"]["data"][char]["items"]
+            instance_ids += [str(item["itemInstanceId"]) for item in items[:3]]
+
+        return instance_ids
+
+    async def fetch_instance_data(self):
+        ''' Grab instanced item data for weapons '''
+        instance_ids = await self.fetch_instance_ids()
+
+        components = "/?components=300,302,304,305"
+
+        urls = [self.root + self.mem_id + "/Item/" + id_ + components for id_ in instance_ids]
+
+        data = await self.gather(urls, self.HEADERS)
+
+        return data
 
     async def fetch_vault(self):
         ''' Get all contents in the player's vault '''
