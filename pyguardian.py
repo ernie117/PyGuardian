@@ -103,7 +103,10 @@ class PyGuardian:
 
         urls = [self.root + self.mem_id + "/Item/" + id_ + components for id_ in instance_ids]
 
+        print("Fetching instanced item data... ", end="")
+        sys.stdout.flush()
         data = await self.gather(urls, self.HEADERS)
+        print("\u2713")
 
         return data
 
@@ -195,7 +198,7 @@ class PyGuardian:
 
         try:
             self.mem_id = r["Response"][0]["membershipId"]
-        except indexerror:
+        except IndexError:
             print("Can't find that player")
             sys.exit()
 
