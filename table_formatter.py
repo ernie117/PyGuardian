@@ -18,7 +18,10 @@ class TableFormatter:
                 "Defense": 10,
                 "Ammo Capacity": 13,
                 "Velocity": 7,
-                "Swing Speed": 17
+                "Swing Speed": 17,
+                "Mobility": 11,
+                "Resilience": 11,
+                "Recovery": 11
         }
 
     def format(self):

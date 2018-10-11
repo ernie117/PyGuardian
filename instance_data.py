@@ -5,7 +5,6 @@ import json
 class InstanceData:
 
     dmg_types = {
-            0: "Unknown",
             1: "Kinetic",
             2: "Arc",
             3: "Solar",
@@ -29,16 +28,16 @@ class InstanceData:
 
     def get_stats(self):
 
-        chars = len(self.data) // 3
-
-        damages = []
         final_data = []
         titles = []
         for entry in self.data:
             element = []
             stat_hashes = []
             stat_values = []
-            element.append(self.dmg_types[entry["Response"]["instance"]["data"]["damageType"]])
+            try:
+                element.append(self.dmg_types[entry["Response"]["instance"]["data"]["damageType"]])
+            except KeyError:
+                pass
             element.append(entry["Response"]["instance"]["data"]["primaryStat"]["value"])
             stats = entry["Response"]["stats"]["data"]["stats"]
             stat_keys = list(entry["Response"]["stats"]["data"]["stats"].keys())

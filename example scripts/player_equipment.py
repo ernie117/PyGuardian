@@ -14,7 +14,7 @@ async def main():
 
     player_items = InventoryManifest(item_hashes)
 
-    item_info = player_items.get_items()
+    item_info = player_items.get_full_items()
 
     print(tabulate(item_info, ["Name", "Type", "Tier"],
                    tablefmt="psql"))

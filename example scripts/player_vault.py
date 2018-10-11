@@ -15,7 +15,7 @@ async def main():
 
     player_vault = InventoryManifest(item_hashes)
 
-    item_info = player_vault.get_items()
+    item_info = player_vault.get_full_items()
 
     sort_prompt = input("Sort vault items? ")
 
