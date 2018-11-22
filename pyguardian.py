@@ -1,253 +1,66 @@
-from aiohttp import ClientSession
-import dateutil.parser
-import datetime
-import requests
-import asyncio
-import logging
-import json
-import sys
-import os
-
-
-# Needed to prevent illegal cookie key messages
-logging.disable()
+''' This class holds a collection of methods that offload all
+the heavy lifting of requesting and processing to other modules,
+for easy command line use with destiny_cli and interactive terminal
+use '''
+from hashes import InventoryManifest
+from requester import Requester
+from tabulate import tabulate
+import json_funcs
 
 
 class PyGuardian:
 
-    HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
-    PLATFORMS = {"xbox": "1", "playstation": "2", "pc": "4"}
-    COMPONENTS = ["200", "102", "205"]
-    GENS = {0: "Male", 1: "Female", 2: "Unknown"}
-    RACES = {0: "Human", 1: "Awoken", 2: "Exo", 3: "Unknown"}
-    CLASSES = {0: "Titan", 1: "Hunter", 2: "Warlock", 3: "Unknown"}
+    @staticmethod
+    def fetch_stats(guardian, platform):
 
-    def __init__(self, gamertag, platform):
+        account = Requester(guardian, platform)
+        account.fetch_player()
+        response = account.fetch_url(account.chars_info)
+        data = json_funcs.fetch_char_info(response)
+        table = tabulate(data, headers="keys", tablefmt="fancy_grid")
 
-        self.chars_info = None
-        self.vault_info = None
-        self.char_equip = None
-
-        self.player_name = gamertag
-        if not self.player_name:
-            print("Must enter gamertag")
-            sys.exit()
-        # "#" must be replaced otherwise it breaks urls
-        if "#" in self.player_name:
-            self.player_name = self.player_name.replace("#", "%23")
-
-        try:
-            self.platform = self.PLATFORMS[platform.lower()]
-        except KeyError:
-            print("No such platform")
-            sys.exit()
-
-        self.base = "https://www.bungie.net/Platform/Destiny2/"
-        self.root = self.base + self.platform + "/Profile/"
-        self.player_search = self.base + "SearchDestinyPlayer/" + self.platform + "/"
-
-    async def fetch_eq(self, length=12):
-        ''' Grab item hashes for all equipment '''
-        await self.search_player()
-        equip_url = self.char_equip
-        info_url = self.chars_info
-
-        responses = await self.gather([equip_url, info_url], self.HEADERS)
-        self.char_equip = responses[0]
-        self.char_info = responses[1]
-
-        try:
-            self.chars = list(self.char_info["Response"]["characters"]["data"].keys())
-        except KeyError:
-            print("No Destiny 2 information for this character")
-            sys.exit()
-
-        item_hashes = []
-        for char in self.chars:
-            items = self.char_equip["Response"]["characterEquipment"]["data"][char]["items"]
-            stats = self.char_info["Response"]["characters"]["data"][char]
-            item_hashes.append([self.GENS[stats["genderType"]].upper(),
-                               self.RACES[stats["raceType"]].upper(),
-                               self.CLASSES[stats["classType"]].upper()])
-            # Slice to cut out banner, emblem and emote
-            item_hashes += [item["itemHash"] for item in items[:length]]
-
-        return item_hashes
-
-    async def fetch_instance_ids(self, length):
-        ''' Grab iteminstanceids for weapons '''
-        try:
-            self.chars = list(self.char_info["Response"]["characters"]["data"].keys())
-        except KeyError:
-            print("No Destiny 2 information for this character")
-            sys.exit()
-
-        instance_ids = []
-        for char in self.chars:
-            items = self.char_equip["Response"]["characterEquipment"]["data"][char]["items"]
-            instance_ids += [str(item["itemInstanceId"]) for item in items[:length]]
-
-        return instance_ids
-
-    async def fetch_instance_data(self, length=3):
-        ''' Grab instanced item data for weapons '''
-        instance_ids = await self.fetch_instance_ids(length)
-
-        components = "/?components=300,302,304,305"
-
-        urls = [self.root + self.mem_id + "/Item/" + id_ + components for id_ in instance_ids]
-
-        print("Fetching instanced item data... ", end="")
-        sys.stdout.flush()
-        data = await self.gather(urls, self.HEADERS)
-        print("\u2713")
-
-        return data
-
-    async def fetch_vault(self):
-        ''' Get all contents in the player's vault '''
-        await self.search_player()
-        vault_info = await PyGuardian.fetch_single_url(self.vault_info, self.HEADERS)
-
-        # Default privacy settings block vault access
-        if len(vault_info["Response"]["profileInventory"]) == 1:
-            print("No vault information available")
-            sys.exit()
-
-        items = vault_info["Response"]["profileInventory"]["data"]["items"]
-
-        item_hashes = [item["itemHash"] for item in items]
-
-        return item_hashes
-
-    async def fetch_play_time(self):
-        ''' Return character playtime and total playtime '''
-        await self.search_player()
-        char_info = await PyGuardian.fetch_single_url(self.chars_info, self.HEADERS)
-
-        try:
-            self.chars = list(char_info["Response"]["characters"]["data"].keys())
-        except KeyError:
-            print("No Destiny 2 information for this character")
-            sys.exit()
-
-        char_mins = [char_info["Response"]["characters"]["data"][char]["minutesPlayedTotal"]
-                                                                     for char in self.chars]
-
-        char_mins = [int(element) for element in char_mins]
-
-        hours, mins = divmod(sum(char_mins), 60)
-        playtime_str = str(hours) + " hours and " + str(mins) + " minutes played"
-
-        return char_mins, playtime_str
-
-    async def fetch_char_info(self):
-        ''' Get basic character information like power, mobility, etc '''
-        await self.search_player()
-        char_info = await PyGuardian.fetch_single_url(self.chars_info, self.HEADERS)
-
-        try:
-            chars = list(char_info["Response"]["characters"]["data"].keys())
-        except KeyError:
-            print("No Destiny 2 information for this character")
-            sys.exit()
-
-        char_stats = []
-        for char in chars:
-            stats = char_info["Response"]["characters"]["data"][char]
-            char_attr = [self.GENS[stats["genderType"]],
-                         self.RACES[stats["raceType"]],
-                         self.CLASSES[stats["classType"]]]
-            element = [" ".join(char_attr)]
-            stats = char_info["Response"]["characters"]["data"][char]["stats"]
-            element += [v for v in stats.values()]
-            stats = char_info["Response"]["characters"]["data"][char]["levelProgression"]
-            element.append(stats["level"])
-            char_stats.append(element)
-
-        return char_stats
-
-    async def fetch_last_time_played(self):
-        ''' Grab the datetime for the end of the last play session '''
-        await self.search_player()
-        char_info = await PyGuardian.fetch_single_url(self.chars_info, self.HEADERS)
-
-        chars = list(char_info["Response"]["characters"]["data"].keys())
-
-        dates = []
-        sessions = []
-        data =  char_info["Response"]["characters"]["data"]
-        for char in chars:
-            date = dateutil.parser.parse(data[char]["dateLastPlayed"])
-            date = date.strftime("%H:%M:%S -- %a %d")
-            dates.append(date)
-            session = int(data[char]["minutesPlayedThisSession"])
-            hours, minutes = divmod(session, 60)
-            session = str(hours) + " hours and " + str(minutes) + " minutes"
-            sessions.append(session)
-
-        time_data = [date + " for " + session for date, session in zip(dates, sessions)]
-
-        return time_data
-
-    async def search_player(self, player=None):
-        ''' Use static methods to send asynchronous requests for player data '''
-        if player is None:
-            player = self.player_name
-
-        search_url = self.player_search + player
-
-        r = await self.fetch_single_url(search_url, self.HEADERS)
-
-        if r["ErrorStatus"] == "SystemDisabled":
-            print("API is down!")
-            sys.exit()
-
-        try:
-            self.mem_id = r["Response"][0]["membershipId"]
-        except IndexError:
-            print("Can't find that player")
-            sys.exit()
-
-        print("Player found \u2713")
-
-        data_url = self.root + self.mem_id + "/?components="
-
-        urls = [data_url + comp for comp in self.COMPONENTS]
-
-        self.chars_info = urls[0]
-        self.vault_info = urls[1]
-        self.char_equip = urls[2]
-
-    async def write_data(self):
-        await self.grab_player_data()
-
-        with open("player_JSON/" + self.player_name + "_ch_eq.json", "w") as f,\
-             open("player_JSON/" + self.player_name + "_va_in.json", "w") as f2,\
-             open("player_JSON/" + self.player_name + "_ch_in.json", "w") as f3:
-            json.dump(self.char_equip, f, indent=4)
-            json.dump(self.vault_info, f2, indent=4)
-            json.dump(self.chars_info, f3, indent=4)
+        return table
 
     @staticmethod
-    async def fetch_single_url(url, headers):
-        session = ClientSession()
-        async with session.get(url, headers=headers) as response:
-            return await response.json()
+    def fetch_eq(guardian, platform):
+
+        account = Requester(guardian, platform)
+        account.fetch_player()
+        char_data = account.fetch_url(account.chars_info)
+        equip_data = account.fetch_url(account.char_equip)
+        weapon_hashes = json_funcs.fetch_eq_hashes(equip_data, char_data)
+        weapon_data = InventoryManifest(weapon_hashes)
+        weapon_data = weapon_data.get_full_item_details()
+        table = tabulate(weapon_data, tablefmt="fancy_grid")
+
+        return table
 
     @staticmethod
-    async def fetch_url(url, headers, session):
-        ''' This function is only used by the gather() function below '''
-        async with session.get(url, headers=headers) as response:
-            return await response.json()
+    def fetch_vault(guardian, platform, sort_by=None):
+
+        account = Requester(guardian, platform)
+        account.fetch_player()
+        vault_data = account.fetch_url(account.vault_info)
+        vault_hashes = json_funcs.fetch_vault_hashes(vault_data)
+        vault_items = InventoryManifest(vault_hashes)
+
+        if sort_by == "name":
+            vault_items = vault_items.get_full_item_details(sort_by="name")
+        elif sort_by == "type":
+            vault_items = vault_items.get_full_item_details(sort_by="type")
+        elif sort_by == "tier":
+            vault_items = vault_items.get_full_item_details(sort_by="tier")
+        else:
+            vault_items = vault_items.get_full_item_details()
+
+        table = tabulate(vault_items, tablefmt="fancy_grid")
+
+        return table
 
     @staticmethod
-    async def gather(urls, headers):
-        async with ClientSession() as session:
-            tasks = [asyncio.ensure_future(PyGuardian.fetch_url(url, headers, session))
-                                                                       for url in urls]
+    def fetch_playtime(guardian, platform):
+        pass
 
-            responses =  await asyncio.gather(*tasks)
-
-        return responses
-
+    @staticmethod
+    def fetch_last_played(guardian, platform):
+        pass
