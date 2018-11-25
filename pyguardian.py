@@ -15,7 +15,7 @@ class PyGuardian:
 
         account = Requester(guardian, platform)
         account.fetch_player()
-        response = account.fetch_url(account.chars_info)
+        response = account.fetch_character_info()
         data = json_funcs.fetch_char_info(response)
         table = tabulate(data, headers="keys", tablefmt="fancy_grid")
 
@@ -26,8 +26,8 @@ class PyGuardian:
 
         account = Requester(guardian, platform)
         account.fetch_player()
-        char_data = account.fetch_url(account.chars_info)
-        equip_data = account.fetch_url(account.char_equip)
+        char_data = account.fetch_character_info()
+        equip_data = account.fetch_character_equip_info()
         weapon_hashes = json_funcs.fetch_eq_hashes(equip_data, char_data)
         weapon_data = InventoryManifest(weapon_hashes)
         weapon_data = weapon_data.get_full_item_details()
@@ -36,31 +36,36 @@ class PyGuardian:
         return table
 
     @staticmethod
-    def fetch_vault(guardian, platform, sort_by=None):
+    def fetch_vault(guardian, platform, sort=None):
 
         account = Requester(guardian, platform)
         account.fetch_player()
-        vault_data = account.fetch_url(account.vault_info)
+        vault_data = account.fetch_vault_info()
         vault_hashes = json_funcs.fetch_vault_hashes(vault_data)
         vault_items = InventoryManifest(vault_hashes)
-
-        if sort_by == "name":
-            vault_items = vault_items.get_full_item_details(sort_by="name")
-        elif sort_by == "type":
-            vault_items = vault_items.get_full_item_details(sort_by="type")
-        elif sort_by == "tier":
-            vault_items = vault_items.get_full_item_details(sort_by="tier")
-        else:
-            vault_items = vault_items.get_full_item_details()
-
+        vault_items = vault_items.get_full_item_details(sort_by=sort)
         table = tabulate(vault_items, tablefmt="fancy_grid")
 
         return table
 
     @staticmethod
     def fetch_playtime(guardian, platform):
-        pass
+
+        account = Requester(guardian, platform)
+        account.fetch_player()
+        char_data = account.fetch_character_info()
+        char_dicts = json_funcs.fetch_play_time(char_data)
+        table = tabulate(char_dicts, headers="keys", tablefmt="fancy_grid")
+
+        return table
 
     @staticmethod
-    def fetch_last_played(guardian, platform):
-        pass
+    def fetch_last_time_played(guardian, platform):
+
+        account = Requester(guardian, platform)
+        account.fetch_player()
+        char_data = account.fetch_character_info()
+        playtimes = json_funcs.fetch_last_time_played(char_data)
+        table = tabulate(playtimes, headers="keys", tablefmt="fancy_grid")
+
+        return table

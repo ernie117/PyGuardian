@@ -12,6 +12,7 @@ CLASSES = {0: "Titan", 1: "Hunter", 2: "Warlock", 3: "Unknown"}
 def JSONMiner(string, data):
     queries = string.split(".")
     query = queries[0]
+    value = None
     try:
         string = '.'.join(queries[1:])
     except IndexError:
@@ -103,21 +104,31 @@ def fetch_last_time_played(character_data):
         print("No data for this character")
         sys.exit()
 
-    dates = []
-    sessions = []
+    char_dict = {
+            "Character": None,
+            "Datetime":  None,
+            "Session": None,
+        }
+
+    char_dicts = []
     data = JSONMiner(root_str, character_data)
     for char in characters:
+        char_str = []
+        char_info = data[char]
+        char_title = (" ".join([GENS[char_info["genderType"]],
+                                RACES[char_info["raceType"]],
+                                CLASSES[char_info["classType"]]]))
+        char_str.append(char_title)
         date = dateutil.parser.parse(data[char]["dateLastPlayed"])
         date = date.strftime("%H:%M:%S -- %a %d/%m")
-        dates.append(date)
+        char_str.append(date)
         session = int(data[char]["minutesPlayedThisSession"])
         hours, minutes = divmod(session, 60)
         session = str(hours) + " hours and " + str(minutes) + " minutes"
-        sessions.append(session)
+        char_str.append(session)
+        char_dicts.append({k: info for k, info in zip(char_dict, char_str)})
 
-    time_data = [date + " for " + session for date, session in zip(dates, sessions)]
-
-    return time_data
+    return char_dicts
 
 
 def fetch_play_time(character_data):
@@ -133,29 +144,45 @@ def fetch_play_time(character_data):
     char_mins = [int(JSONMiner(f"{root_str}{char}.minutesPlayedTotal", character_data))
                                                                 for char in characters]
 
-    hours, mins = divmod(sum(char_mins), 60)
-    playtime_str = (str(hours)
-                   + " hours and "
-                   + str(mins)
-                   + " minutes played")
+    readable_times = (divmod(time, 60) for time in char_mins)
+    readable_times = [f"{time[0]}h {time[1]}m" for time in readable_times]
+    total_hours, total_mins = divmod(sum(char_mins), 60)
+    playtime_str = str(total_hours) + "h " + str(total_mins) + "m"
 
-    return char_mins, playtime_str
+    char_titles = []
+    for char in characters:
+        char_data = JSONMiner(f"{root_str}{char}", character_data)
+        char_titles.append(" ".join([GENS[char_data["genderType"]],
+                                     RACES[char_data["raceType"]],
+                                     CLASSES[char_data["classType"]]]))
+
+    char_dicts = []
+    for char, time in zip(char_titles, readable_times):
+        character = {}
+        character["Character"] = char
+        character["Time"] = time
+        char_dicts.append(character)
+
+    char_dicts.append({"Character": "TOTAL",
+                       "Time": playtime_str})
+
+    return char_dicts
 
 
 def fetch_vault_hashes(vault_info):
 
     root_str = "Response.profileInventory.data.items"
 
-    # Default privacy settings block vault access
-    if len(vault_info["Response"]["profileInventory"]) == 1:
-        print("No vault information available")
+    try:
+        items = JSONMiner(root_str, vault_info)
+        item_hashes = [item["itemHash"] for item in items]
+
+        return [item_hashes]
+
+    except KeyError:
+        print("Vault access blocked")
         sys.exit()
 
-    items = JSONMiner(root_str, vault_info)
-
-    item_hashes = [item["itemHash"] for item in items]
-
-    return [item_hashes]
 
 
 

@@ -19,6 +19,7 @@ class InventoryManifest:
             character_list = []
             for hash_ in character:
                 # Adding character attributes as section titles
+                # e.g. ['Male', 'Exo', 'Titan']
                 if isinstance(hash_, list):
                     character_list.append(hash_)
                 # Converting hash if it needs to be
@@ -37,20 +38,20 @@ class InventoryManifest:
                 if isinstance(hash_, list):
                     item_info.append(hash_)
                     continue
-                for k, v in self.data.items():
-                    if hash_ == k:
-                        # Not all manifest entries for player equipment
-                        # have the same structure
-                        if "itemTypeDisplayName" in v:
-                            element = [v["displayProperties"]["name"],
-                                       v["itemTypeDisplayName"],
-                                       v["inventory"]["tierTypeName"]]
-                            item_info.append(element)
-                        else:
-                            element = [v["displayProperties"]["name"],
-                                       "", ""]
-                            item_info.append(element)
+                if hash_ in self.data:
+                    # Not all item entries have the same JSON structure
+                    try:
+                        element = [self.data[hash_]["displayProperties"]["name"],
+                                   self.data[hash_]["itemTypeDisplayName"],
+                                   self.data[hash_]["inventory"]["tierTypeName"]]
+                        item_info.append(element)
+                    except KeyError:
+                        element = [self.data[hash_]["displayProperties"]["name"],
+                                   "", ""]
+                        item_info.append(element)
 
+        # Sorting alphabetically by item name, type of item
+        # or item rarity e.g. legendary, exotic
         if sort_by == "name":
             item_info = sorted(item_info, key=itemgetter(0))
         elif sort_by == "type":
@@ -60,7 +61,7 @@ class InventoryManifest:
 
         return item_info
 
-    def get_item_names(self, whitespace=False):
+    def get_item_names(self):
 
         item_info = []
         for character in self.final_hashes:
@@ -68,22 +69,8 @@ class InventoryManifest:
             for hash_ in character:
                 if isinstance(hash_, list):
                     continue
-                for k, v in self.data.items():
-                    if hash_ == k:
-                        if "itemTypeDisplayName" in v:
-                            character_list.append(v["displayProperties"]["name"])
-                        else:
-                            character_list.append(v["displayProperties"]["name"])
+                if hash_ in self.data:
+                    character_list.append(v["displayProperties"]["name"])
             item_info.append(character_list)
 
-        if whitespace:
-            max_name_size = max([len(name[0]) for name in item_info])
-
-            final_names = []
-            for name in item_info:
-                new_name = name[0] + (max_name_size - len(name[0])) * " "
-                final_names.append([new_name])
-
-            return final_names
-        else:
-            return item_info
+        return item_info

@@ -1,13 +1,6 @@
 import requests
-import asyncio
-import logging
-import json
 import sys
 import os
-
-
-# Needed to prevent illegal cookie key messages
-logging.disable()
 
 
 class Requester:
@@ -19,10 +12,9 @@ class Requester:
     def __init__(self, gamertag, platform):
 
         self.player_name = gamertag
-        if not self.player_name:
-            print("Must enter gamertag")
-            sys.exit()
-        # "#" must be replaced otherwise it breaks urls
+
+        # "#" is present in BattleID's on pc but they must be
+        # replaced otherwise they break urls
         if "#" in self.player_name:
             self.player_name = self.player_name.replace("#", "%23")
 
@@ -40,7 +32,7 @@ class Requester:
 
     def fetch_player(self):
 
-        r = self.fetch_url(self.search_url)
+        r = requests.get(self.search_url, headers=self.HEADERS).json()
 
         if r["ErrorStatus"] == "SystemDisabled":
             print("API is down!")
@@ -54,15 +46,24 @@ class Requester:
 
         print("Player found \u2713")
 
-        data_url = self.root + self.mem_id + "/?components="
+        urls = [self.root + self.mem_id + "/?components=" + comp
+                                    for comp in self.COMPONENTS]
 
-        urls = [data_url + comp for comp in self.COMPONENTS]
+        self.character_info_url = urls[0]
+        self.vault_info_url = urls[1]
+        self.character_equip_url = urls[2]
 
-        self.chars_info = urls[0]
-        self.vault_info = urls[1]
-        self.char_equip = urls[2]
+    def fetch_character_info(self):
+        r = requests.get(self.character_info_url, headers=self.HEADERS)
 
-    def fetch_url(self, url):
-        r = requests.get(url, headers=self.HEADERS)
+        return r.json()
+
+    def fetch_vault_info(self):
+        r = requests.get(self.vault_info_url, headers=self.HEADERS)
+
+        return r.json()
+
+    def fetch_character_equip_info(self):
+        r = requests.get(self.character_equip_url, headers=self.HEADERS)
 
         return r.json()
