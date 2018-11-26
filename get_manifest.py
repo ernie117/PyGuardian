@@ -26,21 +26,39 @@ def main():
 
 
 def check_dirs():
-
-    if not os.path.isdir(MANIFEST_DIR):
-        print("Creating tmp manifest directory")
-        os.makedirs(MANIFEST_DIR)
-    if not os.path.isdir(JSON_DIR):
-        print("Creating JSON directory")
-        os.makedirs(JSON_DIR)
+    '''
+    Simply checks to see if directories
+    for working with/storing data exist,
+    creates them if they don't, returns
+    True once directories exist
+    '''
+    try:
+        if not os.path.isdir(MANIFEST_DIR):
+            print("Creating tmp manifest directory")
+            os.makedirs(MANIFEST_DIR)
+        if not os.path.isdir(JSON_DIR):
+            print("Creating JSON directory")
+            os.makedirs(JSON_DIR)
+    except OSError:
+        print("Can't create directories!")
+        return False
 
     return True
 
 
 def get_manifest_url():
-
+    '''
+    This function requests data from the API
+    that contains the part of the url required to
+    request the manifest data. It parses out the
+    URI then builds the url from it and returns it
+    '''
     r = requests.get("https://www.bungie.net/Platform/Destiny2/Manifest/",
                      headers=HEADERS).json()
+
+    if r["ErrorStatus"] == "SystemDisabled":
+        print("API is down!")
+        sys.exit()
 
     manifest_uri = r["Response"]["mobileWorldContentPaths"]["en"]
     manifest_url = f"https://www.bungie.net{manifest_uri}"
@@ -49,19 +67,24 @@ def get_manifest_url():
 
 
 def get_manifest(manifest_url):
-
-    r = requests.get(manifest_url, headers=HEADERS, stream=True)
-    file_size = int(r.headers["Content-length"])
-
-    chunk_cnt = 0
-    CHUNK_SIZE = 1024*1024
-    cols, rows = shutil.get_terminal_size()
+    '''
+    Requests the manifest URL and downloads the zipfile
+    database response, prints a nice little
+    progress bar showing download progress
+    '''
+    # Getting terminal size for progress bar construction
+    cols, _ = shutil.get_terminal_size()
     cols = cols - 24  # Make space for the file size
     bar_now = cols * '-'
     progress_bar = f"[{bar_now}]"
 
+    r = requests.get(manifest_url, headers=HEADERS, stream=True)
+    file_size = int(r.headers["Content-length"])
+
     with open("Destiny2Manifest.zip", "wb") as f:
         print("Downloading...")
+        chunk_cnt = 1
+        CHUNK_SIZE = 1024*1024
         for chunk in r.iter_content(chunk_size=CHUNK_SIZE):
             f.write(chunk)
             downloaded = chunk_cnt * CHUNK_SIZE
@@ -82,7 +105,11 @@ def get_manifest(manifest_url):
 
 
 def unzipping_renaming():
-
+    '''
+    Unzips the downloaded zipfile and extracts
+    the SQL database, returns the database
+    object
+    '''
     with zipfile.ZipFile(ZIP_FILE, "r") as f:
         manifest = f.namelist()[0]
         f.extractall(MANIFEST_DIR)
@@ -94,7 +121,14 @@ def unzipping_renaming():
 
 
 def write_tables(sql):
-
+    '''
+    Opens the SQL database, gets the table
+    names and uses them to query all the tables
+    within, converts them to JSON and writes
+    them all to individual files, deletes
+    the temporary manifest directory once
+    finished
+    '''
     conn = sqlite3.connect(sql)
 
     with conn:
