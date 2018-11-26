@@ -74,21 +74,21 @@ def get_manifest(manifest_url):
     '''
     # Getting terminal size for progress bar construction
     cols, _ = shutil.get_terminal_size()
-    cols = cols - 24  # Make space for the file size
+    cols = cols - 36  # Make space for the file size
     bar_now = cols * '-'
     progress_bar = f"[{bar_now}]"
 
     r = requests.get(manifest_url, headers=HEADERS, stream=True)
-    file_size = int(r.headers["Content-length"])
+    file_size = int(r.headers["Content-length"]) // 1024
 
     with open("Destiny2Manifest.zip", "wb") as f:
-        print("Downloading...")
         chunk_cnt = 1
         CHUNK_SIZE = 1024*1024
+        dl_str = "Downloading...    "
         for chunk in r.iter_content(chunk_size=CHUNK_SIZE):
             f.write(chunk)
-            downloaded = chunk_cnt * CHUNK_SIZE
-            print(f"\r{progress_bar} {downloaded}B / {file_size}B ", end="")
+            downloaded = (chunk_cnt * CHUNK_SIZE) // 1024
+            print(f"\r{dl_str}{downloaded}KB/{file_size}KB {progress_bar}", end="")
             sys.stdout.flush()
             # Progress bar re-construction
             progress_pct = (downloaded / file_size)
@@ -101,7 +101,7 @@ def get_manifest(manifest_url):
         else:
             bar = cols * '#'
             progress_bar = f"[{bar}]"
-            print(f"\r{progress_bar} {file_size}B / {file_size}B ")
+            print(f"\r{dl_str}{file_size}KB/{file_size}KB {progress_bar}")
 
 
 def unzipping_renaming():
