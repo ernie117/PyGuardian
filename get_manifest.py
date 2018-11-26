@@ -28,7 +28,6 @@ def main():
 
         write_tables(SQL_DB)
 
-        shutil.rmtree(MANIFEST_DIR)
 
 
 def check_dirs():
@@ -58,26 +57,43 @@ def get_manifest_url():
 def get_manifest(manifest_url):
 
     r = requests.get(manifest_url, headers=HEADERS, stream=True)
-    file_size = int(r.headers["Content-length"]) // 1024
+    file_size = int(r.headers["Content-length"])
 
     chunk_cnt = 0
     CHUNK_SIZE = 1024*1024
+    cols, rows = shutil.get_terminal_size()
+    cols = cols - 24  # Make space for the file size
+    bar_now = cols * '-'
+    progress_bar = f"[{bar_now}]"
 
+    # TODO finish implementing a download progress bar
     with open("Destiny2Manifest.zip", "wb") as f:
+        print("Downloading...")
         for chunk in r.iter_content(chunk_size=CHUNK_SIZE):
             f.write(chunk)
-            print("\r" + str((chunk_cnt * CHUNK_SIZE) // 1024)
-                  + "MB out of "
+            downloaded = chunk_cnt * CHUNK_SIZE
+            print("\r"
+                  + progress_bar
+                  + " " + str(downloaded)
+                  + "B / "
                   + str(file_size)
-                  + "MB ", end="")
+                  + "B ",
+                  end="")
             sys.stdout.flush()
+            progress_pct = (downloaded / file_size)
+            bar_now = round(progress_pct * cols)
+            printable_bar = bar_now * '#'
+            empty = (cols - bar_now) * '-'
+            progress_bar = f"[{printable_bar}{empty}]"
             chunk_cnt += 1
             sleep(0.5)
         else:
-            print("\r" + str(file_size)
-                  + "MB out of "
+            print("\r"
+                  + progress_bar
+                  + " " + str(file_size)
+                  + "B / "
                   + str(file_size)
-                  + "MB")
+                  + "B ")
 
 
 def unzipping_renaming():
@@ -121,13 +137,15 @@ def write_tables(sql):
 
                 os.chdir(MANIFEST_DIR)
 
-                print(entry + " JSON file written...")
+                print("- WRITING >> " + entry)
 
             except sqlite3.OperationalError:
                 print("-- EXCEPTION: SKIPPING " + entry)
                 continue
         else:
             os.chdir(WORKING_DIR)
+            print("Deleting tmp manifest directory")
+            shutil.rmtree(MANIFEST_DIR)
             print("Finished \u263A")
 
 
