@@ -13,7 +13,6 @@ HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
 MANIFEST_DIR = "TMP_Destiny_Manifest"
 JSON_DIR = "DDB-Files"
 ZIP_FILE = "Destiny2Manifest.zip"
-SQL_DB = "sql_manifest.content"
 WORKING_DIR = str(Path.home()) + "/python/" + "destiny/"
 
 
@@ -21,13 +20,9 @@ def main():
 
     if check_dirs():
         manifest_url = get_manifest_url()
-
         get_manifest(manifest_url)
-
-        unzipping_renaming()
-
-        write_tables(SQL_DB)
-
+        manifest = unzipping_renaming()
+        write_tables(manifest)
 
 
 def check_dirs():
@@ -48,7 +43,6 @@ def get_manifest_url():
                      headers=HEADERS).json()
 
     manifest_uri = r["Response"]["mobileWorldContentPaths"]["en"]
-
     manifest_url = f"https://www.bungie.net{manifest_uri}"
 
     return manifest_url
@@ -66,49 +60,37 @@ def get_manifest(manifest_url):
     bar_now = cols * '-'
     progress_bar = f"[{bar_now}]"
 
-    # TODO finish implementing a download progress bar
     with open("Destiny2Manifest.zip", "wb") as f:
         print("Downloading...")
         for chunk in r.iter_content(chunk_size=CHUNK_SIZE):
             f.write(chunk)
             downloaded = chunk_cnt * CHUNK_SIZE
-            print("\r"
-                  + progress_bar
-                  + " " + str(downloaded)
-                  + "B / "
-                  + str(file_size)
-                  + "B ",
-                  end="")
+            print(f"\r{progress_bar} {downloaded}B / {file_size}B ", end="")
             sys.stdout.flush()
+            # Progress bar re-construction
             progress_pct = (downloaded / file_size)
             bar_now = round(progress_pct * cols)
-            printable_bar = bar_now * '#'
-            empty = (cols - bar_now) * '-'
-            progress_bar = f"[{printable_bar}{empty}]"
+            bar = bar_now * '#'
+            remaining = (cols - bar_now) * '-'
+            progress_bar = f"[{bar}{remaining}]"
             chunk_cnt += 1
             sleep(0.5)
         else:
-            print("\r"
-                  + progress_bar
-                  + " " + str(file_size)
-                  + "B / "
-                  + str(file_size)
-                  + "B ")
+            bar = cols * '#'
+            progress_bar = f"[{bar}]"
+            print(f"\r{progress_bar} {file_size}B / {file_size}B ")
 
 
 def unzipping_renaming():
 
     with zipfile.ZipFile(ZIP_FILE, "r") as f:
+        manifest = f.namelist()[0]
         f.extractall(MANIFEST_DIR)
 
     os.remove(ZIP_FILE)
-
-    files = os.listdir(MANIFEST_DIR)
-
-    manifest = [file_ for file_ in files if file_.endswith(".content")][0]
-
     os.chdir(MANIFEST_DIR)
-    os.rename(manifest, SQL_DB)
+
+    return manifest
 
 
 def write_tables(sql):
@@ -124,11 +106,8 @@ def write_tables(sql):
         for entry in table_names:
             try:
                 cur.execute('SELECT id,json FROM {}'.format(entry))
-
                 tables = cur.fetchall()
-
                 data = ((str(table[0]), json.loads(table[1])) for table in tables)
-
                 table_dict = {element[0]: element[1] for element in data}
 
                 os.chdir(WORKING_DIR)
@@ -136,11 +115,10 @@ def write_tables(sql):
                     json.dump(table_dict, f, indent=4)
 
                 os.chdir(MANIFEST_DIR)
-
-                print("- WRITING >> " + entry)
+                print("- WRITING >> " + entry + ".json")
 
             except sqlite3.OperationalError:
-                print("-- EXCEPTION: SKIPPING " + entry)
+                print("-- EXCEPTION: SKIPPING " + entry + ".json")
                 continue
         else:
             os.chdir(WORKING_DIR)
