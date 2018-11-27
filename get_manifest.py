@@ -10,10 +10,10 @@ import os
 
 
 HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
-MANIFEST_DIR = "TMP_Destiny_Manifest"
-JSON_DIR = "DDB-Files"
+WORKING_DIR = str(Path.home()) + "/python/scripts/pyguardian"
+MANIFEST_DIR = WORKING_DIR + "/TMP_Destiny_Manifest"
+JSON_DIR = WORKING_DIR + "/DDB-Files"
 ZIP_FILE = "Destiny2Manifest.zip"
-WORKING_DIR = str(Path.home()) + "/python/" + "destiny/"
 
 
 def main():

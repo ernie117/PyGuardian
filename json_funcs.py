@@ -107,7 +107,7 @@ def fetch_last_time_played(character_data):
     char_dict = {
             "Character": None,
             "Datetime":  None,
-            "Session": None,
+            "Session":   None,
         }
 
     char_dicts = []
