@@ -21,7 +21,7 @@ def main():
                                  "vault-tier",
                                  "playtime",
                                  "last"])
-    parser.add_argument("-d", "--download", action="store_true")
+    parser.add_argument("-d", "--download-manifest", action="store_true")
 
     args = parser.parse_args()
 
@@ -41,7 +41,7 @@ def main():
         print(PyGuardian.fetch_playtime(args.guardian, args.platform))
     if args.response == "last":
         print(PyGuardian.fetch_last_time_played(args.guardian, args.platform))
-    if args.download:
+    if args.download_manifest:
         get_manifest.main()
     else:
         pass

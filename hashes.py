@@ -7,7 +7,7 @@ class InventoryManifest:
     def __init__(self, hash_lists):
         self.hashes = hash_lists
 
-        with open("DDB-Files/DestinyInventoryItemDefinition.json", "r") as f:
+        with open("/home/ernie/python/scripts/pyguardian/DDB-Files/DestinyInventoryItemDefinition.json", "r") as f:
             self.data = json.load(f)
 
         self.convert_hashes(self.hashes)

@@ -1,6 +1,5 @@
 from hashes import InventoryManifest
 import dateutil.parser
-import asyncio
 import sys
 
 
@@ -22,8 +21,8 @@ def JSONMiner(string, data):
         value = data[query]
         data = data[query]
     elif isinstance(data, list):
-        value = data[query]
-        data = data[query]
+        value = data[int(query)]
+        data = data[int(query)]
 
     if string:
         return JSONMiner(string, data)

@@ -5,14 +5,24 @@ use '''
 from hashes import InventoryManifest
 from requester import Requester
 from tabulate import tabulate
+from pathlib import Path
+import get_manifest
 import json_funcs
+import os
 
 
 class PyGuardian:
 
     @staticmethod
+    def prechecks():
+        if not os.path.isdir(str(Path.home()) + "/python/scripts/pyguardian/DDB-Files"):
+            print("Manifest files not available, requesting...")
+            get_manifest.main()
+
+    @staticmethod
     def fetch_stats(guardian, platform):
 
+        PyGuardian.prechecks()
         account = Requester(guardian, platform)
         account.fetch_player()
         response = account.fetch_character_info()
@@ -24,6 +34,7 @@ class PyGuardian:
     @staticmethod
     def fetch_eq(guardian, platform):
 
+        PyGuardian.prechecks()
         account = Requester(guardian, platform)
         account.fetch_player()
         char_data = account.fetch_character_info()
@@ -38,6 +49,7 @@ class PyGuardian:
     @staticmethod
     def fetch_vault(guardian, platform, sort=None):
 
+        PyGuardian.prechecks()
         account = Requester(guardian, platform)
         account.fetch_player()
         vault_data = account.fetch_vault_info()
@@ -51,6 +63,7 @@ class PyGuardian:
     @staticmethod
     def fetch_playtime(guardian, platform):
 
+        PyGuardian.prechecks()
         account = Requester(guardian, platform)
         account.fetch_player()
         char_data = account.fetch_character_info()
@@ -62,6 +75,7 @@ class PyGuardian:
     @staticmethod
     def fetch_last_time_played(guardian, platform):
 
+        PyGuardian.prechecks()
         account = Requester(guardian, platform)
         account.fetch_player()
         char_data = account.fetch_character_info()
