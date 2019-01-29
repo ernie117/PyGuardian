@@ -98,11 +98,11 @@ def get_manifest(manifest_url):
 
     with open("Destiny2Manifest.zip", "wb") as f:
         chunk_cnt = 0
-        CHUNK_SIZE = 1024*1024
+        chunk_size = 1024*1024
         dl_str = "Downloading...    "
-        for chunk in r.iter_content(chunk_size=CHUNK_SIZE):
+        for chunk in r.iter_content(chunk_size=chunk_size):
             f.write(chunk)
-            downloaded = (chunk_cnt * CHUNK_SIZE) // 1024
+            downloaded = (chunk_cnt * chunk_size) // 1024
             print(f"\r{dl_str}{downloaded}KB/{file_size}KB {progress_bar}", end="")
             sys.stdout.flush()
             # Progress bar re-construction
