@@ -10,15 +10,18 @@ import os
 
 
 HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
-WORKING_DIR = str(Path.home()) + "/python/scripts/pyguardian"
+WORKING_DIR = str(Path.home()) + "/Documents/python/PyGuardian"
 MANIFEST_DIR = WORKING_DIR + "/TMP_Destiny_Manifest"
 JSON_DIR = WORKING_DIR + "/DDB-Files"
 ZIP_FILE = "Destiny2Manifest.zip"
 MANIFEST_CHECK_FILE = WORKING_DIR + "/Manifest-url-check.txt"
 
+
 def main():
 
     manifest_url = get_manifest_url()
+    if manifest_url is None:
+        return
     check_dirs()
     get_manifest(manifest_url)
     manifest = unzipping_renaming()
@@ -26,13 +29,12 @@ def main():
 
 
 def check_dirs():
-    '''
+    """
     Simply checks to see if directories
     for working with/storing data exist,
     creates them if they don't, returns
     True once directories exist
-    '''
-    #TODO implement check for manifest version from URL name
+    """
     try:
         if not os.path.isdir(MANIFEST_DIR):
             print("Creating tmp manifest directory")
@@ -46,14 +48,14 @@ def check_dirs():
 
 
 def get_manifest_url():
-    '''
+    """
     This function requests data from the API
     that contains the part of the url required to
     request the manifest data. It parses out the
     URI then builds the url from it and returns it,
     then writes the uri to file as a way of checking
     for a manifest update
-    '''
+    """
     r = requests.get("https://www.bungie.net/Platform/Destiny2/Manifest/",
                      headers=HEADERS).json()
 
@@ -64,12 +66,15 @@ def get_manifest_url():
     manifest_uri = r["Response"]["mobileWorldContentPaths"]["en"]
 
     try:
-        with open(MANIFEST_CHECK_FILE, 'r') as f:
+        with open(MANIFEST_CHECK_FILE, 'r+') as f:
             check_url = f.read()
 
-        if manifest_uri == check_url:
-            print("Manifest unchanged, no download required")
-            sys.exit()
+            if manifest_uri == check_url:
+                print("Manifest unchanged, no download required")
+                return None
+
+            f.seek(0)
+            f.write(manifest_uri)
 
     except FileNotFoundError:
         print("Creating manifest url check-file")
@@ -82,11 +87,11 @@ def get_manifest_url():
 
 
 def get_manifest(manifest_url):
-    '''
+    """
     Requests the manifest URL and downloads the zipfile
     database response, prints a nice little
     progress bar showing download progress
-    '''
+    """
     # Getting terminal size for progress bar construction
     cols, _ = shutil.get_terminal_size()
     cols = cols - 36  # Make space for the file size
@@ -120,11 +125,11 @@ def get_manifest(manifest_url):
 
 
 def unzipping_renaming():
-    '''
+    """
     Unzips the downloaded zipfile and extracts
     the SQL database, returns the database
     object
-    '''
+    """
     with zipfile.ZipFile(ZIP_FILE, "r") as f:
         manifest = f.namelist()[0]
         f.extractall(MANIFEST_DIR)
@@ -136,14 +141,14 @@ def unzipping_renaming():
 
 
 def write_tables(sql):
-    '''
+    """
     Opens the SQL database, gets the table
     names and uses them to query all the tables
     within, converts them to JSON and writes
     them all to individual files, deletes
     the temporary manifest directory once
     finished
-    '''
+    """
     conn = sqlite3.connect(sql)
 
     with conn:

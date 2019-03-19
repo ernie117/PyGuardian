@@ -6,15 +6,15 @@ class InventoryManifest:
 
     def __init__(self, hash_lists):
         self.hashes = hash_lists
+        self.final_hashes = []
 
-        with open("/home/ernie/python/scripts/pyguardian/DDB-Files/DestinyInventoryItemDefinition.json", "r") as f:
+        with open("/home/user-admin/Documents/python/PyGuardian/DDB-Files/DestinyInventoryItemDefinition.json", "r") as f:
             self.data = json.load(f)
 
         self.convert_hashes(self.hashes)
 
     def convert_hashes(self, hashes):
 
-        self.final_hashes = []
         for character in hashes:
             character_list = []
             for hash_ in character:

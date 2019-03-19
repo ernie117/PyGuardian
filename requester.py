@@ -13,8 +13,12 @@ class Requester:
 
         self.player_name = gamertag
 
-        # "#" is present in BattleID's on pc but they must be
-        # replaced otherwise they break urls
+        self.character_info_url = None
+        self.vault_info_url = None
+        self.character_equip_url = None
+        self.mem_id = None
+
+        # "#" is present in BattleID's on pc but they must be replaced
         if "#" in self.player_name:
             self.player_name = self.player_name.replace("#", "%23")
 

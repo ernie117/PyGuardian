@@ -1,7 +1,5 @@
-from hashes import InventoryManifest
 import dateutil.parser
 import sys
-
 
 GENS = {0: "Male", 1: "Female", 2: "Unknown"}
 RACES = {0: "Human", 1: "Awoken", 2: "Exo", 3: "Unknown"}
@@ -31,7 +29,6 @@ def JSONMiner(string, data):
 
 
 def fetch_eq_hashes(equipment_data, character_data):
-
     root_str1 = "Response.characters.data."
     root_str2 = "Response.characterEquipment.data."
 
@@ -57,18 +54,17 @@ def fetch_eq_hashes(equipment_data, character_data):
 
 
 def fetch_char_info(character_data):
-
     root_str = "Response.characters.data."
 
     char_dictionaries = []
     char_dict = {
-            "Character":  None,
-            "Power":      None,
-            "Mobility":   None,
-            "Resilience": None,
-            "Recovery":   None,
-            "Level":      None
-        }
+        "Character": None,
+        "Power": None,
+        "Mobility": None,
+        "Resilience": None,
+        "Recovery": None,
+        "Level": None
+    }
 
     try:
         characters = list(JSONMiner(root_str, character_data).keys())
@@ -94,7 +90,6 @@ def fetch_char_info(character_data):
 
 
 def fetch_last_time_played(character_data):
-
     root_str = "Response.characters.data."
 
     try:
@@ -104,10 +99,10 @@ def fetch_last_time_played(character_data):
         sys.exit()
 
     char_dict = {
-            "Character": None,
-            "Datetime":  None,
-            "Session":   None,
-        }
+        "Character": None,
+        "Datetime": None,
+        "Session": None,
+    }
 
     char_dicts = []
     data = JSONMiner(root_str, character_data)
@@ -131,7 +126,6 @@ def fetch_last_time_played(character_data):
 
 
 def fetch_play_time(character_data):
-
     root_str = "Response.characters.data."
 
     try:
@@ -141,7 +135,7 @@ def fetch_play_time(character_data):
         sys.exit()
 
     char_mins = [int(JSONMiner(f"{root_str}{char}.minutesPlayedTotal", character_data))
-                                                                for char in characters]
+                 for char in characters]
 
     readable_times = (divmod(time, 60) for time in char_mins)
     readable_times = [f"{time[0]}h {time[1]}m" for time in readable_times]
@@ -157,7 +151,7 @@ def fetch_play_time(character_data):
 
     char_dicts = []
     for char, time in zip(char_titles, readable_times):
-        character = {}
+        character = dict()
         character["Character"] = char
         character["Time"] = time
         char_dicts.append(character)
@@ -169,7 +163,6 @@ def fetch_play_time(character_data):
 
 
 def fetch_vault_hashes(vault_info):
-
     root_str = "Response.profileInventory.data.items"
 
     try:
@@ -181,7 +174,3 @@ def fetch_vault_hashes(vault_info):
     except KeyError:
         print("Vault access blocked")
         sys.exit()
-
-
-
-

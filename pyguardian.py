@@ -15,7 +15,7 @@ class PyGuardian:
 
     @staticmethod
     def prechecks():
-        if not os.path.isdir(str(Path.home()) + "/python/scripts/pyguardian/DDB-Files"):
+        if not os.path.isdir(str(Path.home()) + "/Documents/python/PyGuardian/DDB-Files"):
             print("Manifest files not available, requesting...")
             get_manifest.main()
 
