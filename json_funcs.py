@@ -42,6 +42,8 @@ def fetch_eq_hashes(equipment_data, character_data):
     for char in characters:
         element = []
         title = JSONMiner(f"{root_str1}{char}", character_data)
+        # Adding a title row that describes the character
+        # to distinguish between multiple characters
         char_title = ([GENS[title["genderType"]].upper(),
                        RACES[title["raceType"]].upper(),
                        CLASSES[title["classType"]].upper()])
@@ -140,7 +142,7 @@ def fetch_play_time(character_data):
     readable_times = (divmod(time, 60) for time in char_mins)
     readable_times = [f"{time[0]}h {time[1]}m" for time in readable_times]
     total_hours, total_mins = divmod(sum(char_mins), 60)
-    playtime_str = str(total_hours) + "h " + str(total_mins) + "m"
+    playtime_str = f"{total_hours}h {total_mins}m"
 
     char_titles = []
     for char in characters:
