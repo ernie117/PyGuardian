@@ -18,6 +18,8 @@ class PyGuardian:
         if not os.path.isdir(str(Path.home()) + "/Documents/python/PyGuardian/DDB-Files"):
             print("Manifest files not available, requesting...")
             get_manifest.main()
+        else:
+            get_manifest.main()
 
     @staticmethod
     def fetch_stats(guardian, platform):

@@ -70,7 +70,6 @@ def get_manifest_url():
             check_url = f.read()
 
             if manifest_uri == check_url:
-                print("Manifest unchanged, no download required")
                 return None
 
             f.seek(0)
