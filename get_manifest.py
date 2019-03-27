@@ -22,17 +22,13 @@ def main(skip_check=False):
 
     check_dirs()
     manifest_uri = get_manifest_url()
-    if skip_check:
-        get_manifest(MANIFEST_URL_ROOT + manifest_uri)
-        manifest = unzipping_renaming()
-        write_tables(manifest)
-    else:
-        if check_manifest_url(manifest_uri):
-            get_manifest(MANIFEST_URL_ROOT + manifest_uri)
-            manifest = unzipping_renaming()
-            write_tables(manifest)
-        else:
-            return
+
+    if not skip_check:
+        manifest_uri = check_manifest_url(manifest_uri)
+
+    get_manifest(MANIFEST_URL_ROOT + manifest_uri)
+    manifest = unzipping_renaming()
+    write_tables(manifest)
 
 
 def check_dirs():
@@ -58,10 +54,10 @@ def check_dirs():
 def check_manifest_url(uri):
     try:
         with open(MANIFEST_CHECK_FILE, 'r+') as f:
-            check_url = f.read()
+            check_url = f.read().strip()
 
             if uri == check_url:
-                return False
+                return uri
 
             f.seek(0)
             f.write(uri)
@@ -71,12 +67,12 @@ def check_manifest_url(uri):
         with open(MANIFEST_CHECK_FILE, 'w') as f:
             f.write(uri)
 
-    return True
+    return uri
 
 
 def get_manifest_url():
     """
-    This function requests an URL for the manifest SQL data
+    Requests an URL for the manifest SQL data
     """
     r = requests.get("https://www.bungie.net/Platform/Destiny2/Manifest/",
                      headers=HEADERS).json()
@@ -127,9 +123,8 @@ def get_manifest(manifest_url):
 
 def unzipping_renaming():
     """
-    Unzips the downloaded zipfile and extracts
-    the SQL database, returns the database
-    object
+    Unzips the downloaded zipfile and extracts the SQL
+    database, returns the database object
     """
     with zipfile.ZipFile(ZIP_FILE, "r") as f:
         manifest = f.namelist()[0]
@@ -142,10 +137,9 @@ def unzipping_renaming():
 
 def write_tables(sql):
     """
-    Opens the SQL database, gets the table
-    names and uses them to query all the tables
-    within, converts them to JSON and writes
-    them all to individual files
+    Opens the SQL database, gets the table names and
+    uses them to query all the tables within, converts
+    them to JSON and writes them all to individual files
     """
     conn = sqlite3.connect(sql)
 

@@ -18,8 +18,7 @@ class Requester:
         self.mem_id = None
 
         # "#" is present in BattleID's on pc but they must be replaced
-        if "#" in self.player_name:
-            self.player_name = self.player_name.replace("#", "%23")
+        self.player_name = self.player_name.replace("#", "%23")
 
         try:
             self.platform = self.PLATFORMS[platform.lower()]
