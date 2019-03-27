@@ -28,7 +28,7 @@ def JSONMiner(string, data):
     return value
 
 
-def fetch_eq_hashes(equipment_data, character_data):
+def fetch_eq_hashes(equipment_data, character_data, no_of_items=11):
     root_str1 = "Response.characters.data."
     root_str2 = "Response.characterEquipment.data."
 
@@ -48,7 +48,7 @@ def fetch_eq_hashes(equipment_data, character_data):
                        RACES[title["raceType"]].upper(),
                        CLASSES[title["classType"]].upper()])
         element.append(char_title)
-        items = JSONMiner(f"{root_str2}{char}.items", equipment_data)[:11]
+        items = JSONMiner(f"{root_str2}{char}.items", equipment_data)[:no_of_items]
         element.extend([item["itemHash"] for item in items])
         item_hashes.append(element)
 

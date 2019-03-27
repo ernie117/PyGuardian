@@ -16,15 +16,20 @@ MANIFEST_DIR = DATA_DIR + "/Destiny_Manifest"
 JSON_DIR = DATA_DIR + "/DDB-Files"
 MANIFEST_CHECK_FILE = DATA_DIR + "/Manifest-url-check.txt"
 ZIP_FILE = MANIFEST_DIR + "/Destiny2Manifest.zip"
+MANIFEST_URL_ROOT = "https://www.bungie.net"
 
 
 def main(skip_check=False):
 
     check_dirs()
-    manifest_url = get_manifest_url(skip_check)
-    if manifest_url is None:
-        return
-    get_manifest(manifest_url)
+    manifest_uri = get_manifest_url()
+    if skip_check:
+        get_manifest(MANIFEST_URL_ROOT + manifest_uri)
+    else:
+        if check_manifest_url(manifest_uri):
+            get_manifest(MANIFEST_URL_ROOT + manifest_uri)
+        else:
+            return
     manifest = unzipping_renaming()
     write_tables(manifest)
 
@@ -49,11 +54,28 @@ def check_dirs():
         sys.exit()
 
 
-def get_manifest_url(skip_check):
+def check_manifest_url(uri):
+    try:
+        with open(MANIFEST_CHECK_FILE, 'r+') as f:
+            check_url = f.read()
+
+            if uri == check_url:
+                return False
+
+            f.seek(0)
+            f.write(uri)
+
+    except FileNotFoundError:
+        print("Creating manifest url check-file")
+        with open(MANIFEST_CHECK_FILE, 'w') as f:
+            f.write(uri)
+
+    return True
+
+
+def get_manifest_url():
     """
-    This function requests an URL for the manifest SQL
-    data, checks if it has changed (i.e. there is new data),
-    returns the new URL if it has
+    This function requests an URL for the manifest SQL data
     """
     r = requests.get("https://www.bungie.net/Platform/Destiny2/Manifest/",
                      headers=HEADERS).json()
@@ -62,27 +84,7 @@ def get_manifest_url(skip_check):
         print("API is down!")
         sys.exit()
 
-    manifest_uri = r["Response"]["mobileWorldContentPaths"]["en"]
-
-    if skip_check:
-        return f"https://www.bungie.net{manifest_uri}"
-
-    try:
-        with open(MANIFEST_CHECK_FILE, 'r+') as f:
-            check_url = f.read()
-
-            if manifest_uri == check_url:
-                return None
-
-            f.seek(0)
-            f.write(manifest_uri)
-
-    except FileNotFoundError:
-        print("Creating manifest url check-file")
-        with open(MANIFEST_CHECK_FILE, 'w') as f:
-            f.write(manifest_uri)
-
-    return f"https://www.bungie.net{manifest_uri}"
+    return r["Response"]["mobileWorldContentPaths"]["en"]
 
 
 def get_manifest(manifest_url):
@@ -168,6 +170,7 @@ def write_tables(sql):
                 print("-- EXCEPTION: SKIPPING " + entry + ".json")
                 continue
         else:
+            os.remove(sql)
             print("Finished \u263A")
 
 

@@ -20,6 +20,8 @@ class PyGuardian:
             get_manifest.main(skip_check=True)
         if len(os.listdir(str(Path.home()) + "/.pyguardian/DDB-Files")) == 0:
             get_manifest.main(skip_check=True)
+        else:
+            get_manifest.main()
 
     @staticmethod
     def fetch_stats(guardian, platform):
