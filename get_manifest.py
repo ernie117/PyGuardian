@@ -10,10 +10,9 @@ import os
 
 
 HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
-WORKING_DIR = str(Path.home()) + "/Documents/python/PyGuardian"
 DATA_DIR = str(Path.home()) + "/.pyguardian"
-MANIFEST_DIR = DATA_DIR + "/Destiny_Manifest"
 JSON_DIR = DATA_DIR + "/DDB-Files"
+MANIFEST_DIR = DATA_DIR + "/Destiny_Manifest"
 MANIFEST_CHECK_FILE = DATA_DIR + "/Manifest-url-check.txt"
 ZIP_FILE = MANIFEST_DIR + "/Destiny2Manifest.zip"
 MANIFEST_URL_ROOT = "https://www.bungie.net"
@@ -25,13 +24,15 @@ def main(skip_check=False):
     manifest_uri = get_manifest_url()
     if skip_check:
         get_manifest(MANIFEST_URL_ROOT + manifest_uri)
+        manifest = unzipping_renaming()
+        write_tables(manifest)
     else:
         if check_manifest_url(manifest_uri):
             get_manifest(MANIFEST_URL_ROOT + manifest_uri)
+            manifest = unzipping_renaming()
+            write_tables(manifest)
         else:
             return
-    manifest = unzipping_renaming()
-    write_tables(manifest)
 
 
 def check_dirs():
@@ -113,13 +114,13 @@ def get_manifest(manifest_url):
             # Progress bar re-construction
             progress_pct = (downloaded / file_size)
             bar_now = round(progress_pct * cols)
-            bar = bar_now * '#'
-            remaining = (cols - bar_now) * '-'
+            bar = f"{'#' * bar_now}"
+            remaining = f"{'-' * (cols - bar_now)}"
             progress_bar = f"[{bar}{remaining}]"
             chunk_cnt += 1
             sleep(0.5)
         else:
-            bar = cols * '#'
+            bar = f"{cols * '#'}"
             progress_bar = f"[{bar}]"
             print(f"\r{dl_str}{file_size}KB/{file_size}KB {progress_bar}")
 
