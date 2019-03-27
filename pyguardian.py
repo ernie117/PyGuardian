@@ -18,8 +18,10 @@ class PyGuardian:
         if not os.path.isdir(str(Path.home()) + "/.pyguardian/DDB-Files"):
             print("Manifest files not available, requesting...")
             get_manifest.main(skip_check=True)
+            return
         if len(os.listdir(str(Path.home()) + "/.pyguardian/DDB-Files")) == 0:
             get_manifest.main(skip_check=True)
+            return
         else:
             get_manifest.main()
 
