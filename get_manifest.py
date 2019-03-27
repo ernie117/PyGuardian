@@ -11,18 +11,19 @@ import os
 
 HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
 WORKING_DIR = str(Path.home()) + "/Documents/python/PyGuardian"
-MANIFEST_DIR = WORKING_DIR + "/TMP_Destiny_Manifest"
-JSON_DIR = WORKING_DIR + "/DDB-Files"
-ZIP_FILE = "Destiny2Manifest.zip"
-MANIFEST_CHECK_FILE = WORKING_DIR + "/Manifest-url-check.txt"
+DATA_DIR = str(Path.home()) + "/.pyguardian"
+MANIFEST_DIR = DATA_DIR + "/Destiny_Manifest"
+JSON_DIR = DATA_DIR + "/DDB-Files"
+MANIFEST_CHECK_FILE = DATA_DIR + "/Manifest-url-check.txt"
+ZIP_FILE = MANIFEST_DIR + "/Destiny2Manifest.zip"
 
 
-def main():
+def main(skip_check=False):
 
-    manifest_url = get_manifest_url()
+    check_dirs()
+    manifest_url = get_manifest_url(skip_check)
     if manifest_url is None:
         return
-    check_dirs()
     get_manifest(manifest_url)
     manifest = unzipping_renaming()
     write_tables(manifest)
@@ -30,14 +31,15 @@ def main():
 
 def check_dirs():
     """
-    Simply checks to see if directories
-    for working with/storing data exist,
-    creates them if they don't, returns
-    True once directories exist
+    Simply checks to see if directories exist, makes
+    them if they don't
     """
     try:
+        if not os.path.isdir(DATA_DIR):
+            print("Creating data directory")
+            os.makedirs(MANIFEST_DIR)
         if not os.path.isdir(MANIFEST_DIR):
-            print("Creating tmp manifest directory")
+            print("Creating manifest directory")
             os.makedirs(MANIFEST_DIR)
         if not os.path.isdir(JSON_DIR):
             print("Creating JSON directory")
@@ -47,14 +49,11 @@ def check_dirs():
         sys.exit()
 
 
-def get_manifest_url():
+def get_manifest_url(skip_check):
     """
-    This function requests data from the API
-    that contains the part of the url required to
-    request the manifest data. It parses out the
-    URI then builds the url from it and returns it,
-    then writes the uri to file as a way of checking
-    for a manifest update
+    This function requests an URL for the manifest SQL
+    data, checks if it has changed (i.e. there is new data),
+    returns the new URL if it has
     """
     r = requests.get("https://www.bungie.net/Platform/Destiny2/Manifest/",
                      headers=HEADERS).json()
@@ -64,6 +63,9 @@ def get_manifest_url():
         sys.exit()
 
     manifest_uri = r["Response"]["mobileWorldContentPaths"]["en"]
+
+    if skip_check:
+        return f"https://www.bungie.net{manifest_uri}"
 
     try:
         with open(MANIFEST_CHECK_FILE, 'r+') as f:
@@ -80,18 +82,15 @@ def get_manifest_url():
         with open(MANIFEST_CHECK_FILE, 'w') as f:
             f.write(manifest_uri)
 
-    manifest_url = f"https://www.bungie.net{manifest_uri}"
-
-    return manifest_url
+    return f"https://www.bungie.net{manifest_uri}"
 
 
 def get_manifest(manifest_url):
     """
     Requests the manifest URL and downloads the zipfile
-    database response, prints a nice little
-    progress bar showing download progress
+    database response, prints a nice little progress bar
+    showing download progress
     """
-    # Getting terminal size for progress bar construction
     cols, _ = shutil.get_terminal_size()
     cols = cols - 36  # Make space for the file size
     bar_now = cols * '-'
@@ -100,7 +99,7 @@ def get_manifest(manifest_url):
     r = requests.get(manifest_url, headers=HEADERS, stream=True)
     file_size = int(r.headers["Content-length"]) // 1024
 
-    with open("Destiny2Manifest.zip", "wb") as f:
+    with open(ZIP_FILE, "wb") as f:
         chunk_cnt = 0
         chunk_size = 1024*1024
         dl_str = "Downloading...    "
@@ -134,9 +133,8 @@ def unzipping_renaming():
         f.extractall(MANIFEST_DIR)
 
     os.remove(ZIP_FILE)
-    os.chdir(MANIFEST_DIR)
 
-    return manifest
+    return MANIFEST_DIR + "/" + manifest
 
 
 def write_tables(sql):
@@ -144,9 +142,7 @@ def write_tables(sql):
     Opens the SQL database, gets the table
     names and uses them to query all the tables
     within, converts them to JSON and writes
-    them all to individual files, deletes
-    the temporary manifest directory once
-    finished
+    them all to individual files
     """
     conn = sqlite3.connect(sql)
 
@@ -163,20 +159,15 @@ def write_tables(sql):
                 data = ((str(table[0]), json.loads(table[1])) for table in tables)
                 table_dict = {element[0]: element[1] for element in data}
 
-                os.chdir(WORKING_DIR)
                 with open(JSON_DIR + "/" + entry + ".json", "w") as f:
                     json.dump(table_dict, f, indent=4)
 
-                os.chdir(MANIFEST_DIR)
                 print("- WRITING >> " + entry + ".json")
 
             except sqlite3.OperationalError:
                 print("-- EXCEPTION: SKIPPING " + entry + ".json")
                 continue
         else:
-            os.chdir(WORKING_DIR)
-            print("Deleting tmp manifest directory")
-            shutil.rmtree(MANIFEST_DIR)
             print("Finished \u263A")
 
 

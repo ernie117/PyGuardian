@@ -4,7 +4,6 @@ import os
 
 
 class Requester:
-
     HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
     PLATFORMS = {"xbox": "1", "playstation": "2", "pc": "4"}
     COMPONENTS = ["200", "102", "205"]
@@ -51,7 +50,7 @@ class Requester:
         print("Player found \u2713")
 
         urls = [self.root + self.mem_id + "/?components=" + comp
-                                    for comp in self.COMPONENTS]
+                for comp in self.COMPONENTS]
 
         self.character_info_url = urls[0]
         self.vault_info_url = urls[1]

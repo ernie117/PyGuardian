@@ -15,11 +15,11 @@ class PyGuardian:
 
     @staticmethod
     def prechecks():
-        if not os.path.isdir(str(Path.home()) + "/Documents/python/PyGuardian/DDB-Files"):
+        if not os.path.isdir(str(Path.home()) + "/.pyguardian/DDB-Files"):
             print("Manifest files not available, requesting...")
-            get_manifest.main()
-        else:
-            get_manifest.main()
+            get_manifest.main(skip_check=True)
+        if len(os.listdir(str(Path.home()) + "/.pyguardian/DDB-Files")) == 0:
+            get_manifest.main(skip_check=True)
 
     @staticmethod
     def fetch_stats(guardian, platform):

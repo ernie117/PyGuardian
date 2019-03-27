@@ -1,4 +1,5 @@
 from operator import itemgetter
+from pathlib import Path
 import json
 
 
@@ -8,7 +9,7 @@ class InventoryManifest:
         self.hashes = hash_lists
         self.final_hashes = []
 
-        with open("/home/user-admin/Documents/python/PyGuardian/DDB-Files/DestinyInventoryItemDefinition.json", "r") as f:
+        with open(str(Path.home()) + "/.pyguardian/DDB-Files/DestinyInventoryItemDefinition.json", "r") as f:
             self.data = json.load(f)
 
         self.convert_hashes(self.hashes)
