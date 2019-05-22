@@ -1,4 +1,4 @@
-""" This class holds a collection of methods that offload all
+""" This façade class holds a collection of methods that offload all
 the heavy lifting of requesting and processing to other modules,
 for easy command line use with destiny_cli and interactive terminal
 use """
@@ -22,8 +22,6 @@ class PyGuardian:
         if len(os.listdir(str(Path.home()) + "/.pyguardian/DDB-Files")) == 0:
             get_manifest.main(skip_check=True)
             return
-        else:
-            get_manifest.main()
 
     @staticmethod
     def fetch_stats(guardian, platform):
