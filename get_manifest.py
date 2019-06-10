@@ -1,5 +1,4 @@
 from time import sleep
-from pathlib import Path
 import constants
 import requests
 import shutil
@@ -130,7 +129,6 @@ def unzipping_renaming():
 
     print("Deleting zipfile...")
     os.remove(constants.ZIP_FILE)
-    files = os.listdir(constants.MANIFEST_DIR)
     # TODO find most recent sql to write from
 
     return constants.MANIFEST_DIR + "/" + manifest

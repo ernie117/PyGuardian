@@ -5,10 +5,11 @@ import PyGuardian_Exceptions
 
 
 class TestInputValidator(TestCase):
+
     def test_validate_valid_input(self):
         test_guardian, test_platform = "player#22462", "pc"
         result = InputValidator.validate(test_guardian, test_platform)
-        assert result, "Should be valid"
+        self.assertTrue(result), "Should be valid"
 
     def test_validate_invalid_input_reserved_chars(self):
         test_guardian, test_platform = "player&", "pc"
