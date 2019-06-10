@@ -4,7 +4,7 @@ CLI-based app for requesting tabulated character information from the Bungie API
 
 ## Run with:
 
-python destiny_cli.py < playerID > < platform > < eq/stats/playtime/last/vault/valut-name/vault-type/vault-tier >
+> python destiny_cli.py < playerID > < platform > < eq/stats/playtime/last/vault/valut-name/vault-type/vault-tier >
 
 ## Things I want to do
 
