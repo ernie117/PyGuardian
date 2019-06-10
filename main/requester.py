@@ -1,7 +1,7 @@
-from PyGuardian_Exceptions import *
+from validation.PyGuardian_Exceptions import *
 
 import requests
-import constants
+from utils import constants
 import os
 
 

@@ -2,12 +2,11 @@
 the heavy lifting of requesting and processing to other modules,
 for easy command line use with destiny_cli and interactive terminal
 use """
-from hashes import InventoryManifest
-from requester import Requester
+from data_processing.hashes import InventoryManifest
+from main.requester import Requester
 from tabulate import tabulate
 from pathlib import Path
-import get_manifest
-import json_funcs
+from data_processing import json_funcs, get_manifest
 import os
 
 

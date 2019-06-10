@@ -1,9 +1,9 @@
 #!/usr/bin/env python3.7
-from pyguardian import PyGuardian
-from InputValidator import InputValidator
-from GuardianProcessor import GuardianProcessor
+from main.pyguardian import PyGuardian
+from validation.InputValidator import InputValidator
+from validation.GuardianProcessor import GuardianProcessor
 
-import get_manifest
+from data_processing import get_manifest
 import argparse
 
 
