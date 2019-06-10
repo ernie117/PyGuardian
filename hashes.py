@@ -12,9 +12,9 @@ class InventoryManifest:
         with open(str(Path.home()) + "/.pyguardian/DDB-Files/DestinyInventoryItemDefinition.json", "r") as f:
             self.data = json.load(f)
 
-        self.convert_hashes(self.hashes)
+        self._convert_hashes(self.hashes)
 
-    def convert_hashes(self, hashes):
+    def _convert_hashes(self, hashes):
 
         for character in hashes:
             character_list = []

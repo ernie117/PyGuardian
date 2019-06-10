@@ -42,7 +42,7 @@ def main():
     if args.response == "last":
         print(PyGuardian.fetch_last_time_played(args.guardian, args.platform))
     if args.download_manifest:
-        get_manifest.main()
+        get_manifest.main(url_check=True)
     else:
         pass
 

@@ -17,7 +17,7 @@ class Requester:
         self.character_equip_url = None
         self.mem_id = None
 
-        # "#" is present in BattleID's on pc but they must be replaced
+        # "#" in BattleID's on pc must be replaced in URLs
         self.player_name = self.player_name.replace("#", "%23")
 
         try:
@@ -29,7 +29,6 @@ class Requester:
         self.base = "https://www.bungie.net/Platform/Destiny2/"
         self.root = self.base + self.platform + "/Profile/"
         self.player_search = self.base + "SearchDestinyPlayer/" + self.platform + "/"
-
         self.search_url = self.player_search + self.player_name
 
     def fetch_player(self):

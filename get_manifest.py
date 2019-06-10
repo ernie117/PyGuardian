@@ -18,13 +18,15 @@ ZIP_FILE = MANIFEST_DIR + "/Destiny2Manifest.zip"
 MANIFEST_URL_ROOT = "https://www.bungie.net"
 
 
-def main(skip_check=False):
+def main(url_check=False):
 
     check_dirs()
     manifest_uri = get_manifest_url()
 
-    if not skip_check:
+    if url_check:
         manifest_uri = check_manifest_url(manifest_uri)
+        if manifest_uri is None:
+            return
 
     get_manifest(MANIFEST_URL_ROOT + manifest_uri)
     manifest = unzipping_renaming()
@@ -57,7 +59,8 @@ def check_manifest_url(uri):
             check_url = f.read().strip()
 
             if uri == check_url:
-                return uri
+                print("Manifest up-to-date")
+                return
 
             f.seek(0)
             f.write(uri)
@@ -128,9 +131,13 @@ def unzipping_renaming():
     """
     with zipfile.ZipFile(ZIP_FILE, "r") as f:
         manifest = f.namelist()[0]
+        print("Unzipping manifest...")
         f.extractall(MANIFEST_DIR)
 
+    print("Deleting zipfile...")
     os.remove(ZIP_FILE)
+    files = os.listdir(MANIFEST_DIR)
+    # TODO find most recent sql to write from
 
     return MANIFEST_DIR + "/" + manifest
 
@@ -162,10 +169,19 @@ def write_tables(sql):
                 print("- WRITING >> " + entry + ".json")
 
             except sqlite3.OperationalError:
-                print("-- EXCEPTION: SKIPPING " + entry + ".json")
+                # Slightly different SQL schema for this one table :/
+                cur.execute('SELECT key,json FROM {}'.format(entry))
+                tables = cur.fetchall()
+                data = ((table[0], json.loads(table[1])) for table in tables)
+                table_dict = {element[0]: element[1] for element in data}
+
+                with open(JSON_DIR + "/" + entry + ".json", "w") as f:
+                    json.dump(table_dict, f, indent=4)
+
+                print("- WRITING >> " + entry + ".json")
+
                 continue
         else:
-            os.remove(sql)
             print("Finished \u263A")
 
 
