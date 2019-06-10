@@ -49,16 +49,14 @@ class Requester:
         self.character_equip_url = urls[2]
 
     def fetch_character_info(self):
-        r = requests.get(self.character_info_url, headers=self.HEADERS)
 
-        return r.json()
+        return requests.get(self.character_info_url, headers=self.HEADERS).json()
 
     def fetch_vault_info(self):
-        r = requests.get(self.vault_info_url, headers=self.HEADERS)
 
-        return r.json()
+        return requests.get(self.vault_info_url, headers=self.HEADERS).json()
 
     def fetch_character_equip_info(self):
-        r = requests.get(self.character_equip_url, headers=self.HEADERS)
 
-        return r.json()
+        return requests.get(self.character_equip_url, headers=self.HEADERS).json()
+

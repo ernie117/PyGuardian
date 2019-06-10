@@ -10,13 +10,13 @@ class InputValidator:
     @staticmethod
     def validate(player, platform) -> bool:
 
-        return all((InputValidator.validate_player_str(player), 
+        return all((InputValidator.validate_player_str(player, platform), 
                    InputValidator.validate_platform_str(platform)))
 
     @staticmethod
-    def validate_player_str(player) -> bool:
-        if all(char.isdigit() for char in player):
-            raise PlayerException("Player must be String")
+    def validate_player_str(player, platform) -> bool:
+        if player[0].isdigit() and platform.lower().strip() in "xboxplaystation":
+            raise PlayerException("Invalid PSN/Xbox ID")
 
         for char in InputValidator.RESERVED_CHARS:
             if char in player:
