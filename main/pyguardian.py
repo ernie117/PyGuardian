@@ -3,6 +3,8 @@ the heavy lifting of requesting and processing to other modules,
 for easy command line use with destiny_cli and interactive terminal
 use """
 from data_processing.hashes import InventoryManifest
+from validation.InputValidator import InputValidator
+from validation.GuardianProcessor import GuardianProcessor
 from main.requester import Requester
 from tabulate import tabulate
 from pathlib import Path
@@ -13,7 +15,8 @@ import os
 class PyGuardian:
 
     @staticmethod
-    def prechecks():
+    def prechecks(guardian, platform):
+
         if not os.path.isdir(str(Path.home()) + "/.pyguardian/DDB-Files"):
             print("Manifest files not available, requesting...")
             get_manifest.main()
@@ -24,10 +27,14 @@ class PyGuardian:
         else:
             get_manifest.main(url_check=True)
 
+        InputValidator.validate(guardian, platform)
+
+        return GuardianProcessor.process(guardian, platform)
+
     @staticmethod
     def fetch_stats(guardian, platform):
 
-        PyGuardian.prechecks()
+        guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
         account.fetch_player()
         response = account.fetch_character_info()
@@ -39,7 +46,7 @@ class PyGuardian:
     @staticmethod
     def fetch_eq(guardian, platform):
 
-        PyGuardian.prechecks()
+        guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
         account.fetch_player()
         char_data = account.fetch_character_info()
@@ -54,7 +61,7 @@ class PyGuardian:
     @staticmethod
     def fetch_vault(guardian, platform, sort=None):
 
-        PyGuardian.prechecks()
+        guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
         account.fetch_player()
         vault_data = account.fetch_vault_info()
@@ -68,7 +75,7 @@ class PyGuardian:
     @staticmethod
     def fetch_playtime(guardian, platform):
 
-        PyGuardian.prechecks()
+        guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
         account.fetch_player()
         char_data = account.fetch_character_info()
@@ -80,7 +87,7 @@ class PyGuardian:
     @staticmethod
     def fetch_last_time_played(guardian, platform):
 
-        PyGuardian.prechecks()
+        guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
         account.fetch_player()
         char_data = account.fetch_character_info()

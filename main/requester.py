@@ -2,12 +2,11 @@ from validation.PyGuardian_Exceptions import *
 
 import requests
 from utils import constants
-import os
 
 
 class Requester:
 
-    HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
+    HEADERS = {"X-API-Key": constants.BUNGIE_API_KEY}
 
     def __init__(self, gamertag, platform):
 

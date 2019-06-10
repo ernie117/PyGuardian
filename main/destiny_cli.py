@@ -28,27 +28,22 @@ def main():
 
     args = parser.parse_args()
 
-    # TODO maybe offload this to the PyGuardian class
-    raw_guardian, raw_platform = args.guardian, args.platform
-    InputValidator.validate(raw_guardian, raw_platform)
-    final_guardian, final_platform = GuardianProcessor.process(raw_guardian, raw_platform)
-
     if args.response == "stats":
-        print(PyGuardian.fetch_stats(final_guardian, final_platform))
+        print(PyGuardian.fetch_stats(args.guardian, args.platform))
     elif args.response == "eq":
-        print(PyGuardian.fetch_eq(final_guardian, final_platform))
+        print(PyGuardian.fetch_eq(args.guardian, args.platform))
     elif args.response == "vault":
-        print(PyGuardian.fetch_vault(final_guardian, final_platform))
+        print(PyGuardian.fetch_vault(args.guardian, args.platform))
     elif args.response == "vault-name":
-        print(PyGuardian.fetch_vault(final_guardian, final_platform, sort="name"))
+        print(PyGuardian.fetch_vault(args.guardian, args.platform, sort="name"))
     elif args.response == "vault-type":
-        print(PyGuardian.fetch_vault(final_guardian, final_platform, sort="type"))
+        print(PyGuardian.fetch_vault(args.guardian, args.platform, sort="type"))
     elif args.response == "vault-tier":
-        print(PyGuardian.fetch_vault(final_guardian, final_platform, sort="tier"))
+        print(PyGuardian.fetch_vault(args.guardian, args.platform, sort="tier"))
     elif args.response == "playtime":
-        print(PyGuardian.fetch_playtime(final_guardian, final_platform))
+        print(PyGuardian.fetch_playtime(args.guardian, args.platform))
     elif args.response == "last":
-        print(PyGuardian.fetch_last_time_played(final_guardian, final_platform))
+        print(PyGuardian.fetch_last_time_played(args.guardian, args.platform))
     elif args.download_manifest:
         get_manifest.main(url_check=True)
     else:

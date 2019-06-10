@@ -29,6 +29,12 @@ class TestInputValidator(TestCase):
         self.assertRaises(PyGuardian_Exceptions.PlayerException,
                           InputValidator.validate, test_guardian, test_platform)
 
+    def test_validate_platform_valid_platforms(self):
+        valid_platforms = ["xbox", "playstation", "pc"]
+        test_guardian = "player"
+        for platform in valid_platforms:
+            self.assertTrue(InputValidator.validate(test_guardian, platform))
+
     def test_validate_platform_invalid_platform(self):
         test_guardian, test_platform = "player", "atari"
         self.assertRaises(PyGuardian_Exceptions.PlatformException,

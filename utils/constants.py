@@ -3,7 +3,8 @@ from pathlib import Path
 
 
 # Bungie API key stored as env variable
-HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
+BUNGIE_API_KEY = os.environ["BUNGIE_API"]
+HEADERS = {"X-API-Key": BUNGIE_API_KEY}
 
 # URL-related constants
 BASE = "https://www.bungie.net/Platform/Destiny2/"
