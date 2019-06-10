@@ -28,6 +28,7 @@ def main():
 
     args = parser.parse_args()
 
+    # TODO maybe offload this to the PyGuardian class
     raw_guardian, raw_platform = args.guardian, args.platform
     InputValidator.validate(raw_guardian, raw_platform)
     final_guardian, final_platform = GuardianProcessor.process(raw_guardian, raw_platform)
