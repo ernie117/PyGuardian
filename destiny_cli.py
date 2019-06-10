@@ -28,39 +28,27 @@ def main():
 
     args = parser.parse_args()
 
+    raw_guardian, raw_platform = args.guardian, args.platform
+    InputValidator.validate(raw_guardian, raw_platform)
+    final_guardian, final_platform = GuardianProcessor.process(raw_guardian, raw_platform)
+
     if args.response == "stats":
-        InputValidator.validate(args.guardian, args.platform)
-        guardian, platform = GuardianProcessor.process(args.guardian, args.platform)
-        print(PyGuardian.fetch_stats(guardian, platform))
-    if args.response == "eq":
-        InputValidator.validate(args.guardian, args.platform)
-        guardian, platform = GuardianProcessor.process(args.guardian, args.platform)
-        print(PyGuardian.fetch_eq(guardian, platform))
-    if args.response == "vault":
-        InputValidator.validate(args.guardian, args.platform)
-        guardian, platform = GuardianProcessor.process(args.guardian, args.platform)
-        print(PyGuardian.fetch_vault(guardian, platform))
-    if args.response == "vault-name":
-        InputValidator.validate(args.guardian, args.platform)
-        guardian, platform = GuardianProcessor.process(args.guardian, args.platform)
-        print(PyGuardian.fetch_vault(guardian, platform, sort="name"))
-    if args.response == "vault-type":
-        InputValidator.validate(args.guardian, args.platform)
-        guardian, platform = GuardianProcessor.process(args.guardian, args.platform)
-        print(PyGuardian.fetch_vault(guardian, platform, sort="type"))
-    if args.response == "vault-tier":
-        InputValidator.validate(args.guardian, args.platform)
-        guardian, platform = GuardianProcessor.process(args.guardian, args.platform)
-        print(PyGuardian.fetch_vault(guardian, platform, sort="tier"))
-    if args.response == "playtime":
-        InputValidator.validate(args.guardian, args.platform)
-        guardian, platform = GuardianProcessor.process(args.guardian, args.platform)
-        print(PyGuardian.fetch_playtime(guardian, platform))
-    if args.response == "last":
-        InputValidator.validate(args.guardian, args.platform)
-        guardian, platform = GuardianProcessor.process(args.guardian, args.platform)
-        print(PyGuardian.fetch_last_time_played(guardian, platform))
-    if args.download_manifest:
+        print(PyGuardian.fetch_stats(final_guardian, final_platform))
+    elif args.response == "eq":
+        print(PyGuardian.fetch_eq(final_guardian, final_platform))
+    elif args.response == "vault":
+        print(PyGuardian.fetch_vault(final_guardian, final_platform))
+    elif args.response == "vault-name":
+        print(PyGuardian.fetch_vault(final_guardian, final_platform, sort="name"))
+    elif args.response == "vault-type":
+        print(PyGuardian.fetch_vault(final_guardian, final_platform, sort="type"))
+    elif args.response == "vault-tier":
+        print(PyGuardian.fetch_vault(final_guardian, final_platform, sort="tier"))
+    elif args.response == "playtime":
+        print(PyGuardian.fetch_playtime(final_guardian, final_platform))
+    elif args.response == "last":
+        print(PyGuardian.fetch_last_time_played(final_guardian, final_platform))
+    elif args.download_manifest:
         get_manifest.main(url_check=True)
     else:
         pass

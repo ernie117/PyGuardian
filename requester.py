@@ -12,11 +12,11 @@ class Requester:
     def __init__(self, gamertag, platform):
 
         self.player_name = gamertag
+        self.platform = platform
         self.character_info_url = None
         self.vault_info_url = None
         self.character_equip_url = None
         self.mem_id = None
-        self.platform = platform
 
     def fetch_player(self):
 
