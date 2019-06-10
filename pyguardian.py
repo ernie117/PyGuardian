@@ -22,11 +22,8 @@ class PyGuardian:
         if len(os.listdir(str(Path.home()) + "/.pyguardian/DDB-Files")) == 0:
             get_manifest.main()
             return
-<<<<<<< HEAD
         else:
             get_manifest.main(url_check=True)
-=======
->>>>>>> 3258ac85303a9dfa94c0b30d8c1365976dea4b91
 
     @staticmethod
     def fetch_stats(guardian, platform):

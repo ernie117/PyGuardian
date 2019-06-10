@@ -59,7 +59,7 @@ def check_manifest_url(uri):
             check_url = f.read().strip()
 
             if uri == check_url:
-                print("Manifest up-to-date")
+                print("Manifest up-to-date \u2713")
                 return
 
             f.seek(0)
@@ -105,6 +105,8 @@ def get_manifest(manifest_url):
         chunk_cnt = 0
         chunk_size = 1024*1024
         dl_str = "Downloading...    "
+        bar_char = "\u2588"
+        bar_remaining_char = ' '
         for chunk in r.iter_content(chunk_size=chunk_size):
             f.write(chunk)
             downloaded = (chunk_cnt * chunk_size) // 1024
@@ -113,13 +115,13 @@ def get_manifest(manifest_url):
             # Progress bar re-construction
             progress_pct = (downloaded / file_size)
             bar_now = round(progress_pct * cols)
-            bar = f"{'#' * bar_now}"
-            remaining = f"{'-' * (cols - bar_now)}"
+            bar = f"{bar_now * bar_char}"
+            remaining = f"{(cols - bar_now) * bar_remaining_char}"
             progress_bar = f"[{bar}{remaining}]"
             chunk_cnt += 1
             sleep(0.5)
         else:
-            bar = f"{cols * '#'}"
+            bar = f"{cols * bar_char}"
             progress_bar = f"[{bar}]"
             print(f"\r{dl_str}{file_size}KB/{file_size}KB {progress_bar}")
 
