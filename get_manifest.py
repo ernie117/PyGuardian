@@ -1,5 +1,6 @@
 from time import sleep
 from pathlib import Path
+import constants
 import requests
 import shutil
 import sqlite3
@@ -7,15 +8,6 @@ import json
 import zipfile
 import sys
 import os
-
-
-HEADERS = {"X-API-Key": os.environ["BUNGIE_API"]}
-DATA_DIR = str(Path.home()) + "/.pyguardian"
-JSON_DIR = DATA_DIR + "/DDB-Files"
-MANIFEST_DIR = DATA_DIR + "/Destiny_Manifest"
-MANIFEST_CHECK_FILE = DATA_DIR + "/Manifest-url-check.txt"
-ZIP_FILE = MANIFEST_DIR + "/Destiny2Manifest.zip"
-MANIFEST_URL_ROOT = "https://www.bungie.net"
 
 
 def main(url_check=False):
@@ -28,7 +20,7 @@ def main(url_check=False):
         if manifest_uri is None:
             return
 
-    get_manifest(MANIFEST_URL_ROOT + manifest_uri)
+    get_manifest(constants.MANIFEST_URL_ROOT + manifest_uri)
     manifest = unzipping_renaming()
     write_tables(manifest)
 
@@ -39,15 +31,15 @@ def check_dirs():
     them if they don't
     """
     try:
-        if not os.path.isdir(DATA_DIR):
+        if not os.path.isdir(constants.DATA_DIR):
             print("Creating data directory")
-            os.makedirs(MANIFEST_DIR)
-        if not os.path.isdir(MANIFEST_DIR):
+            os.makedirs(constants.MANIFEST_DIR)
+        if not os.path.isdir(constants.MANIFEST_DIR):
             print("Creating manifest directory")
-            os.makedirs(MANIFEST_DIR)
-        if not os.path.isdir(JSON_DIR):
+            os.makedirs(constants.MANIFEST_DIR)
+        if not os.path.isdir(constants.JSON_DIR):
             print("Creating JSON directory")
-            os.makedirs(JSON_DIR)
+            os.makedirs(constants.JSON_DIR)
     except OSError:
         print("Can't create directories!")
         sys.exit()
@@ -55,7 +47,7 @@ def check_dirs():
 
 def check_manifest_url(uri):
     try:
-        with open(MANIFEST_CHECK_FILE, 'r+') as f:
+        with open(constants.MANIFEST_CHECK_FILE, 'r+') as f:
             check_url = f.read().strip()
 
             if uri == check_url:
@@ -67,7 +59,7 @@ def check_manifest_url(uri):
 
     except FileNotFoundError:
         print("Creating manifest url check-file")
-        with open(MANIFEST_CHECK_FILE, 'w') as f:
+        with open(constants.MANIFEST_CHECK_FILE, 'w') as f:
             f.write(uri)
 
     return uri
@@ -78,7 +70,7 @@ def get_manifest_url():
     Requests an URL for the manifest SQL data
     """
     r = requests.get("https://www.bungie.net/Platform/Destiny2/Manifest/",
-                     headers=HEADERS).json()
+                     headers=constants.HEADERS).json()
 
     if r["ErrorStatus"] == "SystemDisabled":
         print("API is down!")
@@ -98,10 +90,10 @@ def get_manifest(manifest_url):
     bar_now = cols * '-'
     progress_bar = f"[{bar_now}]"
 
-    r = requests.get(manifest_url, headers=HEADERS, stream=True)
+    r = requests.get(manifest_url, headers=constants.HEADERS, stream=True)
     file_size = int(r.headers["Content-length"]) // 1024
 
-    with open(ZIP_FILE, "wb") as f:
+    with open(constants.ZIP_FILE, "wb") as f:
         chunk_cnt = 0
         chunk_size = 1024*1024
         dl_str = "Downloading...    "
@@ -131,17 +123,17 @@ def unzipping_renaming():
     Unzips the downloaded zipfile and extracts the SQL
     database, returns the database object
     """
-    with zipfile.ZipFile(ZIP_FILE, "r") as f:
+    with zipfile.ZipFile(constants.ZIP_FILE, "r") as f:
         manifest = f.namelist()[0]
         print("Unzipping manifest...")
-        f.extractall(MANIFEST_DIR)
+        f.extractall(constants.MANIFEST_DIR)
 
     print("Deleting zipfile...")
-    os.remove(ZIP_FILE)
-    files = os.listdir(MANIFEST_DIR)
+    os.remove(constants.ZIP_FILE)
+    files = os.listdir(constants.MANIFEST_DIR)
     # TODO find most recent sql to write from
 
-    return MANIFEST_DIR + "/" + manifest
+    return constants.MANIFEST_DIR + "/" + manifest
 
 
 def write_tables(sql):
@@ -165,7 +157,7 @@ def write_tables(sql):
                 data = ((str(table[0]), json.loads(table[1])) for table in tables)
                 table_dict = {element[0]: element[1] for element in data}
 
-                with open(JSON_DIR + "/" + entry + ".json", "w") as f:
+                with open(constants.JSON_DIR + "/" + entry + ".json", "w") as f:
                     json.dump(table_dict, f, indent=4)
 
                 print("- WRITING >> " + entry + ".json")
@@ -177,7 +169,7 @@ def write_tables(sql):
                 data = ((table[0], json.loads(table[1])) for table in tables)
                 table_dict = {element[0]: element[1] for element in data}
 
-                with open(JSON_DIR + "/" + entry + ".json", "w") as f:
+                with open(constants.JSON_DIR + "/" + entry + ".json", "w") as f:
                     json.dump(table_dict, f, indent=4)
 
                 print("- WRITING >> " + entry + ".json")

@@ -2,7 +2,6 @@ from PyGuardian_Exceptions import *
 
 import requests
 import constants
-import sys
 import os
 
 
