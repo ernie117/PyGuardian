@@ -1,5 +1,8 @@
 #!/usr/bin/env python3.7
 from pyguardian import PyGuardian
+from InputValidator import InputValidator
+from GuardianProcessor import GuardianProcessor
+
 import get_manifest
 import argparse
 
@@ -26,7 +29,11 @@ def main():
     args = parser.parse_args()
 
     if args.response == "stats":
-        print(PyGuardian.fetch_stats(args.guardian, args.platform))
+        InputValidator.validate(args.guardian, args.platform)
+        print("Input valid")
+        guardian, platform = GuardianProcessor.process(args.guardian, args.platform)
+        print("Input processed")
+        print(PyGuardian.fetch_stats(guardian, platform))
     if args.response == "eq":
         print(PyGuardian.fetch_eq(args.guardian, args.platform))
     if args.response == "vault":
