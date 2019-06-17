@@ -11,7 +11,7 @@ class InputValidator:
     def validate(player, platform) -> bool:
 
         return all((InputValidator.validate_player_str(player, platform), 
-                   InputValidator.validate_platform_str(platform)))
+                    InputValidator.validate_platform_str(platform)))
 
     @staticmethod
     def validate_player_str(player, platform) -> bool:
