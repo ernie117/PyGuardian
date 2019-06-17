@@ -45,3 +45,6 @@ class TestInputValidator(TestCase):
         self.assertRaises(PyGuardian_Exceptions.PlatformException,
                           InputValidator.validate, test_guardian, test_platform)
 
+
+if __name__ == "__main__":
+    unittest.main()
