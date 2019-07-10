@@ -46,8 +46,6 @@ def main():
         print(PyGuardian.fetch_last_time_played(args.guardian, args.platform))
     elif args.download_manifest:
         get_manifest.main(url_check=True)
-    else:
-        pass
 
 
 if __name__ == "__main__":

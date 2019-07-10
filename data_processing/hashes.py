@@ -2,6 +2,8 @@ from operator import itemgetter
 from pathlib import Path
 import json
 
+from utils.constants import INVENTORY_JSON_FILE
+
 
 class InventoryManifest:
 
@@ -9,7 +11,7 @@ class InventoryManifest:
         self.hashes = hash_lists
         self.final_hashes = []
 
-        with open(str(Path.home()) + "/.pyguardian/DDB-Files/DestinyInventoryItemDefinition.json", "r") as f:
+        with open(str(Path.home()) + INVENTORY_JSON_FILE, "r") as f:
             self.data = json.load(f)
 
         self._convert_hashes(self.hashes)
@@ -39,20 +41,20 @@ class InventoryManifest:
                 if isinstance(hash_, list):
                     item_info.append(hash_)
                     continue
-                if hash_ in self.data:
-                    # Not all item entries have the same JSON structure
-                    try:
-                        element = [self.data[hash_]["displayProperties"]["name"],
-                                   self.data[hash_]["itemTypeDisplayName"],
-                                   self.data[hash_]["inventory"]["tierTypeName"]]
-                        item_info.append(element)
-                    except KeyError:
-                        element = [self.data[hash_]["displayProperties"]["name"],
-                                   "", ""]
-                        item_info.append(element)
+                # Not all item entries have the same JSON structure
+                try:
+                    item_info.append(
+                        [self.data[hash_]["displayProperties"]["name"],
+                         self.data[hash_]["itemTypeDisplayName"],
+                         self.data[hash_]["inventory"]["tierTypeName"]]
+                    )
+                except KeyError:
+                    element = [self.data[hash_]["displayProperties"]["name"],
+                               "", ""]
+                    item_info.append(element)
 
         # Sorting alphabetically by item name, type of item
-        # or item rarity e.g. legendary, exotic
+        # or item rarity
         if sort_by == "name":
             item_info = sorted(item_info, key=itemgetter(0))
         elif sort_by == "type":

@@ -6,7 +6,7 @@ RACES = {0: "Human", 1: "Awoken", 2: "Exo", 3: "Unknown"}
 CLASSES = {0: "Titan", 1: "Hunter", 2: "Warlock", 3: "Unknown"}
 
 
-def JSONMiner(string, data):
+def json_miner(string, data):
     queries = string.split(".")
     query = queries[0]
     value = None
@@ -23,7 +23,7 @@ def JSONMiner(string, data):
         data = data[int(query)]
 
     if string:
-        return JSONMiner(string, data)
+        return json_miner(string, data)
 
     return value
 
@@ -33,7 +33,7 @@ def fetch_eq_hashes(equipment_data, character_data, no_of_items=11):
     root_str2 = "Response.characterEquipment.data."
 
     try:
-        characters = list(JSONMiner(root_str1, character_data).keys())
+        characters = list(json_miner(root_str1, character_data).keys())
     except KeyError:
         print("No Destiny 2 information for this character")
         sys.exit()
@@ -41,14 +41,14 @@ def fetch_eq_hashes(equipment_data, character_data, no_of_items=11):
     item_hashes = []
     for char in characters:
         element = []
-        title = JSONMiner(f"{root_str1}{char}", character_data)
+        title = json_miner(f"{root_str1}{char}", character_data)
         # Adding a title row that describes the character
         # to distinguish between multiple characters
         char_title = ([GENS[title["genderType"]].upper(),
                        RACES[title["raceType"]].upper(),
                        CLASSES[title["classType"]].upper()])
         element.append(char_title)
-        items = JSONMiner(f"{root_str2}{char}.items", equipment_data)[:no_of_items]
+        items = json_miner(f"{root_str2}{char}.items", equipment_data)[:no_of_items]
         element.extend([item["itemHash"] for item in items])
         item_hashes.append(element)
 
@@ -69,7 +69,7 @@ def fetch_char_info(character_data):
     }
 
     try:
-        characters = list(JSONMiner(root_str, character_data).keys())
+        characters = list(json_miner(root_str, character_data).keys())
     except KeyError:
         print("No data for this character")
         sys.exit()
@@ -78,13 +78,13 @@ def fetch_char_info(character_data):
 
     for char in query_strings:
         stats_list = []
-        stats = JSONMiner(char, character_data)
+        stats = json_miner(char, character_data)
         stats_list.append(" ".join([GENS[stats["genderType"]],
                                     RACES[stats["raceType"]],
                                     CLASSES[stats["classType"]]]))
-        stats = JSONMiner(f"{char}.stats", character_data)
+        stats = json_miner(f"{char}.stats", character_data)
         stats_list.extend([v for v in stats.values()])
-        stats_list.append(JSONMiner(f"{char}.levelProgression.level", character_data))
+        stats_list.append(json_miner(f"{char}.levelProgression.level", character_data))
         char_dict = {k: stat for k, stat in zip(char_dict, stats_list)}
         char_dictionaries.append(char_dict)
 
@@ -95,7 +95,7 @@ def fetch_last_time_played(character_data):
     root_str = "Response.characters.data."
 
     try:
-        characters = list(JSONMiner(root_str, character_data).keys())
+        characters = list(json_miner(root_str, character_data).keys())
     except KeyError:
         print("No data for this character")
         sys.exit()
@@ -107,7 +107,7 @@ def fetch_last_time_played(character_data):
     }
 
     char_dicts = []
-    data = JSONMiner(root_str, character_data)
+    data = json_miner(root_str, character_data)
     for char in characters:
         char_str = []
         char_info = data[char]
@@ -131,12 +131,12 @@ def fetch_play_time(character_data):
     root_str = "Response.characters.data."
 
     try:
-        characters = list(JSONMiner(root_str, character_data).keys())
+        characters = list(json_miner(root_str, character_data).keys())
     except KeyError:
         print("No data for this character")
         sys.exit()
 
-    char_mins = [int(JSONMiner(f"{root_str}{char}.minutesPlayedTotal", character_data))
+    char_mins = [int(json_miner(f"{root_str}{char}.minutesPlayedTotal", character_data))
                  for char in characters]
 
     readable_times = (divmod(time, 60) for time in char_mins)
@@ -146,7 +146,7 @@ def fetch_play_time(character_data):
 
     char_titles = []
     for char in characters:
-        char_data = JSONMiner(f"{root_str}{char}", character_data)
+        char_data = json_miner(f"{root_str}{char}", character_data)
         char_titles.append(" ".join([GENS[char_data["genderType"]],
                                      RACES[char_data["raceType"]],
                                      CLASSES[char_data["classType"]]]))
@@ -168,7 +168,7 @@ def fetch_vault_hashes(vault_info):
     root_str = "Response.profileInventory.data.items"
 
     try:
-        items = JSONMiner(root_str, vault_info)
+        items = json_miner(root_str, vault_info)
         item_hashes = [item["itemHash"] for item in items]
 
         return [item_hashes]

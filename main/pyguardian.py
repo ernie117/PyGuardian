@@ -1,7 +1,8 @@
-""" This façade class holds a collection of methods that offload all
+"""
+This façade class holds a collection of methods that offload all
 the heavy lifting of requesting and processing to other modules,
-for easy command line use with destiny_cli and interactive terminal
-use """
+for command line use with destiny_cli
+"""
 from data_processing.hashes import InventoryManifest
 from validation.InputValidator import InputValidator
 from validation.GuardianProcessor import GuardianProcessor

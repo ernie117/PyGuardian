@@ -58,4 +58,3 @@ class Requester:
     def fetch_character_equip_info(self):
 
         return requests.get(self.character_equip_url, headers=self.HEADERS).json()
-
