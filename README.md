@@ -1,6 +1,6 @@
 # PyGuardian
 
-Soon-to-be python package for requesting tabulated character information from the Bungie API. You'll need a Bungie API key for this, just pop it into the constants file
+Soon-to-be python package for requesting tabulated character information from the Bungie API. You'll need a Bungie API key for this, set as environmental variable "BUNGIE_API".
 
 ## Run with:
 
