@@ -1,5 +1,5 @@
 from time import sleep
-from utils import constants
+from ..utils import constants
 import requests
 import shutil
 import sqlite3

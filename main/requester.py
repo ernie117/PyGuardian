@@ -1,7 +1,7 @@
-from validation.PyGuardian_Exceptions import *
+from ..validation.PyGuardian_Exceptions import *
 
 import requests
-from utils import constants
+from ..utils import constants
 
 
 class Requester:

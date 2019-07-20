@@ -3,13 +3,13 @@ This façade class holds a collection of methods that offload all
 the heavy lifting of requesting and processing to other modules,
 for command line use with destiny_cli
 """
-from data_processing.hashes import InventoryManifest
-from validation.InputValidator import InputValidator
-from validation.GuardianProcessor import GuardianProcessor
-from main.requester import Requester
+from ..data_processing.hashes import InventoryManifest
+from ..validation.InputValidator import InputValidator
+from ..validation.GuardianProcessor import GuardianProcessor
+from .requester import Requester
 from tabulate import tabulate
 from pathlib import Path
-from data_processing import json_funcs, get_manifest
+from ..data_processing import json_funcs, get_manifest
 import os
 
 
