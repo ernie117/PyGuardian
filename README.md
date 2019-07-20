@@ -12,3 +12,4 @@ In the top-level directory:
 
 * Write a setup.py
 * Turn this into a fully-fledged python package
+* Refactor get_manifest.py into class structure
