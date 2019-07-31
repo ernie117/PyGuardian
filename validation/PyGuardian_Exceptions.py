@@ -13,5 +13,6 @@ class APIException(Exception):
 class PlayerNotFoundException(Exception):
     pass
 
+
 class CannotCreateStorageDirectories(Exception):
     pass

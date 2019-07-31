@@ -1,12 +1,11 @@
 #!/usr/bin/env python3.7
 import argparse
 
-from .pyguardian import PyGuardian
-from data_processing.get_manifest import GetManifest
+from PyGuardian.data_processing.get_manifest import GetManifest
+from PyGuardian.main.pyguardian import PyGuardian
 
 
 def main():
-
     parser = argparse.ArgumentParser()
     parser.add_argument("guardian", type=str, nargs="?", action="store", default=None)
     parser.add_argument("platform", type=str, nargs="?", action="store", default=None,
@@ -43,7 +42,8 @@ def main():
     elif args.response == "last":
         print(PyGuardian.fetch_last_time_played(args.guardian, args.platform))
     elif args.download_manifest:
-        GetManifest()
+        get_manifest = GetManifest()
+        get_manifest()
 
 
 if __name__ == "__main__":

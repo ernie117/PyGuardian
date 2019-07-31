@@ -8,8 +8,8 @@ from time import sleep
 
 import requests
 
-from utils import constants
-from validation.PyGuardian_Exceptions import CannotCreateStorageDirectories
+from PyGuardian.utils import constants
+from PyGuardian.validation.PyGuardian_Exceptions import CannotCreateStorageDirectories
 
 
 class GetManifest:
