@@ -1,10 +1,8 @@
 #!/usr/bin/env python3.7
-from .pyguardian import PyGuardian
-from ..validation.InputValidator import InputValidator
-from ..validation.GuardianProcessor import GuardianProcessor
-
-from ..data_processing import get_manifest
 import argparse
+
+from .pyguardian import PyGuardian
+from data_processing.get_manifest import GetManifest
 
 
 def main():
@@ -45,7 +43,7 @@ def main():
     elif args.response == "last":
         print(PyGuardian.fetch_last_time_played(args.guardian, args.platform))
     elif args.download_manifest:
-        get_manifest.main(url_check=True)
+        GetManifest()
 
 
 if __name__ == "__main__":
