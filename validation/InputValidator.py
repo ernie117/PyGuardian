@@ -10,7 +10,7 @@ class InputValidator:
     @staticmethod
     def validate(player, platform) -> bool:
 
-        return all((InputValidator.validate_player_str(player, platform), 
+        return all((InputValidator.validate_player_str(player, platform),
                     InputValidator.validate_platform_str(platform)))
 
     @staticmethod

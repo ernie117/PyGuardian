@@ -115,7 +115,7 @@ class GetManifest:
                 remaining = f"{(cols - bar_now) * bar_remaining_char}"
                 progress_bar = f"[{bar}{remaining}]"
                 chunk_cnt += 1
-                sleep(0.5)
+                sleep(.25)
             else:
                 bar = f"{cols * bar_char}"
                 progress_bar = f"[{bar}]"

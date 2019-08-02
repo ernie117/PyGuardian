@@ -1,7 +1,6 @@
 """
 This façade class holds a collection of methods that offload all
-the heavy lifting of requesting and processing to other modules,
-for command line use with destiny_cli
+the heavy lifting of requesting and processing to other modules
 """
 import os
 from pathlib import Path
@@ -23,14 +22,11 @@ class PyGuardian:
 
         get_manifest = GetManifest()
         if not os.path.isdir(str(Path.home()) + "/.pyguardian/DDB-Files"):
-            print("Manifest files not available, requesting...")
-            get_manifest()
-            return
+            print("Manifest folder not found, creating...")
         if not os.listdir(str(Path.home()) + "/.pyguardian/DDB-Files"):
-            get_manifest()
-            return
-        else:
-            get_manifest()
+            print("Manifest files not available, requesting...")
+
+        get_manifest()
 
         InputValidator.validate(guardian, platform)
 
