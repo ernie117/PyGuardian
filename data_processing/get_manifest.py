@@ -14,18 +14,19 @@ from pyguardian.validation.PyGuardian_Exceptions import CannotCreateStorageDirec
 
 class GetManifest:
 
-    def __init__(self):
-        _check_dirs()
-        manifest_uri = _get_manifest_url()
+    def __call__(self):
+        self._check_dirs()
+        manifest_uri = self._get_manifest_url()
 
-        manifest_uri = _check_manifest_uri(manifest_uri)
+        manifest_uri = self._check_manifest_uri(manifest_uri)
         if manifest_uri is None:
             return
 
-        _get_manifest(constants.MANIFEST_URL_ROOT + manifest_uri)
-        manifest = _unzip_and_rename()
-        _write_tables(manifest)
+        self._get_manifest(constants.MANIFEST_URL_ROOT + manifest_uri)
+        manifest = self._unzip_and_rename()
+        self._write_tables(manifest)
 
+    @staticmethod
     def _check_dirs():
         """
         Just checks that the directories used for reading and
@@ -46,6 +47,7 @@ class GetManifest:
         except OSError:
             raise CannotCreateStorageDirectories("Can't create directories!")
 
+    @staticmethod
     def _check_manifest_uri(uri):
         try:
             with open(constants.MANIFEST_CHECK_FILE, 'r+') as f:
@@ -65,6 +67,7 @@ class GetManifest:
 
         return uri
 
+    @staticmethod
     def _get_manifest_url():
         """
         Requests an URL for the manifest SQL data
@@ -78,6 +81,7 @@ class GetManifest:
 
         return r["Response"]["mobileWorldContentPaths"]["en"]
 
+    @staticmethod
     def _get_manifest(manifest_url):
         """
         Requests the manifest URL and downloads the zipfile
@@ -116,6 +120,7 @@ class GetManifest:
                 progress_bar = f"[{bar}]"
                 print(f"\r{dl_str}{file_size}KB/{file_size}KB {progress_bar}")
 
+    @staticmethod
     def _unzip_and_rename():
         """
         Unzips the downloaded zipfile and extracts the SQL
@@ -132,6 +137,7 @@ class GetManifest:
 
         return constants.MANIFEST_DIR + "/" + manifest
 
+    @staticmethod
     def _write_tables(sql):
         """
         Opens the SQL database, gets the table names and

@@ -27,7 +27,6 @@ class PyGuardian:
             print("Manifest files not available, requesting...")
 
         get_manifest()
-
         InputValidator.validate(guardian, platform)
 
         return GuardianProcessor.process(guardian, platform)

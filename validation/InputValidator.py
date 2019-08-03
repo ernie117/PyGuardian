@@ -1,4 +1,4 @@
-from PyGuardian.validation.PyGuardian_Exceptions import *
+from pyguardian.validation.PyGuardian_Exceptions import *
 
 
 class InputValidator:
