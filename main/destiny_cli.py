@@ -1,8 +1,8 @@
 #!/usr/bin/env python3.7
 import argparse
 
-from PyGuardian.data_processing.get_manifest import GetManifest
-from PyGuardian.main.pyguardian import PyGuardian
+from pyguardian.data_processing.get_manifest import GetManifest
+from pyguardian.main.pyguardian import PyGuardian
 
 
 def main():

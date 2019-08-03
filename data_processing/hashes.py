@@ -2,7 +2,7 @@ from operator import itemgetter
 from pathlib import Path
 import json
 
-from ..utils.constants import INVENTORY_JSON_FILE
+from utils.constants import INVENTORY_JSON_FILE
 
 
 class InventoryManifest:

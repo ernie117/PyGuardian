@@ -1,7 +1,7 @@
 from unittest import TestCase
-from ..validation.InputValidator import InputValidator
+from pyguardian.validation.InputValidator import InputValidator
 
-from PyGuardian.validation import PyGuardian_Exceptions
+from pyguardian.validation import PyGuardian_Exceptions
 
 
 class TestInputValidator(TestCase):

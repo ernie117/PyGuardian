@@ -8,25 +8,24 @@ from time import sleep
 
 import requests
 
-from PyGuardian.utils import constants
-from PyGuardian.validation.PyGuardian_Exceptions import CannotCreateStorageDirectories
+from pyguardian.utils import constants
+from pyguardian.validation.PyGuardian_Exceptions import CannotCreateStorageDirectories
 
 
 class GetManifest:
 
-    def __call__(self):
-        GetManifest._check_dirs()
-        manifest_uri = GetManifest._get_manifest_url()
+    def __init__(self):
+        _check_dirs()
+        manifest_uri = _get_manifest_url()
 
-        manifest_uri = GetManifest._check_manifest_uri(manifest_uri)
+        manifest_uri = _check_manifest_uri(manifest_uri)
         if manifest_uri is None:
             return
 
-        GetManifest._get_manifest(constants.MANIFEST_URL_ROOT + manifest_uri)
-        manifest = GetManifest._unzip_and_rename()
-        GetManifest._write_tables(manifest)
+        _get_manifest(constants.MANIFEST_URL_ROOT + manifest_uri)
+        manifest = _unzip_and_rename()
+        _write_tables(manifest)
 
-    @staticmethod
     def _check_dirs():
         """
         Just checks that the directories used for reading and
@@ -45,10 +44,8 @@ class GetManifest:
                 print("Creating JSON directory")
                 os.makedirs(constants.JSON_DIR)
         except OSError:
-            print("Can't create directories!")
-            raise CannotCreateStorageDirectories()
+            raise CannotCreateStorageDirectories("Can't create directories!")
 
-    @staticmethod
     def _check_manifest_uri(uri):
         try:
             with open(constants.MANIFEST_CHECK_FILE, 'r+') as f:
@@ -68,7 +65,6 @@ class GetManifest:
 
         return uri
 
-    @staticmethod
     def _get_manifest_url():
         """
         Requests an URL for the manifest SQL data
@@ -82,7 +78,6 @@ class GetManifest:
 
         return r["Response"]["mobileWorldContentPaths"]["en"]
 
-    @staticmethod
     def _get_manifest(manifest_url):
         """
         Requests the manifest URL and downloads the zipfile
@@ -121,7 +116,6 @@ class GetManifest:
                 progress_bar = f"[{bar}]"
                 print(f"\r{dl_str}{file_size}KB/{file_size}KB {progress_bar}")
 
-    @staticmethod
     def _unzip_and_rename():
         """
         Unzips the downloaded zipfile and extracts the SQL
@@ -138,7 +132,6 @@ class GetManifest:
 
         return constants.MANIFEST_DIR + "/" + manifest
 
-    @staticmethod
     def _write_tables(sql):
         """
         Opens the SQL database, gets the table names and

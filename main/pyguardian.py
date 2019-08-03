@@ -7,12 +7,12 @@ from pathlib import Path
 
 from tabulate import tabulate
 
-from PyGuardian.main.requester import Requester
-from PyGuardian.data_processing import json_funcs
-from PyGuardian.data_processing.hashes import InventoryManifest
-from PyGuardian.validation.GuardianProcessor import GuardianProcessor
-from PyGuardian.validation.InputValidator import InputValidator
-from PyGuardian.data_processing.get_manifest import GetManifest
+from pyguardian.main.requester import Requester
+from pyguardian.data_processing import json_funcs
+from pyguardian.data_processing.hashes import InventoryManifest
+from pyguardian.validation.GuardianProcessor import GuardianProcessor
+from pyguardian.validation.InputValidator import InputValidator
+from pyguardian.data_processing.get_manifest import GetManifest
 
 
 class PyGuardian:
