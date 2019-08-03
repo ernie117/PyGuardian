@@ -1,0 +1,89 @@
+{
+    "Response": {
+        "profileInventory": {
+            "data": {
+                "items": [
+                    {
+                        "itemHash": 4285666432,
+                        "itemInstanceId": "8773894848271119971",
+                        "quantity": 1,
+                        "bindStatus": 0,
+                        "location": 2,
+                        "bucketHash": 1469714392,
+                        "transferStatus": 2,
+                        "lockable": false,
+                        "state": 0,
+                        "dismantlePermission": 0,
+                        "isWrapper": false
+                    },
+                    {
+                        "itemHash": 2014411539,
+                        "quantity": 147,
+                        "bindStatus": 0,
+                        "location": 2,
+                        "bucketHash": 1469714392,
+                        "transferStatus": 0,
+                        "lockable": false,
+                        "state": 0,
+                        "dismantlePermission": 0,
+                        "isWrapper": false
+                    },
+                    {
+                        "itemHash": 4101386442,
+                        "quantity": 7,
+                        "bindStatus": 0,
+                        "location": 2,
+                        "bucketHash": 1469714392,
+                        "transferStatus": 0,
+                        "lockable": false,
+                        "state": 0,
+                        "dismantlePermission": 0,
+                        "isWrapper": false
+                    },
+                    {
+                        "itemHash": 1177810185,
+                        "quantity": 39,
+                        "bindStatus": 0,
+                        "location": 2,
+                        "bucketHash": 1469714392,
+                        "transferStatus": 0,
+                        "lockable": false,
+                        "state": 0,
+                        "dismantlePermission": 0,
+                        "isWrapper": false
+                    },
+                    {
+                        "itemHash": 2109561326,
+                        "quantity": 79,
+                        "bindStatus": 0,
+                        "location": 2,
+                        "bucketHash": 1469714392,
+                        "transferStatus": 0,
+                        "lockable": false,
+                        "state": 0,
+                        "dismantlePermission": 0,
+                        "isWrapper": false
+                    },
+                    {
+                        "itemHash": 950899352,
+                        "quantity": 197,
+                        "bindStatus": 0,
+                        "location": 2,
+                        "bucketHash": 1469714392,
+                        "transferStatus": 0,
+                        "lockable": false,
+                        "state": 0,
+                        "dismantlePermission": 0,
+                        "isWrapper": false
+                    }
+                ]
+            },
+            "privacy": 2
+        }
+    },
+    "ErrorCode": 1,
+    "ThrottleSeconds": 0,
+    "ErrorStatus": "Success",
+    "Message": "Ok",
+    "MessageData": {}
+}
