@@ -6,7 +6,6 @@ from pyguardian.data_processing.json_funcs import *
 
 
 class TestJsonFuncs(TestCase):
-
     # Reading in the dummy test data
     with open(str(Path(__file__).parent) + "/resources/dummy_character_data.json", "r") as f:
         char_data = json.load(f)
@@ -128,4 +127,81 @@ class TestJsonFuncs(TestCase):
 
         self.assertEquals(self.expected_vault_hashes, hashes[0])
 
+    def test_fetch_eq_hashes_exceptions(self):
+        """
+        fetch_eq_hashes raises a PlayerNotFoundException if its
+        provided character data is empty, or a
+        NoPlayerEquipmentException if equipment data is empty
+        """
+        self.assertRaises(PlayerNotFoundException,
+                          fetch_eq_hashes, self.equip_data, {})
 
+        self.assertRaises(NoPlayerEquipmentException,
+                          fetch_eq_hashes, {}, self.char_data)
+
+    def test_fetch_char_info_exception(self):
+        """
+        fetch_char_info raises a PlayerNotFoundException if its
+        provided character data is empty
+        """
+        self.assertRaises(PlayerNotFoundException,
+                          fetch_char_info, {})
+
+    def test_fetch_last_time_played_exception(self):
+        """
+        fetch_last_time_played raises a PlayerNotFoundException if its
+        provided character data is empty
+        """
+        self.assertRaises(PlayerNotFoundException,
+                          fetch_last_time_played, {})
+
+    def test_fetch_play_time_exception(self):
+        """
+        fetch_play_time raises a PlayerNotFoundException if its
+        provided character data is empty
+        """
+        self.assertRaises(PlayerNotFoundException,
+                          fetch_play_time, {})
+
+    def test_vault_hashes_exception(self):
+        """
+        fetch_vault_hashes raises a PlayerNotFoundException if its
+        provided character data is empty
+        """
+        self.assertRaises(VaultAccessBlockedException,
+                          fetch_vault_hashes, {})
+
+    def test_json_miner_dict(self):
+        """
+        json_miner takes json input and a string with nested keys
+        joined by periods and retrieves nested objects
+        """
+        characters = json_miner("Response.characters.data", self.char_data)
+
+        self.assertTrue(characters)
+        self.assertIsInstance(characters, dict)
+
+        self.assertIn("1234567890123456789", characters)
+        self.assertIn("2345678901234567889", characters)
+
+    def test_json_miner_list(self):
+        """
+        json_miner takes json input and a string with nested keys
+        joined by periods and retrieves nested objects
+        """
+        list_element = json_miner("Response.characterEquipment.data.1234567890123456789.items",
+                                  self.equip_data)
+
+        self.assertTrue(list_element)
+        self.assertIsInstance(list_element, list)
+        self.assertIsInstance(list_element[0], dict)
+
+        dict_inside_list = json_miner("0", list_element)
+
+        self.assertIsInstance(dict_inside_list, dict)
+        self.assertIn(2712244741, dict_inside_list.values())
+
+        second_dict_inside_list = json_miner("1", list_element)
+
+        self.assertIsInstance(dict_inside_list, dict)
+        self.assertIn(1887808042, second_dict_inside_list.values())

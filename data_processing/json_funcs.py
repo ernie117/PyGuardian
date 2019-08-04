@@ -1,5 +1,7 @@
 import dateutil.parser
-import sys
+
+from pyguardian.validation.PyGuardian_Exceptions import PlayerNotFoundException, VaultAccessBlockedException, \
+    NoPlayerEquipmentException
 
 GENS = {0: "Male", 1: "Female", 2: "Unknown"}
 RACES = {0: "Human", 1: "Awoken", 2: "Exo", 3: "Unknown"}
@@ -35,8 +37,7 @@ def fetch_eq_hashes(equipment_data, character_data, no_of_items=11):
     try:
         characters = list(json_miner(root_str1, character_data).keys())
     except KeyError:
-        print("No Destiny 2 information for this character")
-        sys.exit()
+        raise PlayerNotFoundException("No Destiny 2 information for this character")
 
     item_hashes = []
     for char in characters:
@@ -48,7 +49,10 @@ def fetch_eq_hashes(equipment_data, character_data, no_of_items=11):
                        RACES[title["raceType"]].upper(),
                        CLASSES[title["classType"]].upper()])
         element.append(char_title)
-        items = json_miner(f"{root_str2}{char}.items", equipment_data)[:no_of_items]
+        try:
+            items = json_miner(f"{root_str2}{char}.items", equipment_data)[:no_of_items]
+        except KeyError:
+            raise NoPlayerEquipmentException(f"No equipment data found for {char}")
         element.extend([item["itemHash"] for item in items])
         item_hashes.append(element)
 
@@ -71,8 +75,7 @@ def fetch_char_info(character_data):
     try:
         characters = list(json_miner(root_str, character_data).keys())
     except KeyError:
-        print("No data for this character")
-        sys.exit()
+        raise PlayerNotFoundException("No Destiny 2 information for this character")
 
     query_strings = [root_str + char for char in characters]
 
@@ -97,8 +100,7 @@ def fetch_last_time_played(character_data):
     try:
         characters = list(json_miner(root_str, character_data).keys())
     except KeyError:
-        print("No data for this character")
-        sys.exit()
+        raise PlayerNotFoundException("No Destiny 2 information for this character")
 
     char_dict = {
         "Character": None,
@@ -133,8 +135,7 @@ def fetch_play_time(character_data):
     try:
         characters = list(json_miner(root_str, character_data).keys())
     except KeyError:
-        print("No data for this character")
-        sys.exit()
+        raise PlayerNotFoundException("No Destiny 2 information for this character")
 
     char_mins = [int(json_miner(f"{root_str}{char}.minutesPlayedTotal", character_data))
                  for char in characters]
@@ -174,5 +175,4 @@ def fetch_vault_hashes(vault_info):
         return [item_hashes]
 
     except KeyError:
-        print("Vault access blocked")
-        sys.exit()
+        raise VaultAccessBlockedException("Vault access blocked for this character")

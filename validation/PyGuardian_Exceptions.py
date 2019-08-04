@@ -16,3 +16,11 @@ class PlayerNotFoundException(Exception):
 
 class CannotCreateStorageDirectories(Exception):
     pass
+
+
+class VaultAccessBlockedException(Exception):
+    pass
+
+
+class NoPlayerEquipmentException(Exception):
+    pass
