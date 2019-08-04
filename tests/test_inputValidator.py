@@ -46,3 +46,8 @@ class TestInputValidator(TestCase):
         self.assertRaises(PyGuardian_Exceptions.PlatformException,
                           InputValidator.validate, test_guardian, test_platform)
 
+    def test_validate_validate_platform_all_digits(self):
+        test_platform = "123"
+        self.assertRaises(PyGuardian_Exceptions.PlatformException,
+                          InputValidator.validate_platform_str, test_platform)
+

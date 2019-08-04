@@ -34,6 +34,6 @@ class InputValidator:
             raise PlatformException(f"Not a valid platform '{platform}'")
 
         if all(char.isdigit() for char in platform):
-            raise PlayerException("Platform must be String")
+            raise PlatformException("Platform must be String")
 
         return True
