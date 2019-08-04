@@ -2,17 +2,23 @@ from operator import itemgetter
 from pathlib import Path
 import json
 
-from utils.constants import INVENTORY_JSON_FILE
+from pyguardian.utils.constants import INVENTORY_JSON_FILE
 
 
 class InventoryManifest:
 
-    def __init__(self, hash_lists):
+    def __init__(self, hash_lists, inventory_file=INVENTORY_JSON_FILE):
         self.hashes = hash_lists
         self.final_hashes = []
 
-        with open(str(Path.home()) + INVENTORY_JSON_FILE, "r") as f:
-            self.data = json.load(f)
+        if inventory_file == INVENTORY_JSON_FILE:
+            # Real use
+            with open(str(Path.home()) + inventory_file, "r") as f:
+                self.data = json.load(f)
+        else:
+            # Testing
+            with open(inventory_file, "r") as f:
+                self.data = json.load(f)
 
         self._convert_hashes(self.hashes)
 
@@ -54,26 +60,12 @@ class InventoryManifest:
                     item_info.append(element)
 
         # Sorting alphabetically by item name, type of item
-        # or item rarity
+        # or item rarity -- only for vault items
         if sort_by == "name":
             item_info = sorted(item_info, key=itemgetter(0))
         elif sort_by == "type":
             item_info = sorted(item_info, key=itemgetter(1))
         elif sort_by == "tier":
             item_info = sorted(item_info, key=itemgetter(2))
-
-        return item_info
-
-    def get_item_names(self):
-
-        item_info = []
-        for character in self.final_hashes:
-            character_list = []
-            for hash_ in character:
-                if isinstance(hash_, list):
-                    continue
-                if hash_ in self.data:
-                    character_list.append(v["displayProperties"]["name"])
-            item_info.append(character_list)
 
         return item_info
