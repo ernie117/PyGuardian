@@ -1,4 +1,3 @@
-import unittest
 from unittest import TestCase
 from pyguardian.validation.InputValidator import InputValidator
 

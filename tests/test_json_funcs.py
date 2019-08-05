@@ -69,7 +69,7 @@ class TestJsonFuncs(TestCase):
         self.assertIsInstance(char_info[0], dict)
         self.assertIsInstance(char_info[1], dict)
 
-        self.assertEquals(self.expected_char_info_keys, list(char_info[0].keys()))
+        self.assertEqual(self.expected_char_info_keys, list(char_info[0].keys()))
 
         self.assertEqual(char_info[0]["Power"], 731)
         self.assertEqual(char_info[1]["Level"], 50)
@@ -87,7 +87,7 @@ class TestJsonFuncs(TestCase):
         self.assertIsInstance(times[0], dict)
         self.assertIsInstance(times[1], dict)
 
-        self.assertEquals(self.expected_last_played_keys, list(times[0].keys()))
+        self.assertEqual(self.expected_last_played_keys, list(times[0].keys()))
 
         self.assertEqual(times[0]["Datetime"], "00:00:00 -- Fri 01/03")
         self.assertEqual(times[1]["Datetime"], "00:00:00 -- Thu 07/03")
@@ -108,7 +108,7 @@ class TestJsonFuncs(TestCase):
         self.assertIsInstance(times[1], dict)
         self.assertIsInstance(times[2], dict)
 
-        self.assertEquals(self.expected_play_time_keys, list(times[0].keys()))
+        self.assertEqual(self.expected_play_time_keys, list(times[0].keys()))
 
         self.assertEqual(times[0]["Time"], "1100h 0m")
         self.assertEqual(times[1]["Time"], "66h 40m")
@@ -125,7 +125,7 @@ class TestJsonFuncs(TestCase):
         self.assertIsInstance(hashes, list)
         self.assertIsInstance(hashes[0], list)
 
-        self.assertEquals(self.expected_vault_hashes, hashes[0])
+        self.assertEqual(self.expected_vault_hashes, hashes[0])
 
     def test_fetch_eq_hashes_exceptions(self):
         """
