@@ -7,14 +7,14 @@ from pathlib import Path
 
 from tabulate import tabulate
 
-from pyguardian.main.requester import Requester
 from pyguardian.data_processing import json_funcs
+from pyguardian.data_processing.get_manifest import GetManifest
 from pyguardian.data_processing.hashes import InventoryManifest
+from pyguardian.main.requester import Requester
 from pyguardian.utils import constants
 from pyguardian.utils.check_manifest import CheckManifest
 from pyguardian.validation.GuardianProcessor import GuardianProcessor
 from pyguardian.validation.InputValidator import InputValidator
-from pyguardian.data_processing.get_manifest import GetManifest
 from pyguardian.validation.PyGuardian_Exceptions import CannotCreateStorageDirectories
 
 
@@ -113,4 +113,3 @@ class PyGuardian:
         InputValidator.validate(guardian, platform)
 
         return GuardianProcessor.process(guardian, platform)
-

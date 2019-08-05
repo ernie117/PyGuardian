@@ -1,6 +1,6 @@
+import json
 from operator import itemgetter
 from pathlib import Path
-import json
 
 from pyguardian.utils.constants import INVENTORY_JSON_FILE
 

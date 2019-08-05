@@ -1,5 +1,3 @@
-import json
-import os
 from operator import itemgetter
 from pathlib import Path
 from unittest import TestCase
