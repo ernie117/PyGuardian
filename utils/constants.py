@@ -9,6 +9,7 @@ HEADERS = {"X-API-Key": BUNGIE_API_KEY}
 # URL-related constants
 BASE = "https://www.bungie.net/Platform/Destiny2/"
 COMPONENTS = ["200", "102", "205"]
+MANIFEST_URL = BASE + "Manifest/"
 
 # Directories needed for downloading and writing JSON
 DATA_DIR = str(Path.home()) + "/.pyguardian"

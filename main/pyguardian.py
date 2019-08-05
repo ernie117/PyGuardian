@@ -10,26 +10,15 @@ from tabulate import tabulate
 from pyguardian.main.requester import Requester
 from pyguardian.data_processing import json_funcs
 from pyguardian.data_processing.hashes import InventoryManifest
+from pyguardian.utils import constants
+from pyguardian.utils.check_manifest import CheckManifest
 from pyguardian.validation.GuardianProcessor import GuardianProcessor
 from pyguardian.validation.InputValidator import InputValidator
 from pyguardian.data_processing.get_manifest import GetManifest
+from pyguardian.validation.PyGuardian_Exceptions import CannotCreateStorageDirectories
 
 
 class PyGuardian:
-
-    @staticmethod
-    def prechecks(guardian, platform):
-
-        get_manifest = GetManifest()
-        if not os.path.isdir(str(Path.home()) + "/.pyguardian/DDB-Files"):
-            print("Manifest folder not found, creating...")
-        if not os.listdir(str(Path.home()) + "/.pyguardian/DDB-Files"):
-            print("Manifest files not available, requesting...")
-
-        get_manifest()
-        InputValidator.validate(guardian, platform)
-
-        return GuardianProcessor.process(guardian, platform)
 
     @staticmethod
     def fetch_stats(guardian, platform):
@@ -95,3 +84,33 @@ class PyGuardian:
         table = tabulate(playtimes, headers="keys", tablefmt="fancy_grid")
 
         return table
+
+    @staticmethod
+    def prechecks(guardian, platform):
+
+        get_manifest = GetManifest()
+        check_manifest = CheckManifest()
+        try:
+            if not os.path.isdir(constants.DATA_DIR):
+                print("Creating data directory")
+                os.makedirs(constants.MANIFEST_DIR)
+            if not os.path.isdir(constants.MANIFEST_DIR):
+                print("Creating manifest directory")
+                os.makedirs(constants.MANIFEST_DIR)
+            if not os.path.isdir(constants.JSON_DIR):
+                print("Creating JSON directory")
+                os.makedirs(constants.JSON_DIR)
+            if not os.listdir(str(Path.home()) + "/.pyguardian/DDB-Files"):
+                print("Manifest files not available, requesting...")
+                get_manifest(check_manifest())
+        except OSError:
+            raise CannotCreateStorageDirectories("Can't create directories!")
+
+        uri = check_manifest()
+        if uri is not None:
+            get_manifest(uri)
+
+        InputValidator.validate(guardian, platform)
+
+        return GuardianProcessor.process(guardian, platform)
+

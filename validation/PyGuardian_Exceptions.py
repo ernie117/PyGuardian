@@ -24,3 +24,7 @@ class VaultAccessBlockedException(Exception):
 
 class NoPlayerEquipmentException(Exception):
     pass
+
+
+class APIUnavailableException(Exception):
+    pass

@@ -14,72 +14,11 @@ from pyguardian.validation.PyGuardian_Exceptions import CannotCreateStorageDirec
 
 class GetManifest:
 
-    def __call__(self):
-        self._check_dirs()
-        manifest_uri = self._get_manifest_url()
-
-        manifest_uri = self._check_manifest_uri(manifest_uri)
-        if manifest_uri is None:
-            return
+    def __call__(self, manifest_uri):
 
         self._get_manifest(constants.MANIFEST_URL_ROOT + manifest_uri)
         manifest = self._unzip_and_rename()
         self._write_tables(manifest)
-
-    @staticmethod
-    def _check_dirs():
-        """
-        Just checks that the directories used for reading and
-        storage exist, creates otherwise
-
-        :return: None
-        """
-        try:
-            if not os.path.isdir(constants.DATA_DIR):
-                print("Creating data directory")
-                os.makedirs(constants.MANIFEST_DIR)
-            if not os.path.isdir(constants.MANIFEST_DIR):
-                print("Creating manifest directory")
-                os.makedirs(constants.MANIFEST_DIR)
-            if not os.path.isdir(constants.JSON_DIR):
-                print("Creating JSON directory")
-                os.makedirs(constants.JSON_DIR)
-        except OSError:
-            raise CannotCreateStorageDirectories("Can't create directories!")
-
-    @staticmethod
-    def _check_manifest_uri(uri):
-        try:
-            with open(constants.MANIFEST_CHECK_FILE, 'r+') as f:
-                check_url = f.read().strip()
-
-                if uri == check_url:
-                    print("Manifest up-to-date \u2713")
-                    return
-
-                f.seek(0)
-                f.write(uri)
-
-        except FileNotFoundError:
-            print("Creating manifest url check-file")
-            with open(constants.MANIFEST_CHECK_FILE, 'w') as f:
-                f.write(uri)
-
-        return uri
-
-    @staticmethod
-    def _get_manifest_url():
-        """
-        Requests an URL for the manifest SQL data
-        """
-        r = requests.get("https://www.bungie.net/Platform/Destiny2/Manifest/",
-                         headers=constants.HEADERS).json()
-
-        if r["ErrorStatus"] == "SystemDisabled":
-            print("API is down!")
-            sys.exit()
-
-        return r["Response"]["mobileWorldContentPaths"]["en"]
 
     @staticmethod
     def _get_manifest(manifest_url):

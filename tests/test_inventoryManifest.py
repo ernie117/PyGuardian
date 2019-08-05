@@ -8,11 +8,8 @@ from pyguardian.data_processing.hashes import InventoryManifest
 
 
 class TestInventoryManifest(TestCase):
-    # Read in dummy data
-    with open(str(Path(__file__).parent) + "/resources/dummy_equip_data.json", "r") as f:
-        equip_data = json.load(f)
 
-    test_data_file = str(os.getcwd()) + "/resources/dummy_inventoryItemDefinition.json"
+    test_data_file = str(Path(__file__).parent) + "/resources/dummy_inventoryItemDefinition.json"
 
     test_eq_hashes = [
         [
