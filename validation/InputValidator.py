@@ -11,7 +11,8 @@ class InputValidator:
     def validate(player, platform) -> bool:
 
         return all((InputValidator.validate_player_str(player, platform),
-                    InputValidator.validate_platform_str(platform)))
+                    InputValidator.validate_platform_is_valid_platform(platform),
+                    InputValidator.validate_platform_is_not_digits(platform)))
 
     @staticmethod
     def validate_player_str(player, platform) -> bool:
@@ -29,10 +30,14 @@ class InputValidator:
         return True
 
     @staticmethod
-    def validate_platform_str(platform) -> bool:
+    def validate_platform_is_valid_platform(platform) -> bool:
         if platform.lower().strip() not in InputValidator.VALID_PLATFORMS:
             raise PlatformException(f"Not a valid platform '{platform}'")
 
+        return True
+
+    @staticmethod
+    def validate_platform_is_not_digits(platform) -> bool:
         if all(char.isdigit() for char in platform):
             raise PlatformException("Platform must be String")
 
