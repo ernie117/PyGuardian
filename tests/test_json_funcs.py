@@ -23,11 +23,7 @@ class TestJsonFuncs(TestCase):
         cls.expected_play_time_keys = test_constants.EXPECTED_PLAY_TIME_KEYS
         cls.expected_vault_hashes = test_constants.EXPECTED_VAULT_HASHES
 
-    def test_fetch_eq_hashes(self):
-        """
-        fetch_eq_hashes returns a list of lists of hash codes of character
-        equipment, plus a list of traits describing the character
-        """
+    def test_fetch_eq_hashes_returns_expected_data(self):
         eq_hashes = fetch_eq_hashes(self.equip_data, self.char_data)
 
         self.assertTrue(eq_hashes)
@@ -37,11 +33,7 @@ class TestJsonFuncs(TestCase):
         self.assertIn(self.expected_eq_hashes_char_one, eq_hashes)
         self.assertIn(self.expected_eq_hashes_char_two, eq_hashes)
 
-    def test_fetch_char_info(self):
-        """
-        fetch_char_info returns a list of dictionaries, each
-        containing stats describing the player's characters
-        """
+    def test_fetch_char_info_returns_expected_data(self):
         char_info = fetch_char_info(self.char_data)
 
         self.assertTrue(char_info)
@@ -55,11 +47,7 @@ class TestJsonFuncs(TestCase):
         self.assertEqual(char_info[0]["Power"], 731)
         self.assertEqual(char_info[1]["Level"], 50)
 
-    def test_fetch_last_time_played(self):
-        """
-        fetch_last_time_played returns a list of dictionaries,
-        each containing total time spent on game characters
-        """
+    def test_fetch_last_time_played_returns_expected_data(self):
         times = fetch_last_time_played(self.char_data)
 
         self.assertTrue(times)
@@ -73,13 +61,7 @@ class TestJsonFuncs(TestCase):
         self.assertEqual(times[0]["Datetime"], "00:00:00 -- Fri 01/03")
         self.assertEqual(times[1]["Datetime"], "00:00:00 -- Thu 07/03")
 
-    def test_fetch_play_time(self):
-        """
-        fetch_play_time returns a list of dictionaries
-        containing character descriptions and total time
-        played on each, plus a dict acting as a total
-        count of time played over all characters
-        """
+    def test_fetch_play_time_returns_expected_data(self):
         times = fetch_play_time(self.char_data)
 
         self.assertTrue(times)
@@ -94,12 +76,7 @@ class TestJsonFuncs(TestCase):
         self.assertEqual(times[0]["Time"], "1100h 0m")
         self.assertEqual(times[1]["Time"], "66h 40m")
 
-    def test_fetch_vault_hashes(self):
-        """
-        fetch_vault_hashes returns a list of lists of hashes
-        representing items like weapons and armour present in
-        the player's vault
-        """
+    def test_fetch_vault_hashes_returns_expected_data(self):
         hashes = fetch_vault_hashes(self.vault_data)
 
         self.assertTrue(hashes)
@@ -108,55 +85,30 @@ class TestJsonFuncs(TestCase):
 
         self.assertEqual(self.expected_vault_hashes, hashes[0])
 
-    def test_fetch_eq_hashes_exceptions(self):
-        """
-        fetch_eq_hashes raises a PlayerNotFoundException if its
-        provided character data is empty, or a
-        NoPlayerEquipmentException if equipment data is empty
-        """
+    def test_fetch_eq_hashes_raises_correct_exceptions(self):
         self.assertRaises(PlayerNotFoundException,
                           fetch_eq_hashes, self.equip_data, {})
 
         self.assertRaises(NoPlayerEquipmentException,
                           fetch_eq_hashes, {}, self.char_data)
 
-    def test_fetch_char_info_exception(self):
-        """
-        fetch_char_info raises a PlayerNotFoundException if its
-        provided character data is empty
-        """
+    def test_fetch_char_info_raises_correct_exception(self):
         self.assertRaises(PlayerNotFoundException,
                           fetch_char_info, {})
 
-    def test_fetch_last_time_played_exception(self):
-        """
-        fetch_last_time_played raises a PlayerNotFoundException if its
-        provided character data is empty
-        """
+    def test_fetch_last_time_played_raises_correct_exception(self):
         self.assertRaises(PlayerNotFoundException,
                           fetch_last_time_played, {})
 
-    def test_fetch_play_time_exception(self):
-        """
-        fetch_play_time raises a PlayerNotFoundException if its
-        provided character data is empty
-        """
+    def test_fetch_play_time_raises_correct_exception(self):
         self.assertRaises(PlayerNotFoundException,
                           fetch_play_time, {})
 
-    def test_vault_hashes_exception(self):
-        """
-        fetch_vault_hashes raises a PlayerNotFoundException if its
-        provided character data is empty
-        """
+    def test_vault_hashes_raises_correct_exception(self):
         self.assertRaises(VaultAccessBlockedException,
                           fetch_vault_hashes, {})
 
-    def test_json_miner_dict(self):
-        """
-        json_miner takes json input and a string with nested keys
-        joined by periods and retrieves nested objects
-        """
+    def test_json_miner_returns_expected_dict_type(self):
         characters = json_miner("Response.characters.data", self.char_data)
 
         self.assertTrue(characters)
@@ -165,11 +117,7 @@ class TestJsonFuncs(TestCase):
         self.assertIn("1234567890123456789", characters)
         self.assertIn("2345678901234567889", characters)
 
-    def test_json_miner_list(self):
-        """
-        json_miner takes json input and a string with nested keys
-        joined by periods and retrieves nested objects
-        """
+    def test_json_mireturns_expected_list_type(self):
         list_element = json_miner("Response.characterEquipment.data.1234567890123456789.items",
                                   self.equip_data)
 

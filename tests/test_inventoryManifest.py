@@ -15,11 +15,6 @@ class TestInventoryManifest(TestCase):
         cls.vault_hashes = test_constants.VAULT_HASHES
 
     def test_get_full_item_details_eq_hashes(self):
-        """
-        Produces a list of lists, one containing a description
-        of the character, the rest containing a name, type and
-        rarity for each piece of equipment
-        """
         manifest = InventoryManifest(self.test_eq_hashes, self.test_data_file)
         items = manifest.get_full_item_details()
 
@@ -31,10 +26,6 @@ class TestInventoryManifest(TestCase):
         self.assertIn(self.test_item_result, items)
 
     def test_get_full_item_details_vault_sort_by_name(self):
-        """
-        passing the 'sort_by' argument with 'name' should sort
-        the list by item name
-        """
         manifest = InventoryManifest(self.test_eq_hashes, self.test_data_file)
         returned_items = manifest.get_full_item_details(sort_by="name")
 
@@ -49,10 +40,6 @@ class TestInventoryManifest(TestCase):
         self.assertNotEqual(returned_items, more_incorrectly_sorted_items)
 
     def test_get_full_item_details_vault_sort_by_type(self):
-        """
-        passing the 'sort_by' argument with 'type' should sort
-        the list by item type (pulse rifle, hand cannon, etc...)
-        """
         manifest = InventoryManifest(self.test_eq_hashes, self.test_data_file)
         returned_items = manifest.get_full_item_details(sort_by="type")
 
@@ -67,10 +54,6 @@ class TestInventoryManifest(TestCase):
         self.assertNotEqual(returned_items, more_incorrectly_sorted_items)
 
     def test_get_full_item_details_vault_sort_by_rarity(self):
-        """
-        passing the 'sort_by' argument with 'tier' should sort
-        the list by item tier (rare, legendary, etc...)
-        """
         manifest = InventoryManifest(self.test_eq_hashes, self.test_data_file)
         returned_items = manifest.get_full_item_details(sort_by="tier")
 

@@ -50,4 +50,3 @@ TEST_ITEM_RESULT = ["Bygones", "Pulse Rifle", "Legendary"]
 EXPECTED_CHAR_INFO_KEYS = ["Character", "Power", "Mobility", "Resilience", "Recovery", "Level"]
 EXPECTED_LAST_PLAYED_KEYS = ["Character", "Datetime", "Session"]
 EXPECTED_PLAY_TIME_KEYS = ["Character", "Time"]
-

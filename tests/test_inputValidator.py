@@ -49,4 +49,3 @@ class TestInputValidator(TestCase):
         test_platform = "123"
         self.assertRaises(PyGuardian_Exceptions.PlatformException,
                           InputValidator.validate_platform_str, test_platform)
-
