@@ -1,46 +1,27 @@
 import json
-from pathlib import Path
 from unittest import TestCase
 
 from pyguardian.data_processing.json_funcs import *
+from pyguardian.tests.resources import test_constants
 
 
 class TestJsonFuncs(TestCase):
-    # Reading in the dummy test data
-    with open(str(Path(__file__).parent) + "/resources/dummy_character_data.json", "r") as f:
-        char_data = json.load(f)
-    with open(str(Path(__file__).parent) + "/resources/dummy_equip_data.json", "r") as f:
-        equip_data = json.load(f)
-    with open(str(Path(__file__).parent) + "/resources/dummy_vault_data.json", "r") as f:
-        vault_data = json.load(f)
 
-    expected_char_info_keys = ["Character", "Power", "Mobility", "Resilience", "Recovery", "Level"]
-    expected_last_played_keys = ["Character", "Datetime", "Session"]
-    expected_play_time_keys = ["Character", "Time"]
+    @classmethod
+    def setUpClass(cls):
+        with open(test_constants.TEST_CHAR_DATA) as f:
+            cls.char_data = json.load(f)
+        with open(test_constants.TEST_EQUIP_DATA) as f:
+            cls.equip_data = json.load(f)
+        with open(test_constants.TEST_VAULT_DATA) as f:
+            cls.vault_data = json.load(f)
 
-    expected_eq_hashes_char_one = [
-        ["MALE", "EXO", "WARLOCK"],
-        2712244741, 1887808042,
-        1201830623, 381563628,
-        3830828709, 3192591867,
-        4178158375, 1549308050,
-        813936739, 1363029408,
-        2844014413
-    ]
-
-    expected_eq_hashes_char_two = [
-        ["MALE", "HUMAN", "TITAN"],
-        1457394911, 1678957659,
-        1877183765, 1070180272,
-        809007411, 201644247,
-        2362809459, 2329963686,
-        3717471208, 2351197433,
-        682682138
-    ]
-
-    expected_vault_hashes = [
-        4285666432, 2014411539, 4101386442, 1177810185, 2109561326, 950899352
-    ]
+        cls.expected_eq_hashes_char_one = test_constants.EXPECTED_EQ_HASHES_CHAR_ONE
+        cls.expected_eq_hashes_char_two = test_constants.EXPECTED_EQ_HASHES_CHAR_TWO
+        cls.expected_char_info_keys = test_constants.EXPECTED_CHAR_INFO_KEYS
+        cls.expected_last_played_keys = test_constants.EXPECTED_LAST_PLAYED_KEYS
+        cls.expected_play_time_keys = test_constants.EXPECTED_PLAY_TIME_KEYS
+        cls.expected_vault_hashes = test_constants.EXPECTED_VAULT_HASHES
 
     def test_fetch_eq_hashes(self):
         """

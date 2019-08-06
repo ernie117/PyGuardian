@@ -1,31 +1,18 @@
 from operator import itemgetter
-from pathlib import Path
 from unittest import TestCase
 
 from pyguardian.data_processing.hashes import InventoryManifest
+from pyguardian.tests.resources import test_constants
 
 
 class TestInventoryManifest(TestCase):
 
-    test_data_file = str(Path(__file__).parent) + "/resources/dummy_inventoryItemDefinition.json"
-
-    test_eq_hashes = [
-        [
-            ["MALE", "EXO", "WARLOCK"],
-            2712244741, 1887808042,
-            1201830623, 381563628,
-            3830828709, 3192591867,
-            4178158375, 1549308050,
-            813936739, 1363029408,
-            2844014413
-        ]
-    ]
-
-    test_item_result = ["Bygones", "Pulse Rifle", "Legendary"]
-
-    vault_hashes = [
-        4285666432, 2014411539, 4101386442, 1177810185, 2109561326, 950899352
-    ]
+    @classmethod
+    def setUpClass(cls):
+        cls.test_data_file = test_constants.TEST_DATA_FILE
+        cls.test_eq_hashes = test_constants.TEST_EQ_HASHES
+        cls.test_item_result = test_constants.TEST_ITEM_RESULT
+        cls.vault_hashes = test_constants.VAULT_HASHES
 
     def test_get_full_item_details_eq_hashes(self):
         """
