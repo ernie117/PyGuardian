@@ -8,7 +8,6 @@ class CheckManifest:
 
     def __call__(self):
         check_uri = self._get_manifest_url()
-
         return_uri = self._check_manifest_uri(check_uri)
 
         return return_uri
@@ -33,7 +32,6 @@ class CheckManifest:
                 check_url = f.read().strip()
 
                 if uri == check_url:
-                    print("Manifest up-to-date \u2713")
                     return None
 
                 f.seek(0)
