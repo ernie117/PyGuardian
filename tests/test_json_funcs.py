@@ -117,7 +117,7 @@ class TestJsonFuncs(TestCase):
         self.assertIn("1234567890123456789", characters)
         self.assertIn("2345678901234567889", characters)
 
-    def test_json_mireturns_expected_list_type(self):
+    def test_json_miner_returns_expected_list_type(self):
         list_element = json_miner("Response.characterEquipment.data.1234567890123456789.items",
                                   self.equip_data)
 
