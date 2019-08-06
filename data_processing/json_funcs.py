@@ -30,7 +30,7 @@ def json_miner(string, data):
     return value
 
 
-def fetch_eq_hashes(equipment_data, character_data, no_of_items=11):
+def fetch_eq_hashes(equipment_data, character_data, no_of_items=12):
     root_str1 = "Response.characters.data."
     root_str2 = "Response.characterEquipment.data."
 
