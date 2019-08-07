@@ -1,3 +1,6 @@
+import json
+
+
 class MockManifestSuccessfulResponse:
 
     def __init__(self):
@@ -39,3 +42,100 @@ class MockManifestUnsuccessfulResponse:
 
     def json(self):
         return self.response_data
+
+
+class MockSearchDestinyPlayerSuccessfulResponse:
+
+    def __init__(self):
+        self.response_data = {
+            "Response": [
+                {
+                    "membershipType": 4,
+                    "membershipId": "1234567890987654321",
+                    "displayName": "ernie"
+                }
+            ],
+            "ErrorCode": 1,
+            "ThrottleSeconds": 0,
+            "ErrorStatus": "Success",
+            "Message": "Ok",
+            "MessageData": {}
+        }
+
+    def json(self):
+        return self.response_data
+
+
+class MockSearchDestinyPlayerUnsuccessfulResponse:
+
+    def __init__(self):
+        self.response_data = {
+            "ErrorStatus": "SystemDisabled"
+        }
+
+    def json(self):
+        return self.response_data
+
+
+class MockSearchDestinyPlayerNoSuchPlayer:
+
+    def __init__(self):
+        self.response_data = {
+            "Response": [],
+            "ErrorCode": 1,
+            "ThrottleSeconds": 0,
+            "ErrorStatus": "Success",
+            "Message": "Ok",
+            "MessageData": {}
+        }
+
+    def json(self):
+        return self.response_data
+
+
+class MockSuccessfulCharacterDataRequest:
+
+    def __init__(self):
+        with open("resources/dummy_character_data.json", "r") as f:
+            self.response_data = json.load(f)
+
+    def json(self):
+        return self.response_data
+
+
+class MockUnsuccessfulCharacterDataRequest:
+
+    def __init__(self):
+        self.response_data = {
+            "Response": [],
+            "ErrorCode": 1,
+            "ThrottleSeconds": 0,
+            "ErrorStatus": "Success",
+            "Message": "Ok",
+            "MessageData": {}
+        }
+
+    def json(self):
+        return self.response_data
+
+
+class MockSuccessfulCharacterEquipmentDataRequest:
+
+    def __init__(self):
+        with open("resources/dummy_equip_data.json", "r") as f:
+            self.response_data = json.load(f)
+
+    def json(self):
+        return self.response_data
+
+
+class MockSuccessfulVaultDataRequest:
+
+    def __init__(self):
+        with open("resources/dummy_vault_data.json", "r") as f:
+            self.response_data = json.load(f)
+
+    def json(self):
+        return self.response_data
+
+
