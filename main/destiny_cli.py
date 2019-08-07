@@ -3,9 +3,10 @@ import argparse
 
 from pyguardian.data_processing.get_manifest import GetManifest
 from pyguardian.main.pyguardian import PyGuardian
+from pyguardian.utils.check_manifest import CheckManifest
 
 
-def main():
+def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("guardian", type=str, nargs="?", action="store", default=None)
     parser.add_argument("platform", type=str, nargs="?", action="store", default=None,
@@ -23,6 +24,11 @@ def main():
                                  "last"])
     parser.add_argument("-d", "--download-manifest", action="store_true")
 
+    return parser
+
+
+def main():
+    parser = create_parser()
     args = parser.parse_args()
 
     if args.response == "stats":
@@ -42,8 +48,10 @@ def main():
     elif args.response == "last":
         print(PyGuardian.fetch_last_time_played(args.guardian, args.platform))
     elif args.download_manifest:
+        check_manifest = CheckManifest()
+        uri = check_manifest()
         get_manifest = GetManifest()
-        get_manifest()
+        get_manifest(uri)
 
 
 if __name__ == "__main__":
