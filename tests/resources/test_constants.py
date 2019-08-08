@@ -53,3 +53,6 @@ EXPECTED_CHAR_INFO_KEYS = ["Character", "Power", "Mobility",
                            "Resilience", "Recovery", "Level"]
 EXPECTED_LAST_PLAYED_KEYS = ["Character", "Datetime", "Session"]
 EXPECTED_PLAY_TIME_KEYS = ["Character", "Time"]
+FETCH_STATS_MOCK_RESP = "│ Character │ Power │ Mobility │  Resilience │ Recovery │  Level │"
+FETCH_EQ_MOCK_RESP = "│ MALE │ EXO │ WARLOCK │"
+

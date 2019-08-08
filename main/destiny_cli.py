@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.7
 import argparse
+import sys
 
 from pyguardian.data_processing.get_manifest import GetManifest
 from pyguardian.main.pyguardian import PyGuardian
@@ -55,4 +56,4 @@ def main(cli_args):
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

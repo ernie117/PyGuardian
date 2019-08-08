@@ -137,5 +137,3 @@ class MockSuccessfulVaultDataRequest:
 
     def json(self):
         return self.response_data
-
-
