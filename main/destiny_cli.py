@@ -27,9 +27,9 @@ def create_parser():
     return parser
 
 
-def main():
+def main(cli_args):
     parser = create_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(cli_args)
 
     if args.response == "stats":
         print(PyGuardian.fetch_stats(args.guardian, args.platform))
