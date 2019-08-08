@@ -4,7 +4,7 @@ Soon-to-be python package for requesting tabulated character information from th
 
 ## Run with:
 
-In the top-level directory:
+In the parent directory:
 
 > python -m pyguardian < psn/xbox/battleID > < platform > < eq/stats/playtime/last/vault/vault-name/vault-type/vault-tier >
 
