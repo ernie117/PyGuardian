@@ -1,7 +1,7 @@
 import requests
 
 from pyguardian.utils import constants
-from pyguardian.validation.PyGuardian_Exceptions import APIUnavailableException
+from pyguardian.validation.pyguardian_exceptions import APIUnavailableException
 
 
 class CheckManifest:

@@ -6,7 +6,7 @@ from pyguardian.tests.resources.mock_classes import MockSearchDestinyPlayerSucce
     MockSearchDestinyPlayerUnsuccessfulResponse, MockSearchDestinyPlayerNoSuchPlayer, \
     MockSuccessfulCharacterDataRequest, MockUnsuccessfulCharacterDataRequest, \
     MockSuccessfulCharacterEquipmentDataRequest, MockSuccessfulVaultDataRequest
-from pyguardian.validation.PyGuardian_Exceptions import APIException, PlayerNotFoundException
+from pyguardian.validation.pyguardian_exceptions import APIException, PlayerNotFoundException
 
 
 class TestRequester(TestCase):

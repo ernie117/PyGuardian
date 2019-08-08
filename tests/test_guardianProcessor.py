@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from pyguardian.validation.GuardianProcessor import GuardianProcessor
+from pyguardian.validation.guardian_processor import GuardianProcessor
 
 
 class TestGuardianProcessor(TestCase):

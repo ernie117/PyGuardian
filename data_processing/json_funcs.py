@@ -1,6 +1,6 @@
 import dateutil.parser
 
-from pyguardian.validation.PyGuardian_Exceptions import PlayerNotFoundException, VaultAccessBlockedException, \
+from pyguardian.validation.pyguardian_exceptions import PlayerNotFoundException, VaultAccessBlockedException, \
     NoPlayerEquipmentException
 
 GENS = {0: "Male", 1: "Female", 2: "Unknown"}

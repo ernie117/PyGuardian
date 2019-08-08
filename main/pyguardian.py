@@ -13,9 +13,9 @@ from pyguardian.data_processing.hashes import InventoryManifest
 from pyguardian.main.requester import Requester
 from pyguardian.utils import constants
 from pyguardian.utils.check_manifest import CheckManifest
-from pyguardian.validation.GuardianProcessor import GuardianProcessor
-from pyguardian.validation.InputValidator import InputValidator
-from pyguardian.validation.PyGuardian_Exceptions import CannotCreateStorageDirectories
+from pyguardian.validation.guardian_processor import GuardianProcessor
+from pyguardian.validation.input_validator import InputValidator
+from pyguardian.validation.pyguardian_exceptions import CannotCreateStorageDirectories
 
 
 class PyGuardian:

@@ -6,7 +6,7 @@ from pyguardian.tests.resources.mock_classes import MockManifestSuccessfulRespon
     MockManifestUnsuccessfulResponse
 from pyguardian.utils import constants
 from pyguardian.utils.check_manifest import CheckManifest
-from pyguardian.validation.PyGuardian_Exceptions import APIUnavailableException
+from pyguardian.validation.pyguardian_exceptions import APIUnavailableException
 
 
 class TestCheckManifest(TestCase):
