@@ -6,7 +6,7 @@ Soon-to-be python package for requesting tabulated character information from th
 
 In the parent directory:
 
-> python -m pyguardian < psnname/xboxname/battleID > < platform > < eq/stats/playtime/last/vault/vault-name/vault-type/vault-tier >
+> python -m pyguardian < psnname/xboxname/battleID > < playstation/xbox/pc > < eq/stats/playtime/last/vault/vault-name/vault-type/vault-tier >
 
 For example, to get my stats it would be:
 
