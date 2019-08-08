@@ -6,11 +6,11 @@ Alternatively run ```python -m site --user-site``` which will return a directory
 
 ## Run with:
 
-> ```python -m PyGuardian < psnname/xboxname/battleID > < playstation/xbox/pc > < eq/stats/playtime/last/vault/vault-name/vault-type/vault-tier > ```
+```python -m PyGuardian < psnname/xboxname/battleID > < playstation/xbox/pc > < eq/stats/playtime/last/vault/vault-name/vault-type/vault-tier > ```
 
 For example, to get my stats it would be:
 
-> ```python -m PyGuardian ernie#22462 pc stats ```
+```python -m PyGuardian ernie#22462 pc stats ```
 
 ## Things I want to do
 
