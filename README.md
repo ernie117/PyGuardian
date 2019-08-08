@@ -2,9 +2,9 @@
 
 Soon-to-be python package for requesting tabulated character information from the Bungie API. You'll need a Bungie API key for this, set as environmental variable "BUNGIE_API". Until this is a proper package that can be installed with pip, you'll have to place this repo inside a directory and from that directory run the command.
 
-## Run with:
+Alternatively run ```python -m site --user-site``` which will return a directory. Place the pyguardian repo in that directory, then you can run the command from anywhere
 
-In the parent directory:
+## Run with:
 
 > python -m pyguardian < psnname/xboxname/battleID > < playstation/xbox/pc > < eq/stats/playtime/last/vault/vault-name/vault-type/vault-tier >
 
