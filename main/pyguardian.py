@@ -31,9 +31,7 @@ class PyGuardian:
         logger.info(f"Requesting stats data for {guardian}")
         response = account.fetch_character_info()
         logger.info(f"Processing stats data for {guardian}")
-        data = json_funcs.fetch_char_info(response)
-        logger.info(f"Tabulating data...")
-        return data
+        return json_funcs.fetch_char_info(response)
 
     @staticmethod
     @tabulate_me
@@ -46,8 +44,7 @@ class PyGuardian:
         equip_data = account.fetch_character_equip_info()
         weapon_hashes = json_funcs.fetch_eq_hashes(equip_data, char_data)
         weapon_data = InventoryManifest(weapon_hashes)
-        weapon_data = weapon_data.get_full_item_details()
-        return weapon_data
+        return weapon_data.get_full_item_details()
 
     @staticmethod
     @tabulate_me
@@ -59,8 +56,7 @@ class PyGuardian:
         vault_data = account.fetch_vault_info()
         vault_hashes = json_funcs.fetch_vault_hashes(vault_data)
         vault_items = InventoryManifest(vault_hashes)
-        vault_items = vault_items.get_full_item_details(sort_by=sort)
-        return vault_items
+        return vault_items.get_full_item_details(sort_by=sort)
 
     @staticmethod
     @tabulate_me
@@ -70,8 +66,7 @@ class PyGuardian:
         account = Requester(guardian, platform)
         account.fetch_player(logger)
         char_data = account.fetch_character_info()
-        char_dicts = json_funcs.fetch_play_time(char_data)
-        return char_dicts
+        return json_funcs.fetch_play_time(char_data)
 
     @staticmethod
     @tabulate_me
@@ -81,8 +76,7 @@ class PyGuardian:
         account = Requester(guardian, platform)
         account.fetch_player(logger)
         char_data = account.fetch_character_info()
-        playtimes = json_funcs.fetch_last_time_played(char_data)
-        return playtimes
+        return json_funcs.fetch_last_time_played(char_data)
 
     @staticmethod
     def prechecks(guardian, platform):
