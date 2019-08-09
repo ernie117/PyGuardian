@@ -5,7 +5,6 @@ from pyguardian.validation.pyguardian_exceptions import *
 
 
 class Requester:
-
     HEADERS = {"X-API-Key": constants.BUNGIE_API_KEY}
 
     def __init__(self, gamertag, platform):
@@ -17,7 +16,7 @@ class Requester:
         self.character_equip_url = None
         self.mem_id = None
 
-    def fetch_player(self):
+    def fetch_player(self, logger):
 
         r = requests.get(constants.BASE
                          + "SearchDestinyPlayer/"
@@ -34,7 +33,7 @@ class Requester:
         except IndexError:
             raise PlayerNotFoundException("Can't find that player")
 
-        print("Player found \u2713")
+        logger.info(f"Player '{self.player_name}' found \u2713")
 
         urls = [constants.BASE
                 + self.platform

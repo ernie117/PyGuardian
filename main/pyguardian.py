@@ -21,19 +21,24 @@ from pyguardian.validation.pyguardian_exceptions import CannotCreateStorageDirec
 class PyGuardian:
 
     @staticmethod
-    def fetch_stats(guardian, platform):
+    def fetch_stats(guardian, platform, logger):
 
+        logger.info(f"conducting prechecks for {guardian}")
         guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
-        account.fetch_player()
+        logger.info(f"Requesting player data for {guardian}")
+        account.fetch_player(logger)
+        logger.info(f"Requesting stats data for {guardian}")
         response = account.fetch_character_info()
+        logger.info(f"Processing stats data for {guardian}")
         data = json_funcs.fetch_char_info(response)
+        logger.info(f"Tabulating data...")
         table = tabulate(data, headers="keys", tablefmt="fancy_grid")
 
         return table
 
     @staticmethod
-    def fetch_eq(guardian, platform):
+    def fetch_eq(guardian, platform, logger):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
@@ -48,7 +53,7 @@ class PyGuardian:
         return table
 
     @staticmethod
-    def fetch_vault(guardian, platform, sort=None):
+    def fetch_vault(guardian, platform, logger, sort=None):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
@@ -62,7 +67,7 @@ class PyGuardian:
         return table
 
     @staticmethod
-    def fetch_playtime(guardian, platform):
+    def fetch_playtime(guardian, platform, logger):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
@@ -74,7 +79,7 @@ class PyGuardian:
         return table
 
     @staticmethod
-    def fetch_last_time_played(guardian, platform):
+    def fetch_last_time_played(guardian, platform, logger):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)

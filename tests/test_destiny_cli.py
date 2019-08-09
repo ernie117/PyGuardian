@@ -24,7 +24,7 @@ class TestDestinyCLI(TestCase):
         mock_pyguardian.return_value = FETCH_STATS_MOCK_RESP
         destiny_cli.main(["ernie", "pc", "stats"])
 
-        mock_pyguardian.assert_called_once_with("ernie", "pc")
+        mock_pyguardian.assert_called_once()
         self.assertEqual(mock_stdout.getvalue().strip(),
                          "│ Character │ Power │ Mobility │  Resilience │ Recovery │  Level │")
 
@@ -34,6 +34,6 @@ class TestDestinyCLI(TestCase):
         mock_pyguardian.return_value = FETCH_EQ_MOCK_RESP
         destiny_cli.main(["ernie", "playstation", "eq"])
 
-        mock_pyguardian.assert_called_once_with("ernie", "playstation")
+        mock_pyguardian.assert_called_once()
         self.assertEqual(mock_stdout.getvalue().strip(),
                          "│ MALE │ EXO │ WARLOCK │")

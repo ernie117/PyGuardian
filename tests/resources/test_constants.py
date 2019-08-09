@@ -1,6 +1,5 @@
 import os
 
-
 TEST_DATA_FILE = os.path.dirname(os.path.realpath(__file__)) + "/dummy_inventoryItemDefinition.json"
 TEST_CHAR_DATA = os.path.dirname(os.path.realpath(__file__)) + "/dummy_character_data.json"
 TEST_EQUIP_DATA = os.path.dirname(os.path.realpath(__file__)) + "/dummy_equip_data.json"
@@ -55,4 +54,3 @@ EXPECTED_LAST_PLAYED_KEYS = ["Character", "Datetime", "Session"]
 EXPECTED_PLAY_TIME_KEYS = ["Character", "Time"]
 FETCH_STATS_MOCK_RESP = "│ Character │ Power │ Mobility │  Resilience │ Recovery │  Level │"
 FETCH_EQ_MOCK_RESP = "│ MALE │ EXO │ WARLOCK │"
-
