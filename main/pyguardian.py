@@ -5,14 +5,13 @@ the heavy lifting of requesting and processing to other modules
 import os
 from pathlib import Path
 
-from tabulate import tabulate
-
 from pyguardian.data_processing import json_funcs
 from pyguardian.data_processing.get_manifest import GetManifest
 from pyguardian.data_processing.hashes import InventoryManifest
 from pyguardian.main.requester import Requester
 from pyguardian.utils import constants
 from pyguardian.utils.check_manifest import CheckManifest
+from pyguardian.utils.pyguardian_decorators import tabulate_me
 from pyguardian.validation.guardian_processor import GuardianProcessor
 from pyguardian.validation.input_validator import InputValidator
 from pyguardian.validation.pyguardian_exceptions import CannotCreateStorageDirectories
@@ -21,6 +20,7 @@ from pyguardian.validation.pyguardian_exceptions import CannotCreateStorageDirec
 class PyGuardian:
 
     @staticmethod
+    @tabulate_me
     def fetch_stats(guardian, platform, logger):
 
         logger.info(f"conducting prechecks for {guardian}")
@@ -33,11 +33,10 @@ class PyGuardian:
         logger.info(f"Processing stats data for {guardian}")
         data = json_funcs.fetch_char_info(response)
         logger.info(f"Tabulating data...")
-        table = tabulate(data, headers="keys", tablefmt="fancy_grid")
-
-        return table
+        return data
 
     @staticmethod
+    @tabulate_me
     def fetch_eq(guardian, platform, logger):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
@@ -48,11 +47,10 @@ class PyGuardian:
         weapon_hashes = json_funcs.fetch_eq_hashes(equip_data, char_data)
         weapon_data = InventoryManifest(weapon_hashes)
         weapon_data = weapon_data.get_full_item_details()
-        table = tabulate(weapon_data, tablefmt="fancy_grid")
-
-        return table
+        return weapon_data
 
     @staticmethod
+    @tabulate_me
     def fetch_vault(guardian, platform, logger, sort=None):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
@@ -62,11 +60,10 @@ class PyGuardian:
         vault_hashes = json_funcs.fetch_vault_hashes(vault_data)
         vault_items = InventoryManifest(vault_hashes)
         vault_items = vault_items.get_full_item_details(sort_by=sort)
-        table = tabulate(vault_items, tablefmt="fancy_grid")
-
-        return table
+        return vault_items
 
     @staticmethod
+    @tabulate_me
     def fetch_playtime(guardian, platform, logger):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
@@ -74,11 +71,10 @@ class PyGuardian:
         account.fetch_player(logger)
         char_data = account.fetch_character_info()
         char_dicts = json_funcs.fetch_play_time(char_data)
-        table = tabulate(char_dicts, headers="keys", tablefmt="fancy_grid")
-
-        return table
+        return char_dicts
 
     @staticmethod
+    @tabulate_me
     def fetch_last_time_played(guardian, platform, logger):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
@@ -86,9 +82,7 @@ class PyGuardian:
         account.fetch_player(logger)
         char_data = account.fetch_character_info()
         playtimes = json_funcs.fetch_last_time_played(char_data)
-        table = tabulate(playtimes, headers="keys", tablefmt="fancy_grid")
-
-        return table
+        return playtimes
 
     @staticmethod
     def prechecks(guardian, platform):
