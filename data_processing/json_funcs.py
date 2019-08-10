@@ -2,6 +2,8 @@ import dateutil.parser
 
 from pyguardian.validation.pyguardian_exceptions import PlayerNotFoundException, VaultAccessBlockedException, \
     NoPlayerEquipmentException
+from pyguardian.utils.pyguardian_decorators import log_me
+
 
 GENS = {0: "Male", 1: "Female", 2: "Unknown"}
 RACES = {0: "Human", 1: "Awoken", 2: "Exo", 3: "Unknown"}
@@ -30,6 +32,7 @@ def json_miner(string, data):
     return value
 
 
+@log_me
 def fetch_eq_hashes(equipment_data, character_data, no_of_items=12):
     root_str1 = "Response.characters.data."
     root_str2 = "Response.characterEquipment.data."
@@ -59,6 +62,7 @@ def fetch_eq_hashes(equipment_data, character_data, no_of_items=12):
     return item_hashes
 
 
+@log_me
 def fetch_char_info(character_data):
     root_str = "Response.characters.data."
 
@@ -94,6 +98,7 @@ def fetch_char_info(character_data):
     return char_dictionaries
 
 
+@log_me
 def fetch_last_time_played(character_data):
     root_str = "Response.characters.data."
 
@@ -129,6 +134,7 @@ def fetch_last_time_played(character_data):
     return char_dicts
 
 
+@log_me
 def fetch_play_time(character_data):
     root_str = "Response.characters.data."
 
@@ -165,6 +171,7 @@ def fetch_play_time(character_data):
     return char_dicts
 
 
+@log_me
 def fetch_vault_hashes(vault_info):
     root_str = "Response.profileInventory.data.items"
 

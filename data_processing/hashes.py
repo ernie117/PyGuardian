@@ -3,6 +3,7 @@ from operator import itemgetter
 from pathlib import Path
 
 from pyguardian.utils.constants import INVENTORY_JSON_FILE
+from pyguardian.utils.pyguardian_decorators import log_me
 
 
 class InventoryManifest:
@@ -22,6 +23,7 @@ class InventoryManifest:
 
         self._convert_hashes(self.hashes)
 
+    @log_me
     def _convert_hashes(self, hashes):
 
         for character in hashes:
@@ -39,6 +41,7 @@ class InventoryManifest:
                     character_list.append(str(hash_))
             self.final_hashes.append(character_list)
 
+    @log_me
     def get_full_item_details(self, sort_by=None):
 
         item_info = []
