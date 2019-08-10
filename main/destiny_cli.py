@@ -7,9 +7,11 @@ import sys
 from pyguardian.data_processing.get_manifest import GetManifest
 from pyguardian.main.pyguardian import PyGuardian
 from pyguardian.utils.check_manifest import CheckManifest
+from pyguardian.utils.pyguardian_decorators import log_me
 from pyguardian.utils.pyguardian_logging import PyGuardianLogger
 
 
+@log_me
 def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("guardian", type=str, nargs="?", action="store", default=None)
@@ -32,32 +34,32 @@ def create_parser():
     return parser
 
 
+@log_me
 def main(cli_args):
     parser = create_parser()
     args = parser.parse_args(cli_args)
 
-    log = PyGuardianLogger(name=os.path.basename(__file__))
     # disable logging as default
     logging.disable()
     if args.log:
         logging.disable(logging.NOTSET)
 
     if args.response == "stats":
-        print(PyGuardian.fetch_stats(args.guardian, args.platform, log))
+        print(PyGuardian.fetch_stats(args.guardian, args.platform))
     elif args.response == "eq":
-        print(PyGuardian.fetch_eq(args.guardian, args.platform, log))
+        print(PyGuardian.fetch_eq(args.guardian, args.platform))
     elif args.response == "vault":
-        print(PyGuardian.fetch_vault(args.guardian, args.platform, log))
+        print(PyGuardian.fetch_vault(args.guardian, args.platform))
     elif args.response == "vault-name":
-        print(PyGuardian.fetch_vault(args.guardian, args.platform, log, sort="name"))
+        print(PyGuardian.fetch_vault(args.guardian, args.platform, sort="name"))
     elif args.response == "vault-type":
-        print(PyGuardian.fetch_vault(args.guardian, args.platform, log, sort="type"))
+        print(PyGuardian.fetch_vault(args.guardian, args.platform, sort="type"))
     elif args.response == "vault-tier":
-        print(PyGuardian.fetch_vault(args.guardian, args.platform, log, sort="tier"))
+        print(PyGuardian.fetch_vault(args.guardian, args.platform, sort="tier"))
     elif args.response == "playtime":
-        print(PyGuardian.fetch_playtime(args.guardian, args.platform, log))
+        print(PyGuardian.fetch_playtime(args.guardian, args.platform))
     elif args.response == "last":
-        print(PyGuardian.fetch_last_time_played(args.guardian, args.platform, log))
+        print(PyGuardian.fetch_last_time_played(args.guardian, args.platform))
     elif args.download_manifest:
         check_manifest = CheckManifest()
         uri = check_manifest()

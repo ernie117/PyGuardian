@@ -19,7 +19,7 @@ def tabulate_me(pyguardian_static_method):
 
     @wraps(pyguardian_static_method)
     def wrapper(*args, **kwargs):
-        data = pyguardian_static_method(*args)
+        data = pyguardian_static_method(*args, **kwargs)
         if pyguardian_static_method.__name__ == "fetch_eq" or "fetch_vault":
             return tabulate(data, tablefmt="fancy_grid")
 
@@ -43,9 +43,11 @@ def log_me(json_func):
     def wrapper(*args, **kwargs):
         log = PyGuardianLogger(inspect.getfile(json_func).split('/')[-1])
         arg_types = inspect.getfullargspec(json_func)
-        log.info(f"{json_func.__name__}() started with args: {arg_types.args} at {time.time()}")
-        data = json_func(*args)
-        log.info(f"{json_func.__name__}() finished at {time.time()}")
+        log.info(f"{json_func.__name__}() started with args: {arg_types.args}")
+        start = time.time()
+        data = json_func(*args, **kwargs)
+        finish = time.time()
+        log.info(f"{json_func.__name__}() finished in {finish - start}")
         return data
 
     return wrapper

@@ -21,25 +21,21 @@ class PyGuardian:
 
     @staticmethod
     @tabulate_me
-    def fetch_stats(guardian, platform, logger):
+    def fetch_stats(guardian, platform):
 
-        logger.info(f"conducting prechecks for {guardian}")
         guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
-        logger.info(f"Requesting player data for {guardian}")
-        account.fetch_player(logger)
-        logger.info(f"Requesting stats data for {guardian}")
+        account.fetch_player()
         response = account.fetch_character_info()
-        logger.info(f"Processing stats data for {guardian}")
         return json_funcs.fetch_char_info(response)
 
     @staticmethod
     @tabulate_me
-    def fetch_eq(guardian, platform, logger):
+    def fetch_eq(guardian, platform):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
-        account.fetch_player(logger)
+        account.fetch_player()
         char_data = account.fetch_character_info()
         equip_data = account.fetch_character_equip_info()
         weapon_hashes = json_funcs.fetch_eq_hashes(equip_data, char_data)
@@ -48,11 +44,11 @@ class PyGuardian:
 
     @staticmethod
     @tabulate_me
-    def fetch_vault(guardian, platform, logger, sort=None):
+    def fetch_vault(guardian, platform, sort=None):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
-        account.fetch_player(logger)
+        account.fetch_player()
         vault_data = account.fetch_vault_info()
         vault_hashes = json_funcs.fetch_vault_hashes(vault_data)
         vault_items = InventoryManifest(vault_hashes)
@@ -60,21 +56,21 @@ class PyGuardian:
 
     @staticmethod
     @tabulate_me
-    def fetch_playtime(guardian, platform, logger):
+    def fetch_playtime(guardian, platform):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
-        account.fetch_player(logger)
+        account.fetch_player()
         char_data = account.fetch_character_info()
         return json_funcs.fetch_play_time(char_data)
 
     @staticmethod
     @tabulate_me
-    def fetch_last_time_played(guardian, platform, logger):
+    def fetch_last_time_played(guardian, platform):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
         account = Requester(guardian, platform)
-        account.fetch_player(logger)
+        account.fetch_player()
         char_data = account.fetch_character_info()
         return json_funcs.fetch_last_time_played(char_data)
 
