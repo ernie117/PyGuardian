@@ -37,7 +37,7 @@ def log_me(function_to_log):
 
     :param function_to_log: some function from
     this package
-    :return: various
+    :return: various functions
     """
 
     @wraps(function_to_log)
