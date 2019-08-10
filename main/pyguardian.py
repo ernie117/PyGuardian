@@ -21,6 +21,7 @@ class PyGuardian:
 
     @staticmethod
     @tabulate_me
+    @log_me
     def fetch_stats(guardian, platform):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
@@ -31,6 +32,7 @@ class PyGuardian:
 
     @staticmethod
     @tabulate_me
+    @log_me
     def fetch_eq(guardian, platform):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
@@ -44,6 +46,7 @@ class PyGuardian:
 
     @staticmethod
     @tabulate_me
+    @log_me
     def fetch_vault(guardian, platform, sort=None):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
@@ -56,6 +59,7 @@ class PyGuardian:
 
     @staticmethod
     @tabulate_me
+    @log_me
     def fetch_playtime(guardian, platform):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
@@ -66,6 +70,7 @@ class PyGuardian:
 
     @staticmethod
     @tabulate_me
+    @log_me
     def fetch_last_time_played(guardian, platform):
 
         guardian, platform = PyGuardian.prechecks(guardian, platform)
