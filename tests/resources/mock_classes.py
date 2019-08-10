@@ -141,3 +141,21 @@ class MockSuccessfulVaultDataRequest:
 
     def json(self):
         return self.response_data
+
+
+class MockCheckManifest:
+
+    def __call__(self):
+        return True
+
+
+class MockCheckManifestReturnNone:
+
+    def __call__(self):
+        return None
+
+
+class MockGetManifest:
+
+    def __call__(self, uri):
+        return True

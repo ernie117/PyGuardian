@@ -62,7 +62,7 @@ class GetManifest:
     def _unzip_and_rename():
         """
         Unzips the downloaded zipfile and extracts the SQL
-        database, returns the database object
+        database, returns the database path
         """
         with zipfile.ZipFile(constants.ZIP_FILE, "r") as f:
             manifest = f.namelist()[0]

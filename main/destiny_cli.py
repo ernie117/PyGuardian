@@ -59,8 +59,9 @@ def main(cli_args):
     elif args.download_manifest:
         check_manifest = CheckManifest()
         uri = check_manifest()
-        get_manifest = GetManifest()
-        get_manifest(uri)
+        if uri is not None:
+            get_manifest = GetManifest()
+            get_manifest(uri)
 
 
 if __name__ == "__main__":
