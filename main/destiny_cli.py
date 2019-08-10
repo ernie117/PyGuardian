@@ -6,10 +6,8 @@ import sys
 from pyguardian.data_processing.get_manifest import GetManifest
 from pyguardian.main.pyguardian import PyGuardian
 from pyguardian.utils.check_manifest import CheckManifest
-from pyguardian.utils.pyguardian_decorators import log_me
 
 
-@log_me
 def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("guardian", type=str, nargs="?", action="store", default=None)
@@ -32,13 +30,13 @@ def create_parser():
     return parser
 
 
-@log_me
 def main(cli_args):
     parser = create_parser()
     args = parser.parse_args(cli_args)
 
     # disable logging as default
     logging.disable()
+
     if args.log:
         logging.disable(logging.NOTSET)
 

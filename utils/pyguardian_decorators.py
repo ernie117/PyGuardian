@@ -1,4 +1,5 @@
 import inspect
+import logging
 import time
 from functools import wraps
 
@@ -43,13 +44,7 @@ def log_me(function_to_log):
     def wrapper(*args, **kwargs):
         log = PyGuardianLogger(inspect.getfile(function_to_log).split('/')[-1])
         arg_types = inspect.getfullargspec(function_to_log)
-
-        # To view the exact command line arguments in logs
-        if arg_types.args == ["cli_args"]:
-            log.info(f"{function_to_log.__name__}() started with args: {args[0]}")
-        else:
-            log.info(f"{function_to_log.__name__}() started with args: {arg_types.args}")
-
+        log.info(f"{function_to_log.__name__}() started with args: {arg_types.args}")
         start = time.time()
         data = function_to_log(*args, **kwargs)
         finish = time.time()
