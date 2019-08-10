@@ -1,3 +1,4 @@
+import logging
 from unittest import TestCase, mock
 from unittest.mock import patch
 
@@ -7,6 +8,9 @@ from pyguardian.tests.resources.mock_classes import MockManifestSuccessfulRespon
 from pyguardian.utils import constants
 from pyguardian.utils.check_manifest import CheckManifest
 from pyguardian.validation.pyguardian_exceptions import APIUnavailableException
+
+
+logging.disable()
 
 
 class TestCheckManifest(TestCase):

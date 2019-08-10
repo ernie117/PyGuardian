@@ -9,7 +9,7 @@ from pyguardian.validation.pyguardian_exceptions import APIUnavailableException
 
 
 class CheckManifest:
-    LOGGER = PyGuardianLogger()
+    LOGGER = PyGuardianLogger(os.path.basename(os.path.realpath(__file__)))
 
     def __call__(self):
         check_uri = self._get_manifest_uri()
