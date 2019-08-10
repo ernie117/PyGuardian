@@ -20,7 +20,7 @@ class TestCheckManifest(TestCase):
         mock_get.return_value = MockManifestSuccessfulResponse()
         response = mock_get.return_value.json()
 
-        self.assertEqual(self.check_manifest._get_manifest_url(),
+        self.assertEqual(self.check_manifest._get_manifest_uri(),
                          response["Response"]["mobileWorldContentPaths"]["en"])
 
     @patch("pyguardian.utils.check_manifest.requests.get")
@@ -28,7 +28,7 @@ class TestCheckManifest(TestCase):
         mock_get.return_value = MockManifestUnsuccessfulResponse()
 
         self.assertRaises(APIUnavailableException,
-                          self.check_manifest._get_manifest_url)
+                          self.check_manifest._get_manifest_uri)
 
     @patch("builtins.open", mock.mock_open(read_data="/unique-uri"), create=True)
     def test_check_manifest_url_returns_None_for_unchanged_URI(self):
