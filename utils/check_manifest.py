@@ -1,3 +1,5 @@
+import os
+
 import requests
 
 from pyguardian.utils import constants
@@ -45,7 +47,7 @@ class CheckManifest:
         :return: None if URI is the same, returns new URI
         otherwise
         """
-        try:
+        if os.path.isfile(constants.MANIFEST_CHECK_FILE):
             with open(constants.MANIFEST_CHECK_FILE, 'r+') as f:
                 check_url = f.read().strip()
 
@@ -55,8 +57,8 @@ class CheckManifest:
                 f.seek(0)
                 f.write(uri)
 
-        except FileNotFoundError:
-            CheckManifest.LOGGER.warn("Creating manifest url check-file")
+        else:
+            CheckManifest.LOGGER.warn("Creating manifest url check-file...")
             with open(constants.MANIFEST_CHECK_FILE, 'w') as f:
                 f.write(uri)
 

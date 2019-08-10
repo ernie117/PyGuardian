@@ -1,4 +1,5 @@
 import json
+import os
 
 
 class MockManifestSuccessfulResponse:
@@ -96,7 +97,8 @@ class MockSearchDestinyPlayerNoSuchPlayer:
 class MockSuccessfulCharacterDataRequest:
 
     def __init__(self):
-        with open("resources/dummy_character_data.json", "r") as f:
+        with open(os.path.dirname(os.path.realpath(__file__)) +
+                  "/dummy_character_data.json", "r") as f:
             self.response_data = json.load(f)
 
     def json(self):
@@ -122,7 +124,8 @@ class MockUnsuccessfulCharacterDataRequest:
 class MockSuccessfulCharacterEquipmentDataRequest:
 
     def __init__(self):
-        with open("resources/dummy_equip_data.json", "r") as f:
+        with open(os.path.dirname(os.path.realpath(__file__)) +
+                  "/dummy_equip_data.json", "r") as f:
             self.response_data = json.load(f)
 
     def json(self):
@@ -132,7 +135,8 @@ class MockSuccessfulCharacterEquipmentDataRequest:
 class MockSuccessfulVaultDataRequest:
 
     def __init__(self):
-        with open("resources/dummy_vault_data.json", "r") as f:
+        with open(os.path.dirname(os.path.realpath(__file__)) +
+                  "/dummy_vault_data.json", "r") as f:
             self.response_data = json.load(f)
 
     def json(self):

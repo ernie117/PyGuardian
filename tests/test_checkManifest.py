@@ -40,11 +40,11 @@ class TestCheckManifest(TestCase):
                          "/new-uri")
 
     @patch("builtins.open")
-    def test_check_manifest_url_raises_FileNotFoundError_if_no_file_present(self, mock_open):
-        mock_open.side_effect = FileNotFoundError("No such file")
-        self.assertRaises(FileNotFoundError,
-                          self.check_manifest._check_manifest_uri, "/uri")
-        mock_open.assert_called_once_with(constants.DEFAULT_LOGGING_PATH, 'a', encoding=None)
+    @patch("os.path.isfile")
+    def test_check_manifest_url_creates_new_file_if_no_check_file_found(self, mock_isfile, mock_open):
+        mock_isfile.return_value = False
+        self.check_manifest._check_manifest_uri("/uri")
+        mock_open.assert_called_with(constants.MANIFEST_CHECK_FILE, 'w')
 
     @patch("pyguardian.utils.check_manifest.requests.get")
     @patch("builtins.open", mock.mock_open(read_data="/made-up-URL"), create=True)

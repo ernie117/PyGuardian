@@ -44,6 +44,7 @@ def log_me(function_to_log):
         log = PyGuardianLogger(inspect.getfile(function_to_log).split('/')[-1])
         arg_types = inspect.getfullargspec(function_to_log)
 
+        # To view the exact command line arguments in logs
         if arg_types.args == ["cli_args"]:
             log.info(f"{function_to_log.__name__}() started with args: {args[0]}")
         else:
@@ -53,6 +54,7 @@ def log_me(function_to_log):
         data = function_to_log(*args, **kwargs)
         finish = time.time()
         log.info(f"{function_to_log.__name__}() finished in {finish - start}")
+
         return data
 
     return wrapper

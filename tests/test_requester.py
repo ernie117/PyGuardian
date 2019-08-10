@@ -1,5 +1,3 @@
-import logging
-import os
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -17,7 +15,6 @@ class TestRequester(TestCase):
     def setUpClass(cls):
         cls.test_gamertag = "ernie"
         cls.test_platform = "playstation"
-        cls.fake_logger = logging.getLogger(os.path.basename(__file__))
 
     def setUpRequester(self):
         return Requester(self.test_gamertag, self.test_platform)

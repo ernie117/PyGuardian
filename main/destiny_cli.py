@@ -1,14 +1,12 @@
 #!/usr/bin/env python3.7
 import argparse
 import logging
-import os
 import sys
 
 from pyguardian.data_processing.get_manifest import GetManifest
 from pyguardian.main.pyguardian import PyGuardian
 from pyguardian.utils.check_manifest import CheckManifest
 from pyguardian.utils.pyguardian_decorators import log_me
-from pyguardian.utils.pyguardian_logging import PyGuardianLogger
 
 
 @log_me
