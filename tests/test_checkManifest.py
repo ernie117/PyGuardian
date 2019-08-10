@@ -44,7 +44,7 @@ class TestCheckManifest(TestCase):
         mock_open.side_effect = FileNotFoundError("No such file")
         self.assertRaises(FileNotFoundError,
                           self.check_manifest._check_manifest_uri, "/uri")
-        mock_open.assert_called_with(constants.MANIFEST_CHECK_FILE, 'w')
+        mock_open.assert_called_once_with(constants.DEFAULT_LOGGING_PATH, 'a', encoding=None)
 
     @patch("pyguardian.utils.check_manifest.requests.get")
     @patch("builtins.open", mock.mock_open(read_data="/made-up-URL"), create=True)

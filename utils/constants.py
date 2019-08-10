@@ -21,3 +21,6 @@ MANIFEST_URL_ROOT = "https://www.bungie.net"
 
 # InventoryItemDefinition file path
 INVENTORY_JSON_FILE = "/.pyguardian/DDB-Files/DestinyInventoryItemDefinition.json"
+
+# Default logging file path
+DEFAULT_LOGGING_PATH = str(Path.home()) + "/.pyguardian/" + "default-log-file"

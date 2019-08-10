@@ -11,7 +11,7 @@ from pyguardian.data_processing.hashes import InventoryManifest
 from pyguardian.main.requester import Requester
 from pyguardian.utils import constants
 from pyguardian.utils.check_manifest import CheckManifest
-from pyguardian.utils.pyguardian_decorators import tabulate_me
+from pyguardian.utils.pyguardian_decorators import tabulate_me, log_me
 from pyguardian.validation.guardian_processor import GuardianProcessor
 from pyguardian.validation.input_validator import InputValidator
 from pyguardian.validation.pyguardian_exceptions import CannotCreateStorageDirectories
@@ -75,6 +75,7 @@ class PyGuardian:
         return json_funcs.fetch_last_time_played(char_data)
 
     @staticmethod
+    @log_me
     def prechecks(guardian, platform):
 
         get_manifest = GetManifest()

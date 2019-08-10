@@ -1,10 +1,13 @@
 import requests
 
 from pyguardian.utils import constants
+from pyguardian.utils.pyguardian_decorators import log_me
+from pyguardian.utils.pyguardian_logging import PyGuardianLogger
 from pyguardian.validation.pyguardian_exceptions import APIUnavailableException
 
 
 class CheckManifest:
+    LOGGER = PyGuardianLogger()
 
     def __call__(self):
         check_uri = self._get_manifest_url()
@@ -13,6 +16,7 @@ class CheckManifest:
         return return_uri
 
     @staticmethod
+    @log_me
     def _get_manifest_url():
         """
         Requests an URL for the manifest SQL data
@@ -21,11 +25,13 @@ class CheckManifest:
                          headers=constants.HEADERS).json()
 
         if r["ErrorStatus"] == "SystemDisabled":
+            CheckManifest.LOGGER.warn("Bungie API is down")
             raise APIUnavailableException("API is down!")
 
         return r["Response"]["mobileWorldContentPaths"]["en"]
 
     @staticmethod
+    @log_me
     def _check_manifest_uri(uri):
         try:
             with open(constants.MANIFEST_CHECK_FILE, 'r+') as f:

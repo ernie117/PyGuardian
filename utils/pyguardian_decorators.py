@@ -20,7 +20,7 @@ def tabulate_me(pyguardian_static_method):
     @wraps(pyguardian_static_method)
     def wrapper(*args, **kwargs):
         data = pyguardian_static_method(*args, **kwargs)
-        if pyguardian_static_method.__name__ == "fetch_eq" or "fetch_vault":
+        if pyguardian_static_method.__name__ in ("fetch_eq", "fetch_vault"):
             return tabulate(data, tablefmt="fancy_grid")
 
         return tabulate(data, headers="keys", tablefmt="fancy_grid")
@@ -28,26 +28,31 @@ def tabulate_me(pyguardian_static_method):
     return wrapper
 
 
-def log_me(json_func):
+def log_me(function_to_log):
     """
     Another gratuitous decorator function for
-    logging a json_funcs function's arguments
-    at the start and the end of the function
+    logging a function's arguments and timing
+    the function's execution
 
-    :param json_func: one of the functions from
-    the json_funcs module
-    :return: data processed from API data
+    :param function_to_log: some function from
+    this package
+    :return: various
     """
 
-    @wraps(json_func)
+    @wraps(function_to_log)
     def wrapper(*args, **kwargs):
-        log = PyGuardianLogger(inspect.getfile(json_func).split('/')[-1])
-        arg_types = inspect.getfullargspec(json_func)
-        log.info(f"{json_func.__name__}() started with args: {arg_types.args}")
+        log = PyGuardianLogger(inspect.getfile(function_to_log).split('/')[-1])
+        arg_types = inspect.getfullargspec(function_to_log)
+
+        if arg_types.args == ["cli_args"]:
+            log.info(f"{function_to_log.__name__}() started with args: {args[0]}")
+        else:
+            log.info(f"{function_to_log.__name__}() started with args: {arg_types.args}")
+
         start = time.time()
-        data = json_func(*args, **kwargs)
+        data = function_to_log(*args, **kwargs)
         finish = time.time()
-        log.info(f"{json_func.__name__}() finished in {finish - start}")
+        log.info(f"{function_to_log.__name__}() finished in {finish - start}")
         return data
 
     return wrapper
