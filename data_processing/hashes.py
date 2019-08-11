@@ -1,6 +1,5 @@
 import json
 from operator import itemgetter
-from pathlib import Path
 
 from pyguardian.utils.constants import INVENTORY_JSON_FILE
 from pyguardian.utils.pyguardian_decorators import log_me
@@ -12,14 +11,8 @@ class InventoryManifest:
         self.hashes = hash_lists
         self.final_hashes = []
 
-        if inventory_file == INVENTORY_JSON_FILE:
-            # Real use
-            with open(str(Path.home()) + inventory_file, "r") as f:
-                self.data = json.load(f)
-        else:
-            # Testing
-            with open(inventory_file, "r") as f:
-                self.data = json.load(f)
+        with open(inventory_file, "r") as f:
+            self.data = json.load(f)
 
         self._convert_hashes(self.hashes)
 

@@ -1,8 +1,10 @@
 from operator import itemgetter
 from unittest import TestCase
+from unittest.mock import patch
 
 from pyguardian.data_processing.hashes import InventoryManifest
 from pyguardian.tests.resources import test_constants
+from pyguardian.tests.resources.mock_classes import MockInventoryDefinition
 
 
 class TestInventoryManifest(TestCase):
@@ -66,3 +68,15 @@ class TestInventoryManifest(TestCase):
         self.assertEqual(returned_items, correctly_sorted_items)
         self.assertNotEqual(returned_items, incorrectly_sorted_items)
         self.assertNotEqual(returned_items, more_incorrectly_sorted_items)
+
+    @patch("builtins.open")
+    @patch("json.load", return_value=MockInventoryDefinition().json())
+    def test_get_full_item_details_alternate_json_structure(self, mock_load, mock_open):
+        manifest = InventoryManifest(self.test_eq_hashes)
+        returned_items = manifest.get_full_item_details()
+
+        self.assertTrue(returned_items)
+        self.assertIsInstance(returned_items, list)
+        self.assertIsInstance(returned_items[0], list)
+        self.assertIsInstance(returned_items[0][0], str)
+        self.assertIn(["Dummy name", "", ""], returned_items)
