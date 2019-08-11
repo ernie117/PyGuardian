@@ -34,99 +34,88 @@ class TestDestinyCLI(TestCase):
         self.assertTrue(args.platform)
         self.assertFalse(args.response)
 
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_stats")
     @patch("sys.stdout", new_callable=io.StringIO)
-    def test_destiny_cli_main_fetch_stats(self, mock_stdout, mock_pyguardian):
-        mock_pyguardian.return_value = FETCH_STATS_MOCK_RESP
+    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_stats", return_value=FETCH_STATS_MOCK_RESP)
+    def test_destiny_cli_main_fetch_stats(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "pc", "stats"])
 
         mock_pyguardian.assert_called_once()
         self.assertEqual(mock_stdout.getvalue().strip(),
                          "│ Character │ Power │ Mobility │  Resilience │ Recovery │  Level │")
 
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_eq")
     @patch("sys.stdout", new_callable=io.StringIO)
-    def test_destiny_cli_main_fetch_eq(self, mock_stdout, mock_pyguardian):
-        mock_pyguardian.return_value = FETCH_EQ_MOCK_RESP
+    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_eq", return_value=FETCH_EQ_MOCK_RESP)
+    def test_destiny_cli_main_fetch_eq(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "eq"])
 
         mock_pyguardian.assert_called_once()
         self.assertEqual(mock_stdout.getvalue().strip(),
                          "│ MALE │ EXO │ WARLOCK │")
 
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_vault")
     @patch("sys.stdout", new_callable=io.StringIO)
-    def test_destiny_cli_main_fetch_vault(self, mock_stdout, mock_pyguardian):
-        mock_pyguardian.return_value = FETCH_VAULT_MOCK_RESP
+    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_vault", return_value=FETCH_VAULT_MOCK_RESP)
+    def test_destiny_cli_main_fetch_vault(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "vault"])
 
         mock_pyguardian.assert_called_once()
         self.assertEqual(mock_stdout.getvalue().strip(),
                          "│ Item Name │ Item Type │ Item Tier │")
 
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_vault")
     @patch("sys.stdout", new_callable=io.StringIO)
-    def test_destiny_cli_main_fetch_vault_sort_name(self, mock_stdout, mock_pyguardian):
-        mock_pyguardian.return_value = FETCH_VAULT_MOCK_RESP
+    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_vault", return_value=FETCH_VAULT_MOCK_RESP)
+    def test_destiny_cli_main_fetch_vault_sort_name(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "vault-name"])
 
         mock_pyguardian.assert_called_once_with("ernie", "playstation", sort="name")
         self.assertEqual(mock_stdout.getvalue().strip(),
                          "│ Item Name │ Item Type │ Item Tier │")
 
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_vault")
     @patch("sys.stdout", new_callable=io.StringIO)
-    def test_destiny_cli_main_fetch_vault_sort_type(self, mock_stdout, mock_pyguardian):
-        mock_pyguardian.return_value = FETCH_VAULT_MOCK_RESP
+    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_vault", return_value=FETCH_VAULT_MOCK_RESP)
+    def test_destiny_cli_main_fetch_vault_sort_type(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "vault-type"])
 
         mock_pyguardian.assert_called_once_with("ernie", "playstation", sort="type")
         self.assertEqual(mock_stdout.getvalue().strip(),
                          "│ Item Name │ Item Type │ Item Tier │")
 
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_vault")
     @patch("sys.stdout", new_callable=io.StringIO)
-    def test_destiny_cli_main_fetch_vault_sort_tier(self, mock_stdout, mock_pyguardian):
-        mock_pyguardian.return_value = FETCH_VAULT_MOCK_RESP
+    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_vault", return_value=FETCH_VAULT_MOCK_RESP)
+    def test_destiny_cli_main_fetch_vault_sort_tier(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "vault-tier"])
 
         mock_pyguardian.assert_called_once_with("ernie", "playstation", sort="tier")
         self.assertEqual(mock_stdout.getvalue().strip(),
                          "│ Item Name │ Item Type │ Item Tier │")
 
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_playtime")
     @patch("sys.stdout", new_callable=io.StringIO)
-    def test_destiny_cli_main_fetch_playtime(self, mock_stdout, mock_pyguardian):
-        mock_pyguardian.return_value = FETCH_PLAYTIME_MOCK_RESP
+    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_playtime", return_value=FETCH_PLAYTIME_MOCK_RESP)
+    def test_destiny_cli_main_fetch_playtime(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "playtime"])
 
         mock_pyguardian.assert_called_once()
         self.assertEqual(mock_stdout.getvalue().strip(),
                          "│ Character │ Time │")
 
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_last_time_played")
     @patch("sys.stdout", new_callable=io.StringIO)
-    def test_destiny_cli_main_fetch_last_play_time(self, mock_stdout, mock_pyguardian):
-        mock_pyguardian.return_value = FETCH_LAST_PLAY_MOCK_RESP
+    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_last_time_played", return_value=FETCH_LAST_PLAY_MOCK_RESP)
+    def test_destiny_cli_main_fetch_last_play_time(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "last"])
 
         mock_pyguardian.assert_called_once()
         self.assertEqual(mock_stdout.getvalue().strip(),
                          "│ Character │ Datetime │ Session │")
 
-    @patch("pyguardian.main.destiny_cli.CheckManifest")
-    @patch("pyguardian.main.destiny_cli.GetManifest")
+    @patch("pyguardian.main.destiny_cli.CheckManifest", return_value=MockCheckManifest())
+    @patch("pyguardian.main.destiny_cli.GetManifest", return_value=MockGetManifest())
     def test_destiny_cli_download_manifest(self, mock_get_manifest, mock_check_manifest):
-        mock_check_manifest.return_value = MockCheckManifest()
-        mock_get_manifest.return_value = MockGetManifest()
         destiny_cli.main(["-d"])
         mock_check_manifest.assert_called_once()
         mock_get_manifest.assert_called_once()
 
-    @patch("pyguardian.main.destiny_cli.CheckManifest")
-    @patch("pyguardian.main.destiny_cli.GetManifest")
+    @patch("pyguardian.main.destiny_cli.CheckManifest", return_value=MockCheckManifestReturnNone())
+    @patch("pyguardian.main.destiny_cli.GetManifest", return_value=MockGetManifest())
     def test_destiny_cli_download_manifest_not_required(self, mock_get_manifest, mock_check_manifest):
-        mock_check_manifest.return_value = MockCheckManifestReturnNone()
         destiny_cli.main(["-d"])
         mock_check_manifest.assert_called_once()
         mock_get_manifest.assert_not_called()

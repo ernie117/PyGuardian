@@ -1,8 +1,6 @@
 import json
 import os
 
-from pyguardian.tests.resources import test_constants
-
 
 class BaseMockDataResponse:
 

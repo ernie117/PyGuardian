@@ -19,18 +19,13 @@ class TestCheckManifest(TestCase):
     def setUpClass(cls):
         cls.check_manifest = CheckManifest()
 
-    @patch("pyguardian.utils.check_manifest.requests.get")
+    @patch("pyguardian.utils.check_manifest.requests.get", return_value=MockManifestSuccessfulResponse())
     def test_get_manifest_url_returns_nested_URL(self, mock_get):
-        mock_get.return_value = MockManifestSuccessfulResponse()
-        response = mock_get.return_value.json()
-
         self.assertEqual(self.check_manifest._get_manifest_uri(),
-                         response["Response"]["mobileWorldContentPaths"]["en"])
+                         "/made-up-URL")
 
-    @patch("pyguardian.utils.check_manifest.requests.get")
+    @patch("pyguardian.utils.check_manifest.requests.get", return_value=MockManifestUnsuccessfulResponse())
     def test_get_manifest_url_API_down_raises_exception(self, mock_get):
-        mock_get.return_value = MockManifestUnsuccessfulResponse()
-
         self.assertRaises(APIUnavailableException,
                           self.check_manifest._get_manifest_uri)
 
@@ -44,22 +39,17 @@ class TestCheckManifest(TestCase):
                          "/new-uri")
 
     @patch("builtins.open")
-    @patch("os.path.isfile")
+    @patch("os.path.isfile", return_value=False)
     def test_check_manifest_url_creates_new_file_if_no_check_file_found(self, mock_isfile, mock_open):
-        mock_isfile.return_value = False
         self.check_manifest._check_manifest_uri("/uri")
         mock_open.assert_called_with(constants.MANIFEST_CHECK_FILE, 'w')
 
-    @patch("pyguardian.utils.check_manifest.requests.get")
     @patch("builtins.open", mock.mock_open(read_data="/made-up-URL"), create=True)
+    @patch("pyguardian.utils.check_manifest.requests.get", return_value=MockManifestSuccessfulResponse())
     def test_calling_check_manifest_whole_process_unchanged_URI(self, mock_get):
-        mock_get.return_value = MockManifestSuccessfulResponse()
-
         self.assertIsNone(self.check_manifest())
 
-    @patch("pyguardian.utils.check_manifest.requests.get")
     @patch("builtins.open", mock.mock_open(read_data="/made-up-URL"), create=True)
+    @patch("pyguardian.utils.check_manifest.requests.get", return_value=MockManifestSuccessfulResponseNewURI())
     def test_calling_check_manifest_whole_process_new_URI(self, mock_get):
-        mock_get.return_value = MockManifestSuccessfulResponseNewURI()
-
         self.assertEqual(self.check_manifest(), "/shiny-new-uri")

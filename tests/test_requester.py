@@ -19,10 +19,9 @@ class TestRequester(TestCase):
     def setUpRequester(self):
         return Requester(self.test_gamertag, self.test_platform)
 
-    @patch("pyguardian.main.requester.requests.get")
+    @patch("pyguardian.main.requester.requests.get", return_value=MockSearchDestinyPlayerSuccessfulResponse())
     def test_requester_successful_response(self, mock_get):
         requester = self.setUpRequester()
-        mock_get.return_value = MockSearchDestinyPlayerSuccessfulResponse()
         requester.fetch_player()
 
         self.assertEqual(requester.character_equip_url,
@@ -35,34 +34,31 @@ class TestRequester(TestCase):
                          "https://www.bungie.net/Platform/Destiny2/playstation/" +
                          "Profile/1234567890987654321/?components=102")
 
-    @patch("pyguardian.main.requester.requests.get")
+    @patch("pyguardian.main.requester.requests.get", return_value=MockSearchDestinyPlayerUnsuccessfulResponse())
     def test_requester_unsuccessful_response_raises_APIException(self, mock_get):
         requester = self.setUpRequester()
-        mock_get.return_value = MockSearchDestinyPlayerUnsuccessfulResponse()
 
         with self.assertRaises(APIException):
-            self.assertIsNone(requester.character_equip_url, None)
-            self.assertIsNone(requester.character_info_url, None)
-            self.assertIsNone(requester.vault_info_url, None)
+            self.assertIsNone(requester.character_equip_url)
+            self.assertIsNone(requester.character_info_url)
+            self.assertIsNone(requester.vault_info_url)
             requester.fetch_player()
 
-    @patch("pyguardian.main.requester.requests.get")
+    @patch("pyguardian.main.requester.requests.get", return_value=MockSearchDestinyPlayerNoSuchPlayer())
     def test_requester_no_such_player(self, mock_get):
         requester = self.setUpRequester()
-        mock_get.return_value = MockSearchDestinyPlayerNoSuchPlayer()
 
         with self.assertRaises(PlayerNotFoundException):
-            self.assertIsNone(requester.character_equip_url, None)
-            self.assertIsNone(requester.character_info_url, None)
-            self.assertIsNone(requester.vault_info_url, None)
+            self.assertIsNone(requester.character_equip_url)
+            self.assertIsNone(requester.character_info_url)
+            self.assertIsNone(requester.vault_info_url)
             requester.fetch_player()
 
-    @patch("pyguardian.main.requester.requests.get")
+    @patch("pyguardian.main.requester.requests.get", side_effect=(MockSearchDestinyPlayerSuccessfulResponse(),
+                                                                  MockSuccessfulCharacterDataRequest()))
     def test_requester_successful_character_data_request(self, mock_get):
         requester = self.setUpRequester()
-        mock_get.return_value = MockSearchDestinyPlayerSuccessfulResponse()
         requester.fetch_player()
-        mock_get.return_value = MockSuccessfulCharacterDataRequest()
         char_info = requester.fetch_character_info()
 
         self.assertTrue(char_info)
@@ -72,23 +68,21 @@ class TestRequester(TestCase):
         self.assertIsInstance(char_info["Response"]["characters"]["data"]["1234567890123456789"]["stats"],
                               dict)
 
-    @patch("pyguardian.main.requester.requests.get")
+    @patch("pyguardian.main.requester.requests.get", side_effect=(MockSearchDestinyPlayerSuccessfulResponse(),
+                                                                  MockUnsuccessfulCharacterDataRequest()))
     def test_requester_unsuccessful_character_data_request(self, mock_get):
         requester = self.setUpRequester()
-        mock_get.return_value = MockSearchDestinyPlayerSuccessfulResponse()
         requester.fetch_player()
-        mock_get.return_value = MockUnsuccessfulCharacterDataRequest()
         char_info = requester.fetch_character_info()
 
         self.assertIsInstance(char_info, dict)
         self.assertFalse(char_info["Response"])
 
-    @patch("pyguardian.main.requester.requests.get")
+    @patch("pyguardian.main.requester.requests.get", side_effect=(MockSearchDestinyPlayerSuccessfulResponse(),
+                                                                  MockSuccessfulCharacterEquipmentDataRequest()))
     def test_requester_successful_character_equipment_data_request(self, mock_get):
         requester = self.setUpRequester()
-        mock_get.return_value = MockSearchDestinyPlayerSuccessfulResponse()
         requester.fetch_player()
-        mock_get.return_value = MockSuccessfulCharacterEquipmentDataRequest()
         char_equip_info = requester.fetch_character_equip_info()
 
         self.assertTrue(char_equip_info)
@@ -102,12 +96,11 @@ class TestRequester(TestCase):
             2712244741
         )
 
-    @patch("pyguardian.main.requester.requests.get")
+    @patch("pyguardian.main.requester.requests.get", side_effect=(MockSearchDestinyPlayerSuccessfulResponse(),
+                                                                  MockSuccessfulVaultDataRequest()))
     def test_requester_successful_vault_data_request(self, mock_get):
         requester = self.setUpRequester()
-        mock_get.return_value = MockSearchDestinyPlayerSuccessfulResponse()
         requester.fetch_player()
-        mock_get.return_value = MockSuccessfulVaultDataRequest()
         vault_info = requester.fetch_vault_info()
 
         self.assertTrue(vault_info)
