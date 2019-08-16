@@ -35,7 +35,7 @@ class TestDestinyCLI(TestCase):
         self.assertFalse(args.response)
 
     @patch("sys.stdout", new_callable=io.StringIO)
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_stats", return_value=FETCH_STATS_MOCK_RESP)
+    @patch("pyguardian.main.destiny_cli.pyguardian.fetch_stats", return_value=FETCH_STATS_MOCK_RESP)
     def test_destiny_cli_main_fetch_stats(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "pc", "stats"])
 
@@ -44,7 +44,7 @@ class TestDestinyCLI(TestCase):
                          "│ Character │ Power │ Mobility │  Resilience │ Recovery │  Level │")
 
     @patch("sys.stdout", new_callable=io.StringIO)
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_eq", return_value=FETCH_EQ_MOCK_RESP)
+    @patch("pyguardian.main.destiny_cli.pyguardian.fetch_eq", return_value=FETCH_EQ_MOCK_RESP)
     def test_destiny_cli_main_fetch_eq(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "eq"])
 
@@ -53,7 +53,7 @@ class TestDestinyCLI(TestCase):
                          "│ MALE │ EXO │ WARLOCK │")
 
     @patch("sys.stdout", new_callable=io.StringIO)
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_vault", return_value=FETCH_VAULT_MOCK_RESP)
+    @patch("pyguardian.main.destiny_cli.pyguardian.fetch_vault", return_value=FETCH_VAULT_MOCK_RESP)
     def test_destiny_cli_main_fetch_vault(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "vault"])
 
@@ -62,7 +62,7 @@ class TestDestinyCLI(TestCase):
                          "│ Item Name │ Item Type │ Item Tier │")
 
     @patch("sys.stdout", new_callable=io.StringIO)
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_vault", return_value=FETCH_VAULT_MOCK_RESP)
+    @patch("pyguardian.main.destiny_cli.pyguardian.fetch_vault", return_value=FETCH_VAULT_MOCK_RESP)
     def test_destiny_cli_main_fetch_vault_sort_name(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "vault-name"])
 
@@ -71,7 +71,7 @@ class TestDestinyCLI(TestCase):
                          "│ Item Name │ Item Type │ Item Tier │")
 
     @patch("sys.stdout", new_callable=io.StringIO)
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_vault", return_value=FETCH_VAULT_MOCK_RESP)
+    @patch("pyguardian.main.destiny_cli.pyguardian.fetch_vault", return_value=FETCH_VAULT_MOCK_RESP)
     def test_destiny_cli_main_fetch_vault_sort_type(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "vault-type"])
 
@@ -80,7 +80,7 @@ class TestDestinyCLI(TestCase):
                          "│ Item Name │ Item Type │ Item Tier │")
 
     @patch("sys.stdout", new_callable=io.StringIO)
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_vault", return_value=FETCH_VAULT_MOCK_RESP)
+    @patch("pyguardian.main.destiny_cli.pyguardian.fetch_vault", return_value=FETCH_VAULT_MOCK_RESP)
     def test_destiny_cli_main_fetch_vault_sort_tier(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "vault-tier"])
 
@@ -89,7 +89,7 @@ class TestDestinyCLI(TestCase):
                          "│ Item Name │ Item Type │ Item Tier │")
 
     @patch("sys.stdout", new_callable=io.StringIO)
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_playtime", return_value=FETCH_PLAYTIME_MOCK_RESP)
+    @patch("pyguardian.main.destiny_cli.pyguardian.fetch_playtime", return_value=FETCH_PLAYTIME_MOCK_RESP)
     def test_destiny_cli_main_fetch_playtime(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "playtime"])
 
@@ -98,7 +98,7 @@ class TestDestinyCLI(TestCase):
                          "│ Character │ Time │")
 
     @patch("sys.stdout", new_callable=io.StringIO)
-    @patch("pyguardian.main.destiny_cli.PyGuardian.fetch_last_time_played", return_value=FETCH_LAST_PLAY_MOCK_RESP)
+    @patch("pyguardian.main.destiny_cli.pyguardian.fetch_last_time_played", return_value=FETCH_LAST_PLAY_MOCK_RESP)
     def test_destiny_cli_main_fetch_last_play_time(self, mock_pyguardian, mock_stdout):
         destiny_cli.main(["ernie", "playstation", "last"])
 

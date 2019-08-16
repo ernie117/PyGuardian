@@ -14,7 +14,7 @@ def tabulate_me(pyguardian_static_method):
     data returned by the decorated function
 
     :param pyguardian_static_method: only used on
-    PyGuardian static methods... So far
+    pyguardian static methods... So far
     :return: tabulated data
     """
 
