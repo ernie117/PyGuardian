@@ -34,11 +34,8 @@ def main(cli_args):
     parser = create_parser()
     args = parser.parse_args(cli_args)
 
-    # disable logging as default
-    logging.disable()
-
-    if args.log:
-        logging.disable(logging.NOTSET)
+    # disable logging by default
+    logging.disable() if not args.log else logging.disable(logging.NOTSET)
 
     if args.response == "stats":
         print(PyGuardian.fetch_stats(args.guardian, args.platform))

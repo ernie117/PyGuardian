@@ -19,11 +19,7 @@ class InputValidator:
         if player[0].isdigit() and platform.lower().strip() in "xboxplaystation":
             raise PlayerException("Invalid PSN/Xbox ID")
 
-        for char in InputValidator.RESERVED_CHARS:
-            if char in player:
-                raise PlayerException(f"Disallowed character '{char}'")
-
-        for char in InputValidator.UNSAFE_CHARS:
+        for char in InputValidator.UNSAFE_CHARS + InputValidator.RESERVED_CHARS:
             if char in player:
                 raise PlayerException(f"Disallowed character '{char}'")
 

@@ -9,6 +9,8 @@ from time import sleep
 import requests
 
 from pyguardian.utils import constants
+from pyguardian.utils.pyguardian_decorators import log_me
+from pyguardian.utils.pyguardian_logging import PyGuardianLogger
 
 
 class GetManifest:
@@ -20,6 +22,7 @@ class GetManifest:
         self._write_tables(manifest)
 
     @staticmethod
+    @log_me
     def _get_manifest(manifest_url):
         """
         Requests the manifest URL and downloads the zipfile
@@ -59,6 +62,7 @@ class GetManifest:
                 print(f"\r{dl_str}{file_size}KB/{file_size}KB {progress_bar}")
 
     @staticmethod
+    @log_me
     def _unzip_and_rename():
         """
         Unzips the downloaded zipfile and extracts the SQL
@@ -76,12 +80,14 @@ class GetManifest:
         return constants.MANIFEST_DIR + "/" + manifest
 
     @staticmethod
+    @log_me
     def _write_tables(sql):
         """
         Opens the SQL database, gets the table names and
         uses them to query all the tables within, converts
         them to JSON and writes them all to individual files
         """
+        log = PyGuardianLogger()
         conn = sqlite3.connect(sql)
 
         with conn:
@@ -106,7 +112,7 @@ class GetManifest:
                     with open(constants.JSON_DIR + "/" + entry + ".json", "w") as f:
                         json.dump(table_dict, f, indent=4)
 
-                    print("- WRITING >> " + entry + ".json")
+                    log.info("- WRITING >> " + entry + ".json")
 
             else:
                 print("Finished \u263A")
