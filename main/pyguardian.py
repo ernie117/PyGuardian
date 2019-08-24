@@ -2,8 +2,9 @@
 This façade class holds a collection of methods that offload all
 the heavy lifting of requesting and processing to other modules
 """
-import os
 import json
+import logging
+import os
 from pathlib import Path
 
 from pyguardian.data_processing import json_funcs
@@ -20,13 +21,10 @@ from pyguardian.validation.pyguardian_exceptions import CannotCreateStorageDirec
 
 class PyGuardian:
 
-    def __init__(self):
-        self.api_key = None
-        self.gamertag = None
-        self.platform = None
-        self.character_json = None
-        self.equipment_json = None
-        self.vault_json = None
+    logging.disable()
+    CHARACTER_JSON = None
+    EQUIPMENT_JSON = None
+    VAULT_JSON = None
 
     @staticmethod
     @tabulate_me
@@ -114,58 +112,64 @@ class PyGuardian:
         return GuardianProcessor.process(guardian, platform)
 
     def api_key(self, api_key):
-        self.api_key = api_key
+        self.X_API_KEY = api_key
         return self
 
     def gamertag(self, gamertag):
-        self.gamertag = gamertag
+        self.PLAYER = GuardianProcessor.process_guardian(gamertag)
         return self
 
     def platform(self, platform):
-        self.platform = platform
+        self.PLATFORM = GuardianProcessor.process_platform(platform)
         return self
 
     def get_character_json(self):
-        self.character_json = Requester(self.gamertag, self.platform) \
-                                        .fetch_character_info()
+        key = os.getenv("BUNGIE_API") if os.getenv("BUNGIE_API") is not None else self.X_API_KEY
+        self.CHARACTER_JSON = Requester(self.PLAYER, self.PLATFORM) \
+            .fetch_character_info(headers={"X-API-Key": key})
         return self
 
     def get_vault_json(self):
-        self.vault_json = Requester(self.gamertag, self.platform) \
-                                    .fetch_vault_info()
+        key = os.getenv("BUNGIE_API") if os.getenv("BUNGIE_API") is not None else self.X_API_KEY
+        self.VAULT_JSON = Requester(self.PLAYER, self.PLATFORM) \
+            .fetch_vault_info(headers={"X-API-Key": key})
         return self
 
     def get_equipment_json(self):
-        self.equipment_json = Requester(self.gamertag, self.platform) \
-                                        .fetch_character_equip_info()
+        key = os.getenv("BUNGIE_API") if os.getenv("BUNGIE_API") is not None else self.X_API_KEY
+        self.EQUIPMENT_JSON = Requester(self.PLAYER, self.PLATFORM) \
+            .fetch_character_equip_info(headers={"X-API-Key": key})
         return self
 
     def print_char_info(self):
-        if self.character_json:
-            print(json.dumps(json.loads(self.character_json), indent=4))
+        if self.CHARACTER_JSON:
+            print(json.dumps(self.CHARACTER_JSON, indent=4))
         else:
             print("No character info json")
 
     def print_vault_info(self):
-        if self.character_json:
-            print(self.vault_json)
+        if self.VAULT_JSON:
+            print(json.dumps(self.VAULT_JSON, indent=4))
+        else:
+            print("No vault info json")
 
     def print_eq_info(self):
-        if self.character_json:
-            print(self.equipment_json)
+        if self.EQUIPMENT_JSON:
+            print(json.dumps(self.EQUIPMENT_JSON, indent=4))
+        else:
+            print("No equipment info json")
 
     def write_char_json(self):
-        if self.character_json:
+        if self.CHARACTER_JSON:
             pass
 
     def write_vault_json(self):
-        if self.vault_json:
+        if self.VAULT_JSON:
             pass
 
     def write_eq_json(self):
-        if self.equipment_json:
+        if self.EQUIPMENT_JSON:
             pass
 
     def write_all(self):
         pass
-

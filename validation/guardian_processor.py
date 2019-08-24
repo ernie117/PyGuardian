@@ -9,3 +9,10 @@ class GuardianProcessor:
         return (guardian.strip().replace("#", "%23"),
                 GuardianProcessor.PLATFORMS[platform.strip().lower()])
 
+    @staticmethod
+    def process_guardian(guardian):
+        return guardian.strip().replace("#", "%23")
+
+    @staticmethod
+    def process_platform(platform):
+        return GuardianProcessor.PLATFORMS[platform.strip().lower()]

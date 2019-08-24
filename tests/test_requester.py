@@ -1,3 +1,4 @@
+import logging
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -13,6 +14,7 @@ class TestRequester(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        logging.disable()
         cls.test_gamertag = "ernie"
         cls.test_platform = "playstation"
 
@@ -22,7 +24,6 @@ class TestRequester(TestCase):
     @patch("pyguardian.main.requester.requests.get", return_value=MockSearchDestinyPlayerSuccessfulResponse())
     def test_requester_successful_response(self, mock_get):
         requester = self.setUpRequester()
-        requester.fetch_player()
 
         self.assertEqual(requester.character_equip_url,
                          "https://www.bungie.net/Platform/Destiny2/playstation/" +
@@ -36,29 +37,18 @@ class TestRequester(TestCase):
 
     @patch("pyguardian.main.requester.requests.get", return_value=MockSearchDestinyPlayerUnsuccessfulResponse())
     def test_requester_unsuccessful_response_raises_APIException(self, mock_get):
-        requester = self.setUpRequester()
-
         with self.assertRaises(APIException):
-            self.assertIsNone(requester.character_equip_url)
-            self.assertIsNone(requester.character_info_url)
-            self.assertIsNone(requester.vault_info_url)
-            requester.fetch_player()
+            self.setUpRequester()
 
     @patch("pyguardian.main.requester.requests.get", return_value=MockSearchDestinyPlayerNoSuchPlayer())
     def test_requester_no_such_player(self, mock_get):
-        requester = self.setUpRequester()
-
         with self.assertRaises(PlayerNotFoundException):
-            self.assertIsNone(requester.character_equip_url)
-            self.assertIsNone(requester.character_info_url)
-            self.assertIsNone(requester.vault_info_url)
-            requester.fetch_player()
+            self.setUpRequester()
 
     @patch("pyguardian.main.requester.requests.get", side_effect=(MockSearchDestinyPlayerSuccessfulResponse(),
                                                                   MockSuccessfulCharacterDataRequest()))
     def test_requester_successful_character_data_request(self, mock_get):
         requester = self.setUpRequester()
-        requester.fetch_player()
         char_info = requester.fetch_character_info()
 
         self.assertTrue(char_info)
@@ -72,7 +62,6 @@ class TestRequester(TestCase):
                                                                   MockUnsuccessfulCharacterDataRequest()))
     def test_requester_unsuccessful_character_data_request(self, mock_get):
         requester = self.setUpRequester()
-        requester.fetch_player()
         char_info = requester.fetch_character_info()
 
         self.assertIsInstance(char_info, dict)
@@ -82,7 +71,6 @@ class TestRequester(TestCase):
                                                                   MockSuccessfulCharacterEquipmentDataRequest()))
     def test_requester_successful_character_equipment_data_request(self, mock_get):
         requester = self.setUpRequester()
-        requester.fetch_player()
         char_equip_info = requester.fetch_character_equip_info()
 
         self.assertTrue(char_equip_info)
@@ -100,7 +88,6 @@ class TestRequester(TestCase):
                                                                   MockSuccessfulVaultDataRequest()))
     def test_requester_successful_vault_data_request(self, mock_get):
         requester = self.setUpRequester()
-        requester.fetch_player()
         vault_info = requester.fetch_vault_info()
 
         self.assertTrue(vault_info)

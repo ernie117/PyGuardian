@@ -18,10 +18,10 @@ class Requester:
         self.vault_info_url = None
         self.character_equip_url = None
         self.mem_id = None
-        self._fetch_player()
+        self.fetch_player()
 
     @log_me
-    def _fetch_player(self):
+    def fetch_player(self):
 
         r = requests.get(constants.BASE
                          + "SearchDestinyPlayer/"
@@ -53,16 +53,22 @@ class Requester:
         self.character_equip_url = urls[2]
 
     @log_me
-    def fetch_character_info(self):
+    def fetch_character_info(self, headers=None):
 
-        return requests.get(self.character_info_url, headers=self.HEADERS).json()
-
-    @log_me
-    def fetch_vault_info(self):
-
-        return requests.get(self.vault_info_url, headers=self.HEADERS).json()
+        if headers is None:
+            headers = self.HEADERS
+        return requests.get(self.character_info_url, headers=headers).json()
 
     @log_me
-    def fetch_character_equip_info(self):
+    def fetch_vault_info(self, headers=None):
 
-        return requests.get(self.character_equip_url, headers=self.HEADERS).json()
+        if headers is None:
+            headers = self.HEADERS
+        return requests.get(self.vault_info_url, headers=headers).json()
+
+    @log_me
+    def fetch_character_equip_info(self, headers=None):
+
+        if headers is None:
+            headers = self.HEADERS
+        return requests.get(self.character_equip_url, headers=headers).json()
