@@ -18,9 +18,10 @@ class Requester:
         self.vault_info_url = None
         self.character_equip_url = None
         self.mem_id = None
+        self._fetch_player()
 
     @log_me
-    def fetch_player(self):
+    def _fetch_player(self):
 
         r = requests.get(constants.BASE
                          + "SearchDestinyPlayer/"
