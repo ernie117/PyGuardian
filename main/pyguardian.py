@@ -158,19 +158,19 @@ class PyGuardian:
     def get_equipment_json(self):
         return self.EQUIPMENT_JSON
 
-    def print_char_info(self):
+    def print_char_json(self):
         if self.CHARACTER_JSON:
             print(json.dumps(self.CHARACTER_JSON, indent=4))
         else:
             print("No character info json")
 
-    def print_vault_info(self):
+    def print_vault_json(self):
         if self.VAULT_JSON:
             print(json.dumps(self.VAULT_JSON, indent=4))
         else:
             print("No vault info json")
 
-    def print_eq_info(self):
+    def print_eq_json(self):
         if self.EQUIPMENT_JSON:
             print(json.dumps(self.EQUIPMENT_JSON, indent=4))
         else:
