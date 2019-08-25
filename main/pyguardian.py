@@ -23,9 +23,6 @@ from pyguardian.validation.pyguardian_exceptions import CannotCreateStorageDirec
 class PyGuardian:
 
     logging.disable()
-    CHARACTER_JSON = None
-    EQUIPMENT_JSON = None
-    VAULT_JSON = None
 
     @staticmethod
     @tabulate_me
@@ -114,6 +111,14 @@ class PyGuardian:
 
         return GuardianProcessor.process(guardian, platform)
 
+    def __init__(self):
+        self.X_API_KEY = None
+        self.PLAYER = None
+        self.PLATFORM = None
+        self.CHARACTER_JSON = None
+        self.VAULT_JSON = None
+        self.EQUIPMENT_JSON = None
+
     def api_key(self, api_key):
         self.X_API_KEY = api_key
         return self
@@ -126,23 +131,32 @@ class PyGuardian:
         self.PLATFORM = GuardianProcessor.process_platform(platform)
         return self
 
-    def get_character_json(self):
+    def fetch_character_json(self):
         key = os.getenv("BUNGIE_API") if os.getenv("BUNGIE_API") is not None else self.X_API_KEY
         self.CHARACTER_JSON = Requester(self.PLAYER, self.PLATFORM) \
-            .fetch_character_info(headers={"X-API-Key": key})
+            .fetch_character_info(_headers={"X-API-Key": key})
         return self
 
-    def get_vault_json(self):
+    def fetch_vault_json(self):
         key = os.getenv("BUNGIE_API") if os.getenv("BUNGIE_API") is not None else self.X_API_KEY
         self.VAULT_JSON = Requester(self.PLAYER, self.PLATFORM) \
-            .fetch_vault_info(headers={"X-API-Key": key})
+            .fetch_vault_info(_headers={"X-API-Key": key})
         return self
 
-    def get_equipment_json(self):
+    def fetch_equipment_json(self):
         key = os.getenv("BUNGIE_API") if os.getenv("BUNGIE_API") is not None else self.X_API_KEY
         self.EQUIPMENT_JSON = Requester(self.PLAYER, self.PLATFORM) \
-            .fetch_character_equip_info(headers={"X-API-Key": key})
+            .fetch_character_equip_info(_headers={"X-API-Key": key})
         return self
+
+    def get_character_json(self):
+        return self.CHARACTER_JSON
+
+    def get_vault_json(self):
+        return self.VAULT_JSON
+
+    def get_equipment_json(self):
+        return self.EQUIPMENT_JSON
 
     def print_char_info(self):
         if self.CHARACTER_JSON:

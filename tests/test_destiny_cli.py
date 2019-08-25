@@ -123,7 +123,7 @@ class TestDestinyCLI(TestCase):
     @patch("pyguardian.main.destiny_cli.logging.disable")
     def test_destiny_cli_logging_re_enabled_if_logging_argument_passed(self, mock_log):
         destiny_cli.main(["--log"])
-        mock_log.assert_has_calls([mock.call(), mock.call(0)])
+        mock_log.assert_has_calls([mock.call(0)])
 
     @patch("pyguardian.main.destiny_cli.logging.disable")
     def test_destiny_cli_logging_not_enabled_if_logging_argument_not_passed(self, mock_log):
