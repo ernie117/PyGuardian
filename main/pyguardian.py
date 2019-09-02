@@ -96,6 +96,9 @@ class PyGuardian:
             if not os.path.isdir(constants.JSON_DIR):
                 log.info("Creating JSON directory")
                 os.makedirs(constants.JSON_DIR)
+            if not os.path.isdir(constants.CHARACTER_JSON_DIR):
+                log.info("Creating Character JSON directory")
+                os.makedirs(constants.CHARACTER_JSON_DIR)
             if not os.listdir(str(Path.home()) + "/.pyguardian/DDB-Files"):
                 log.info("Manifest files not available, requesting...")
                 get_manifest(check_manifest())
@@ -132,28 +135,33 @@ class PyGuardian:
         self.PLATFORM = GuardianProcessor.process_platform(platform)
         return self
 
-    def fetch_character_json(self):
+    def fetch_json(self, arbitrary_request):
+        requester = Requester(self.PLAYER, self.PLATFORM)
+        request_dict = {
+            "character": requester.fetch_character_info,
+            "vault": requester.fetch_vault_info,
+            "eq": requester.fetch_character_equip_info,
+            "stats": requester.fetch_historical_stats
+        }
+
         key = os.getenv("BUNGIE_API") if os.getenv("BUNGIE_API") is not None else self.X_API_KEY
-        self.CHARACTER_JSON = Requester(self.PLAYER, self.PLATFORM) \
-            .fetch_character_info(_headers={"X-API-Key": key})
+
+        return request_dict[arbitrary_request](_headers={"X-API-Key": key})
+
+    def fetch_character_json(self):
+        self.CHARACTER_JSON = self.fetch_json("character")
         return self
 
     def fetch_vault_json(self):
-        key = os.getenv("BUNGIE_API") if os.getenv("BUNGIE_API") is not None else self.X_API_KEY
-        self.VAULT_JSON = Requester(self.PLAYER, self.PLATFORM) \
-            .fetch_vault_info(_headers={"X-API-Key": key})
+        self.VAULT_JSON = self.fetch_json("vault")
         return self
 
     def fetch_equipment_json(self):
-        key = os.getenv("BUNGIE_API") if os.getenv("BUNGIE_API") is not None else self.X_API_KEY
-        self.EQUIPMENT_JSON = Requester(self.PLAYER, self.PLATFORM) \
-            .fetch_character_equip_info(_headers={"X-API-Key": key})
+        self.EQUIPMENT_JSON = self.fetch_json("eq")
         return self
 
     def fetch_historical_stats(self):
-        key = os.getenv("BUNGIE_API") if os.getenv("BUNGIE_API") is not None else self.X_API_KEY
-        self.HISTORICAL_STATS = Requester(self.PLAYER, self.PLATFORM) \
-            .fetch_historical_stats(_headers={"X-API-Key": key})
+        self.HISTORICAL_STATS = self.fetch_json("stats")
         return self
 
     def get_character_json(self):
@@ -174,11 +182,15 @@ class PyGuardian:
         else:
             print("No character info json")
 
+        return self
+
     def print_vault_json(self):
         if self.VAULT_JSON:
             print(json.dumps(self.VAULT_JSON, indent=4))
         else:
             print("No vault info json")
+
+        return self
 
     def print_eq_json(self):
         if self.EQUIPMENT_JSON:
@@ -186,27 +198,40 @@ class PyGuardian:
         else:
             print("No equipment info json")
 
+        return self
+
     def print_stats_json(self):
         if self.HISTORICAL_STATS:
             print(json.dumps(self.HISTORICAL_STATS, indent=4))
         else:
             print("No equipment info json")
 
-    def write_char_json(self):
+        return self
+
+    def write_char_json(self, write_dir="."):
         if self.CHARACTER_JSON:
-            pass
+            filename = write_dir + "/" + self.PLAYER + "-character-info.json"
+            with open(filename, "w") as f:
+                print("Writing character JSON to file")
+                json.dump(self.CHARACTER_JSON, f, indent=4)
 
-    def write_vault_json(self):
+    def write_vault_json(self, write_dir="."):
         if self.VAULT_JSON:
-            pass
+            filename = write_dir + "/" + self.PLAYER + "-vault-info.json"
+            with open(filename, "w") as f:
+                print("Writing vault JSON to file")
+                json.dump(self.VAULT_JSON, f, indent=4)
 
-    def write_eq_json(self):
+    def write_eq_json(self, write_dir="."):
         if self.EQUIPMENT_JSON:
-            pass
+            filename = write_dir + "/" + self.PLAYER + "-equipment-info.json"
+            with open(filename, "w") as f:
+                print("Writing equipment JSON to file")
+                json.dump(self.EQUIPMENT_JSON, f, indent=4)
 
-    def write_stats_json(self):
+    def write_stats_json(self, write_dir="."):
         if self.HISTORICAL_STATS:
-            pass
-
-    def write_all(self):
-        pass
+            filename = write_dir + "/" + self.PLAYER + "-historical-info.json"
+            with open(filename, "w") as f:
+                print("Writing historical stats JSON to file")
+                json.dump(self.HISTORICAL_STATS, f, indent=4)

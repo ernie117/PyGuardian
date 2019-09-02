@@ -14,6 +14,7 @@ MANIFEST_URL = BASE + "Manifest/"
 # Directories needed for downloading and writing JSON
 DATA_DIR = str(Path.home()) + "/.pyguardian"
 JSON_DIR = DATA_DIR + "/DDB-Files"
+CHARACTER_JSON_DIR = DATA_DIR + "/character-json"
 MANIFEST_DIR = DATA_DIR + "/Destiny_Manifest"
 MANIFEST_CHECK_FILE = DATA_DIR + "/Manifest-url-check.txt"
 ZIP_FILE = MANIFEST_DIR + "/Destiny2Manifest.zip"
