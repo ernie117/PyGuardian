@@ -18,6 +18,7 @@ class Requester:
         self.character_info_url = None
         self.vault_info_url = None
         self.character_equip_url = None
+        self.historical_stats_url = None
         self.mem_id = None
         self._fetch_player()
 
@@ -49,9 +50,18 @@ class Requester:
                 + "/?components="
                 + component for component in constants.COMPONENTS]
 
+        historical_stats_url = (
+                constants.BASE
+                + self.platform
+                + "/Account/"
+                + self.mem_id
+                + "/Stats/"
+        )
+
         self.character_info_url = urls[0]
         self.vault_info_url = urls[1]
         self.character_equip_url = urls[2]
+        self.historical_stats_url = historical_stats_url
 
     @log_me
     def fetch_character_info(self, _headers=None):
@@ -70,3 +80,9 @@ class Requester:
 
         actual_headers = self.HEADERS if _headers is None else _headers
         return requests.get(self.character_equip_url, headers=actual_headers).json()
+
+    @log_me
+    def fetch_historical_stats(self, _headers=None):
+
+        actual_headers = self.HEADERS if _headers is None else _headers
+        return requests.get(self.historical_stats_url, headers=actual_headers).json()

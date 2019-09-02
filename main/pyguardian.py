@@ -118,6 +118,7 @@ class PyGuardian:
         self.CHARACTER_JSON = None
         self.VAULT_JSON = None
         self.EQUIPMENT_JSON = None
+        self.HISTORICAL_STATS = None
 
     def api_key(self, api_key):
         self.X_API_KEY = api_key
@@ -149,6 +150,12 @@ class PyGuardian:
             .fetch_character_equip_info(_headers={"X-API-Key": key})
         return self
 
+    def fetch_historical_stats(self):
+        key = os.getenv("BUNGIE_API") if os.getenv("BUNGIE_API") is not None else self.X_API_KEY
+        self.HISTORICAL_STATS = Requester(self.PLAYER, self.PLATFORM) \
+            .fetch_historical_stats(_headers={"X-API-Key": key})
+        return self
+
     def get_character_json(self):
         return self.CHARACTER_JSON
 
@@ -157,6 +164,9 @@ class PyGuardian:
 
     def get_equipment_json(self):
         return self.EQUIPMENT_JSON
+
+    def get_historical_stats_json(self):
+        return self.HISTORICAL_STATS
 
     def print_char_json(self):
         if self.CHARACTER_JSON:
@@ -176,6 +186,12 @@ class PyGuardian:
         else:
             print("No equipment info json")
 
+    def print_stats_json(self):
+        if self.HISTORICAL_STATS:
+            print(json.dumps(self.HISTORICAL_STATS, indent=4))
+        else:
+            print("No equipment info json")
+
     def write_char_json(self):
         if self.CHARACTER_JSON:
             pass
@@ -186,6 +202,10 @@ class PyGuardian:
 
     def write_eq_json(self):
         if self.EQUIPMENT_JSON:
+            pass
+
+    def write_stats_json(self):
+        if self.HISTORICAL_STATS:
             pass
 
     def write_all(self):
