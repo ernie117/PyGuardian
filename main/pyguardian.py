@@ -1,5 +1,5 @@
 """
-This façade class holds a collection of methods that offload all
+This facade class holds a collection of methods that offload all
 the heavy lifting of requesting and processing to other modules
 """
 import json
@@ -127,15 +127,25 @@ class PyGuardian:
         self.X_API_KEY = api_key
         return self
 
-    def gamertag(self, gamertag):
+    def gamertag(self, gamertag=""):
         self.PLAYER = GuardianProcessor.process_guardian(gamertag)
         return self
 
-    def platform(self, platform):
+    def platform(self, platform=""):
+        if not platform:
+            return self
+
         self.PLATFORM = GuardianProcessor.process_platform(platform)
         return self
 
     def fetch_json(self, arbitrary_request):
+        if not self.PLAYER:
+            print("Gamertag not set!")
+            return
+        if not self.PLATFORM:
+            print("Platform not set!")
+            return
+
         requester = Requester(self.PLAYER, self.PLATFORM)
         request_dict = {
             "character": requester.fetch_character_info,
@@ -179,32 +189,24 @@ class PyGuardian:
     def print_char_json(self):
         if self.CHARACTER_JSON:
             print(json.dumps(self.CHARACTER_JSON, indent=4))
-        else:
-            print("No character info json")
 
         return self
 
     def print_vault_json(self):
         if self.VAULT_JSON:
             print(json.dumps(self.VAULT_JSON, indent=4))
-        else:
-            print("No vault info json")
 
         return self
 
     def print_eq_json(self):
         if self.EQUIPMENT_JSON:
             print(json.dumps(self.EQUIPMENT_JSON, indent=4))
-        else:
-            print("No equipment info json")
 
         return self
 
     def print_stats_json(self):
         if self.HISTORICAL_STATS:
             print(json.dumps(self.HISTORICAL_STATS, indent=4))
-        else:
-            print("No equipment info json")
 
         return self
 
