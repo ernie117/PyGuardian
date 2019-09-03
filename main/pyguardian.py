@@ -138,7 +138,7 @@ class PyGuardian:
         self.PLATFORM = GuardianProcessor.process_platform(platform)
         return self
 
-    def fetch_json(self, arbitrary_request):
+    def _default_fetch_json(self, arbitrary_request):
         if not self.PLAYER:
             print("Gamertag not set!")
             return
@@ -159,19 +159,19 @@ class PyGuardian:
         return request_dict[arbitrary_request](_headers={"X-API-Key": key})
 
     def fetch_character_json(self):
-        self.CHARACTER_JSON = self.fetch_json("character")
+        self.CHARACTER_JSON = self._default_fetch_json("character")
         return self
 
     def fetch_vault_json(self):
-        self.VAULT_JSON = self.fetch_json("vault")
+        self.VAULT_JSON = self._default_fetch_json("vault")
         return self
 
     def fetch_equipment_json(self):
-        self.EQUIPMENT_JSON = self.fetch_json("eq")
+        self.EQUIPMENT_JSON = self._default_fetch_json("eq")
         return self
 
     def fetch_historical_stats(self):
-        self.HISTORICAL_STATS = self.fetch_json("stats")
+        self.HISTORICAL_STATS = self._default_fetch_json("stats")
         return self
 
     def get_character_json(self):
@@ -210,30 +210,32 @@ class PyGuardian:
 
         return self
 
+    def _default_write_json(self, data_to_write, write_dir="."):
+        data_dict = {
+            "character": self.CHARACTER_JSON,
+            "vault": self.VAULT_JSON,
+            "eq": self.EQUIPMENT_JSON,
+            "stats": self.HISTORICAL_STATS
+        }
+
+        if data_dict[data_to_write]:
+            filename = write_dir + "/" + self.PLAYER + "-" + data_to_write + "-info.json"
+            with open(filename, "w") as f:
+                print(f"Writing {data_to_write} JSON to file")
+                json.dump(data_dict[data_to_write], f, indent=4)
+
     def write_char_json(self, write_dir="."):
         if self.CHARACTER_JSON:
-            filename = write_dir + "/" + self.PLAYER + "-character-info.json"
-            with open(filename, "w") as f:
-                print("Writing character JSON to file")
-                json.dump(self.CHARACTER_JSON, f, indent=4)
+            self._default_write_json("character", write_dir)
 
     def write_vault_json(self, write_dir="."):
         if self.VAULT_JSON:
-            filename = write_dir + "/" + self.PLAYER + "-vault-info.json"
-            with open(filename, "w") as f:
-                print("Writing vault JSON to file")
-                json.dump(self.VAULT_JSON, f, indent=4)
+            self._default_write_json("vault", write_dir)
 
     def write_eq_json(self, write_dir="."):
         if self.EQUIPMENT_JSON:
-            filename = write_dir + "/" + self.PLAYER + "-equipment-info.json"
-            with open(filename, "w") as f:
-                print("Writing equipment JSON to file")
-                json.dump(self.EQUIPMENT_JSON, f, indent=4)
+            self._default_write_json("eq", write_dir)
 
     def write_stats_json(self, write_dir="."):
         if self.HISTORICAL_STATS:
-            filename = write_dir + "/" + self.PLAYER + "-historical-info.json"
-            with open(filename, "w") as f:
-                print("Writing historical stats JSON to file")
-                json.dump(self.HISTORICAL_STATS, f, indent=4)
+            self._default_write_json("stats", write_dir)
