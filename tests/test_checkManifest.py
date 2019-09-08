@@ -10,7 +10,7 @@ from pyguardian.utils.check_manifest import CheckManifest
 from pyguardian.validation.pyguardian_exceptions import APIUnavailableException
 
 
-logging.disable()
+logging.disable(level=logging.CRITICAL)
 
 
 class TestCheckManifest(TestCase):

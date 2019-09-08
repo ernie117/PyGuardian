@@ -14,7 +14,7 @@ class TestRequester(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        logging.disable()
+        logging.disable(level=logging.CRITICAL)
         cls.test_gamertag = "ernie"
         cls.test_platform = "playstation"
 

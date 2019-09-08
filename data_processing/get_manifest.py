@@ -87,7 +87,6 @@ class GetManifest:
         uses them to query all the tables within, converts
         them to JSON and writes them all to individual files
         """
-        log = PyGuardianLogger()
         conn = sqlite3.connect(sql)
 
         with conn:
@@ -112,7 +111,7 @@ class GetManifest:
                     with open(constants.JSON_DIR + "/" + entry + ".json", "w") as f:
                         json.dump(table_dict, f, indent=4)
 
-                    log.info("- WRITING >> " + entry + ".json")
+                    print("- WRITING >> " + entry + ".json")
 
             else:
                 print("Finished \u263A")

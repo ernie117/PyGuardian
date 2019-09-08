@@ -22,7 +22,7 @@ from pyguardian.validation.pyguardian_exceptions import CannotCreateStorageDirec
 
 class PyGuardian:
 
-    logging.disable()
+    logging.disable(level=logging.CRITICAL)
 
     @staticmethod
     @tabulate_me
