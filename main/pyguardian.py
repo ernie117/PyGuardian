@@ -80,6 +80,17 @@ class PyGuardian:
         return json_funcs.fetch_last_time_played(char_data)
 
     @staticmethod
+    @tabulate_me
+    @log_me
+    def fetch_kd(guardian, platform):
+
+        guardian, platform = PyGuardian.prechecks(guardian, platform)
+        account = Requester(guardian, platform)
+        char_data = account.fetch_character_info()
+        historical_stats = account.fetch_historical_stats()
+        return json_funcs.fetch_kd(historical_stats, char_data)
+
+    @staticmethod
     @log_me
     def prechecks(guardian, platform):
 

@@ -183,3 +183,31 @@ def fetch_vault_hashes(vault_info):
 
     except KeyError:
         raise VaultAccessBlockedException("Vault access blocked for this character")
+
+@log_me
+def fetch_kd(stats_json, char_data):
+    # root_str = "Response.mergedAllCharacters.results.allPvP.allTime.killsDeathsRatio.basic.displayValue"
+    root_str = "Response.characters.data."
+
+    try:
+        characters = list(json_miner(root_str, char_data).keys())
+    except KeyError:
+        raise PlayerNotFoundException("No Destiny 2 information for this character")
+
+    char_titles = []
+    for character in characters:
+        char_obj = json_miner(f"{root_str}{character}", char_data)
+        char_titles.append(" ".join([GENS[char_obj["genderType"]],
+                                     RACES[char_obj["raceType"]],
+                                     CLASSES[char_obj["classType"]]]))
+        
+
+    root_str = "Response.characters"
+    character_kds = []
+    for i, char in enumerate(json_miner(root_str, stats_json)):
+        character = dict()
+        character["Character"] = char_titles[i]
+        character["KD"] = char["results"]["allPvP"]["allTime"]["killsDeathsRatio"]["basic"]["displayValue"]
+        character_kds.append(character)
+
+    return character_kds
