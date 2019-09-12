@@ -186,28 +186,36 @@ def fetch_vault_hashes(vault_info):
 
 @log_me
 def fetch_kd(stats_json, char_data):
-    # root_str = "Response.mergedAllCharacters.results.allPvP.allTime.killsDeathsRatio.basic.displayValue"
     root_str = "Response.characters.data."
+    root_str_2 = "Response.characters"
+    root_str_3 = "results.allPvP.allTime.killsDeathsRatio.basic.displayValue"
+    root_str_4 = "Response.mergedAllCharacters.results.allPvP.allTime.killsDeathsRatio.basic.displayValue"
 
     try:
         characters = list(json_miner(root_str, char_data).keys())
     except KeyError:
         raise PlayerNotFoundException("No Destiny 2 information for this character")
 
-    char_titles = []
+    char_titles = dict()
     for character in characters:
         char_obj = json_miner(f"{root_str}{character}", char_data)
-        char_titles.append(" ".join([GENS[char_obj["genderType"]],
-                                     RACES[char_obj["raceType"]],
-                                     CLASSES[char_obj["classType"]]]))
-        
+        char_titles[char_obj["characterId"]] = " ".join([GENS[char_obj["genderType"]],
+                                                         RACES[char_obj["raceType"]],
+                                                         CLASSES[char_obj["classType"]]])
 
-    root_str = "Response.characters"
+    char_objects = json_miner(root_str_2, stats_json)
     character_kds = []
-    for i, char in enumerate(json_miner(root_str, stats_json)):
-        character = dict()
-        character["Character"] = char_titles[i]
-        character["KD"] = char["results"]["allPvP"]["allTime"]["killsDeathsRatio"]["basic"]["displayValue"]
-        character_kds.append(character)
+    for obj in char_objects:
+        for char in char_titles:
+            if obj["characterId"] in char:
+                character = dict()
+                character["Character"] = char_titles[char]
+                character["Kill/Death Ratio"] = json_miner(root_str_3, obj)
+                character_kds.append(character)
+            else:
+                continue
+
+    character_kds.append({"Character": "Overall",
+                          "Kill/Death Ratio": json_miner(root_str_4, stats_json)})
 
     return character_kds
