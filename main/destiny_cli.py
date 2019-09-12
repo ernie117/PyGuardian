@@ -23,7 +23,8 @@ def create_parser():
                                  "vault-type",
                                  "vault-tier",
                                  "playtime",
-                                 "last"])
+                                 "last",
+                                 "kd"])
     parser.add_argument("-d", "--download-manifest", action="store_true")
     parser.add_argument("-l", "--log", action="store_true")
 
@@ -53,6 +54,8 @@ def main(cli_args):
         print(PyGuardian.fetch_playtime(args.guardian, args.platform))
     elif args.response == "last":
         print(PyGuardian.fetch_last_time_played(args.guardian, args.platform))
+    elif args.response == "kd":
+        print(PyGuardian.fetch_kd(args.guardian, args.platform))
     elif args.download_manifest:
         check_manifest = CheckManifest()
         uri = check_manifest()
