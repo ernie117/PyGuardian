@@ -1,6 +1,6 @@
 """
 A collection of pure functions used for parsing JSON returned
-from the Bungie API and extracting specific values and arranging
+from the Bungie API, extracting specific values and arranging
 them into data structures suitable for tabulation by the tabulate
 library
 """
