@@ -1,3 +1,9 @@
+"""
+A collection of pure functions used for parsing JSON returned
+from the Bungie API and extracting specific values and arranging
+them into data structures suitable for tabulation by the tabulate
+library
+"""
 import dateutil.parser
 
 from pyguardian.validation.pyguardian_exceptions import PlayerNotFoundException, VaultAccessBlockedException, \
@@ -37,10 +43,7 @@ def fetch_eq_hashes(equipment_data, character_data, no_of_items=12):
     root_str1 = "Response.characters.data."
     root_str2 = "Response.characterEquipment.data."
 
-    try:
-        characters = list(json_miner(root_str1, character_data).keys())
-    except KeyError:
-        raise PlayerNotFoundException("No Destiny 2 information for this character")
+    characters = get_character_ids(root_str1, character_data)
 
     item_hashes = []
     for char in characters:
@@ -48,9 +51,7 @@ def fetch_eq_hashes(equipment_data, character_data, no_of_items=12):
         title = json_miner(f"{root_str1}{char}", character_data)
         # Adding a title row that describes the character
         # to distinguish between multiple characters
-        char_title = ([GENS[title["genderType"]].upper(),
-                       RACES[title["raceType"]].upper(),
-                       CLASSES[title["classType"]].upper()])
+        char_title = [string.upper() for string in get_character_titles(title)]
         element.append(char_title)
         try:
             items = json_miner(f"{root_str2}{char}.items", equipment_data)[:no_of_items]
@@ -76,19 +77,13 @@ def fetch_char_info(character_data):
         "Level": None
     }
 
-    try:
-        characters = list(json_miner(root_str, character_data).keys())
-    except KeyError:
-        raise PlayerNotFoundException("No Destiny 2 information for this character")
-
+    characters = get_character_ids(root_str, character_data)
     query_strings = [root_str + char for char in characters]
 
     for char in query_strings:
         stats_list = []
         stats = json_miner(char, character_data)
-        stats_list.append(" ".join([GENS[stats["genderType"]],
-                                    RACES[stats["raceType"]],
-                                    CLASSES[stats["classType"]]]))
+        stats_list.append(" ".join(get_character_titles(stats)))
         stats = json_miner(f"{char}.stats", character_data)
         stats_list.extend([v for v in stats.values()])
         stats_list.append(json_miner(f"{char}.levelProgression.level", character_data))
@@ -102,10 +97,7 @@ def fetch_char_info(character_data):
 def fetch_last_time_played(character_data):
     root_str = "Response.characters.data."
 
-    try:
-        characters = list(json_miner(root_str, character_data).keys())
-    except KeyError:
-        raise PlayerNotFoundException("No Destiny 2 information for this character")
+    characters = get_character_ids(root_str, character_data)
 
     char_dict = {
         "Character": None,
@@ -118,9 +110,7 @@ def fetch_last_time_played(character_data):
     for char in characters:
         char_str = []
         char_info = data[char]
-        char_title = (" ".join([GENS[char_info["genderType"]],
-                                RACES[char_info["raceType"]],
-                                CLASSES[char_info["classType"]]]))
+        char_title = (" ".join(get_character_titles(char_info)))
         char_str.append(char_title)
         date = dateutil.parser.parse(data[char]["dateLastPlayed"])
         date = date.strftime("%H:%M:%S -- %a %d/%m")
@@ -138,10 +128,7 @@ def fetch_last_time_played(character_data):
 def fetch_play_time(character_data):
     root_str = "Response.characters.data."
 
-    try:
-        characters = list(json_miner(root_str, character_data).keys())
-    except KeyError:
-        raise PlayerNotFoundException("No Destiny 2 information for this character")
+    characters = get_character_ids(root_str, character_data)
 
     char_mins = [int(json_miner(f"{root_str}{char}.minutesPlayedTotal", character_data))
                  for char in characters]
@@ -154,9 +141,7 @@ def fetch_play_time(character_data):
     char_titles = []
     for char in characters:
         char_data = json_miner(f"{root_str}{char}", character_data)
-        char_titles.append(" ".join([GENS[char_data["genderType"]],
-                                     RACES[char_data["raceType"]],
-                                     CLASSES[char_data["classType"]]]))
+        char_titles.append(" ".join(get_character_titles(char_data)))
 
     char_dicts = []
     for char, time in zip(char_titles, readable_times):
@@ -184,6 +169,7 @@ def fetch_vault_hashes(vault_info):
     except KeyError:
         raise VaultAccessBlockedException("Vault access blocked for this character")
 
+
 @log_me
 def fetch_kd(stats_json, char_data):
     root_str = "Response.characters.data."
@@ -191,17 +177,12 @@ def fetch_kd(stats_json, char_data):
     root_str_3 = "results.allPvP.allTime.killsDeathsRatio.basic.displayValue"
     root_str_4 = "Response.mergedAllCharacters.results.allPvP.allTime.killsDeathsRatio.basic.displayValue"
 
-    try:
-        characters = list(json_miner(root_str, char_data).keys())
-    except KeyError:
-        raise PlayerNotFoundException("No Destiny 2 information for this character")
+    characters = get_character_ids(root_str, char_data)
 
     char_titles = dict()
     for character in characters:
         char_obj = json_miner(f"{root_str}{character}", char_data)
-        char_titles[char_obj["characterId"]] = " ".join([GENS[char_obj["genderType"]],
-                                                         RACES[char_obj["raceType"]],
-                                                         CLASSES[char_obj["classType"]]])
+        char_titles[char_obj["characterId"]] = " ".join(get_character_titles(char_obj))
 
     char_objects = json_miner(root_str_2, stats_json)
     character_kds = []
@@ -212,10 +193,19 @@ def fetch_kd(stats_json, char_data):
                 character["Character"] = char_titles[char]
                 character["Kill/Death Ratio"] = json_miner(root_str_3, obj)
                 character_kds.append(character)
-            else:
-                continue
 
     character_kds.append({"Character": "Overall",
                           "Kill/Death Ratio": json_miner(root_str_4, stats_json)})
 
     return character_kds
+
+
+def get_character_ids(root_str, char_data):
+    try:
+        return list(json_miner(root_str, char_data).keys())
+    except KeyError:
+        raise PlayerNotFoundException("No Destiny 2 information for this character")
+
+
+def get_character_titles(char_object):
+    return [GENS[char_object["genderType"]], RACES[char_object["raceType"]], CLASSES[char_object["classType"]]]
