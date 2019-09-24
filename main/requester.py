@@ -6,7 +6,6 @@ from pyguardian.utils.pyguardian_logging import PyGuardianLogger
 from pyguardian.validation.pyguardian_exceptions import *
 
 
-# TODO "https://www.bungie.net/Platform/Destiny2/2/Account/memID/Stats/" K/D stuff
 class Requester:
     HEADERS = {"X-API-Key": constants.BUNGIE_API_KEY}
     LOGGER = PyGuardianLogger("Requester.py")
