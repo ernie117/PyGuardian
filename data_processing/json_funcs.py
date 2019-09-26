@@ -7,7 +7,7 @@ library
 import dateutil.parser
 
 from pyguardian.validation.pyguardian_exceptions import PlayerNotFoundException, VaultAccessBlockedException, \
-    NoPlayerEquipmentException
+    NoPlayerEquipmentException, APIException
 from pyguardian.utils.pyguardian_decorators import log_me
 
 
@@ -40,6 +40,7 @@ def json_miner(string, data):
 
 @log_me
 def fetch_eq_hashes(equipment_data, character_data, no_of_items=12):
+    check_response(equipment_data, character_data)
     root_str1 = "Response.characters.data."
     root_str2 = "Response.characterEquipment.data."
 
@@ -65,6 +66,7 @@ def fetch_eq_hashes(equipment_data, character_data, no_of_items=12):
 
 @log_me
 def fetch_char_info(character_data):
+    check_response(character_data)
     root_str = "Response.characters.data."
 
     char_dictionaries = []
@@ -95,6 +97,7 @@ def fetch_char_info(character_data):
 
 @log_me
 def fetch_last_time_played(character_data):
+    check_response(character_data)
     root_str = "Response.characters.data."
 
     characters = get_character_ids(root_str, character_data)
@@ -126,6 +129,7 @@ def fetch_last_time_played(character_data):
 
 @log_me
 def fetch_play_time(character_data):
+    check_response(character_data)
     root_str = "Response.characters.data."
 
     characters = get_character_ids(root_str, character_data)
@@ -158,6 +162,7 @@ def fetch_play_time(character_data):
 
 @log_me
 def fetch_vault_hashes(vault_info):
+    check_response(vault_info)
     root_str = "Response.profileInventory.data.items"
 
     try:
@@ -172,6 +177,7 @@ def fetch_vault_hashes(vault_info):
 
 @log_me
 def fetch_kd(stats_json, char_data):
+    check_response(stats_json, char_data)
     root_str = "Response.characters.data."
     root_str_2 = "Response.characters"
     root_str_3 = "results.allPvP.allTime.killsDeathsRatio.basic.displayValue"
@@ -209,3 +215,9 @@ def get_character_ids(root_str, char_data):
 
 def get_character_titles(char_object):
     return [GENS[char_object["genderType"]], RACES[char_object["raceType"]], CLASSES[char_object["classType"]]]
+
+
+def check_response(*args):
+    for response in args:
+        if "ErrorStatus" in response.keys() and response["ErrorStatus"] == "UnhandledException":
+            raise APIException(f"API is down: {response['Message']}")

@@ -33,6 +33,8 @@ class Requester:
 
         if r["ErrorStatus"] == "SystemDisabled":
             raise APIException("API is down!")
+        elif r["ErrorStatus"] == "UnhandledException":
+            raise APIException(f"API is down: {r['Message']}")
 
         try:
             self.mem_id = r["Response"][0]["membershipId"]
