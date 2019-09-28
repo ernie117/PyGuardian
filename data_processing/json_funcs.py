@@ -9,6 +9,8 @@ import dateutil.parser
 from pyguardian.validation.pyguardian_exceptions import PlayerNotFoundException, VaultAccessBlockedException, \
     NoPlayerEquipmentException, APIException
 from pyguardian.utils.pyguardian_decorators import log_me
+from pyguardian.main.guardian import Guardian
+from pyguardian.data_processing.hashes import InventoryManifest
 
 
 GENS = {0: "Male", 1: "Female", 2: "Unknown"}
@@ -65,6 +67,35 @@ def fetch_eq_hashes(equipment_data, character_data, no_of_items=12):
 
 
 @log_me
+def fetch_character_eq_hashes(equipment_data, character_data, no_of_items=12):
+    check_response(equipment_data, character_data)
+    root_str1 = "Response.characters.data."
+    root_str2 = "Response.characterEquipment.data."
+
+    characters = get_character_ids(root_str1, character_data)
+
+    character_items_lists = []
+    for char in characters:
+        element = []
+        item_hashes = []
+        title = json_miner(f"{root_str1}{char}", character_data)
+        # Adding a title row that describes the character
+        # to distinguish between multiple characters
+        char_title = [string.upper() for string in get_character_titles(title)]
+        element.append(char_title)
+        try:
+            items = json_miner(f"{root_str2}{char}.items", equipment_data)[:no_of_items]
+        except KeyError:
+            raise NoPlayerEquipmentException(f"No equipment data found for {char}")
+        element.extend([item["itemHash"] for item in items])
+        item_hashes.append(element)
+        data = InventoryManifest(item_hashes)
+        character_items_lists.append(data.get_full_item_details())
+
+    return character_items_lists
+
+
+@log_me
 def fetch_char_info(character_data):
     check_response(character_data)
     root_str = "Response.characters.data."
@@ -90,6 +121,55 @@ def fetch_char_info(character_data):
         stats_list.extend([v for v in stats.values()])
         stats_list.append(json_miner(f"{char}.levelProgression.level", character_data))
         char_dict = {k: stat for k, stat in zip(char_dict, stats_list)}
+        char_dictionaries.append(char_dict)
+
+    return char_dictionaries
+
+
+@log_me
+def fetch_extended_char_info(character_data, guardian):
+    check_response(character_data)
+    root_str = "Response.characters.data."
+
+    char_dictionaries = []
+    extended_char_dict = {
+        "_gamertag": None,
+        "_character_id": None,
+        "_membership_id": None,
+        "_membership_type": None,
+        "_date_last_played": None,
+        "_total_mins_played": None,
+        "_gender": None,
+        "_race": None,
+        "_class": None,
+        "_subclass": None,
+        "_level": None,
+        "_light": None,
+        "_mobility": None,
+        "_resilience": None,
+        "_recovery": None,
+        "_emblem_path": None,
+    }
+
+    characters = get_character_ids(root_str, character_data)
+    query_strings = [root_str + char for char in characters]
+
+    for char in query_strings:
+        stats_list = [guardian]
+        stats = json_miner(char, character_data)
+        emblem_path = stats["emblemPath"]
+        stats_list.extend([stats["characterId"],
+                           stats["membershipId"],
+                           stats["membershipType"],
+                           stats["dateLastPlayed"],
+                           stats["minutesPlayedTotal"]])
+        gender, race, class_ = get_character_titles(stats)
+        stats_list.extend([gender, race, class_, "placeholder"])
+        stats_list.append(json_miner(f"{char}.levelProgression.level", character_data))
+        stats = json_miner(f"{char}.stats", character_data)
+        stats_list.extend([v for v in stats.values()])
+        stats_list.append(emblem_path)
+        char_dict = {k: stat for k, stat in zip(extended_char_dict, stats_list)}
         char_dictionaries.append(char_dict)
 
     return char_dictionaries
@@ -204,6 +284,37 @@ def fetch_kd(stats_json, char_data):
                           "Kill/Death Ratio": json_miner(root_str_4, stats_json)})
 
     return character_kds
+
+
+@log_me
+def get_data_guardian_object(char_data, equip_data):
+    # equipment list contains unwanted character description
+    characters = []
+    eq_dict = {
+        "_primary": None,
+        "_secondary": None,
+        "_heavy": None,
+        "_helmet": None,
+        "_gauntlets": None,
+        "_chest": None,
+        "_greaves": None,
+        "_class_item": None,
+        "_ghost": None,
+        "_sparrow": None,
+        "_ship": None
+    }
+
+    for character in equip_data:
+        filtered = list(filter(lambda x: "MALE" not in x and "FEMALE" not in x, character))
+        characters.append({k: v for k, v in zip(eq_dict, filtered)})
+
+    zipped = list(zip(char_data, characters))
+
+    final_characters = []
+    for char in zipped:
+        final_characters.append(Guardian({**char[0], **char[1]}))
+
+    return final_characters
 
 
 def get_character_ids(root_str, char_data):

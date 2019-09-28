@@ -91,6 +91,19 @@ class PyGuardian:
         return json_funcs.fetch_kd(historical_stats, char_data)
 
     @staticmethod
+    def get_guardian_object(guardian, platform):
+
+        guardian, platform = PyGuardian.prechecks(guardian, platform)
+        account = Requester(guardian, platform)
+        char_data = account.fetch_character_info()
+        equip_data = account.fetch_character_equip_info()
+        equipment_details = json_funcs.fetch_character_eq_hashes(equip_data, char_data)
+        char_data = json_funcs.fetch_extended_char_info(char_data, guardian)
+        char_dicts = json_funcs.get_data_guardian_object(char_data, equipment_details)
+        return char_dicts
+
+
+    @staticmethod
     @log_me
     def prechecks(guardian, platform):
 
