@@ -1,9 +1,9 @@
-import json
 from collections import namedtuple
 
-
 Item = namedtuple("Item", "name, type, tier")
-Character_description = namedtuple("Description", "gender, race, class_")
+Armour = namedtuple("Armour", "helmet, gauntlets, chest, greaves, class_item")
+Weapons = namedtuple("Item", "primary, secondary, heavy")
+Character_description = namedtuple("Description", "gender, race, class_, subclass")
 
 
 class Guardian:
@@ -12,7 +12,27 @@ class Guardian:
         self.__dict__.update(init_dictionary)
 
     def __str__(self):
-        return str(Character_description(self.get_gender(), self.get_race(), self.get_class()))
+        return str(self.get_description())
+
+    def get_description(self):
+        return Character_description(
+            self.get_gender(), self.get_race(),
+            self.get_class(), self.get_subclass()
+        )
+
+    def get_armour(self):
+        return Armour(
+            self.get_helmet(), self.get_gauntlets(),
+            self.get_chest(), self.get_greaves(),
+            self.get_class_item()
+        )
+
+    def get_weapons(self):
+        return Weapons(
+            self.get_primary(),
+            self.get_secondary(),
+            self.get_heavy()
+        )
 
     def get_gamertag(self):
         return getattr(self, "_gamertag")
@@ -94,4 +114,3 @@ class Guardian:
 
     def get_ship(self):
         return Item(*getattr(self, "_ship"))
-

@@ -127,7 +127,7 @@ def fetch_char_info(character_data):
 
 
 @log_me
-def fetch_extended_char_info(character_data, guardian):
+def fetch_extended_char_info(character_data, equipment_data, guardian):
     check_response(character_data)
     root_str = "Response.characters.data."
 
@@ -151,20 +151,28 @@ def fetch_extended_char_info(character_data, guardian):
         "_emblem_path": None,
     }
 
+    # Subclass is in equipment data rather than character data
+    subclasses = []
+    for char in equipment_data:
+        for item in char:
+            for element in item:
+                if "subclass" in element.lower():
+                    subclasses.append(item[0])
+
     characters = get_character_ids(root_str, character_data)
     query_strings = [root_str + char for char in characters]
 
-    for char in query_strings:
+    for i, char in enumerate(query_strings):
         stats_list = [guardian]
         stats = json_miner(char, character_data)
-        emblem_path = stats["emblemPath"]
+        emblem_path = stats["emblemBackgroundPath"]
         stats_list.extend([stats["characterId"],
                            stats["membershipId"],
                            stats["membershipType"],
                            stats["dateLastPlayed"],
                            stats["minutesPlayedTotal"]])
         gender, race, class_ = get_character_titles(stats)
-        stats_list.extend([gender, race, class_, "placeholder"])
+        stats_list.extend([gender, race, class_, subclasses[i]])
         stats_list.append(json_miner(f"{char}.levelProgression.level", character_data))
         stats = json_miner(f"{char}.stats", character_data)
         stats_list.extend([v for v in stats.values()])
@@ -288,7 +296,6 @@ def fetch_kd(stats_json, char_data):
 
 @log_me
 def get_data_guardian_object(char_data, equip_data):
-    # equipment list contains unwanted character description
     characters = []
     eq_dict = {
         "_primary": None,
@@ -305,6 +312,7 @@ def get_data_guardian_object(char_data, equip_data):
     }
 
     for character in equip_data:
+        # equipment list contains unwanted character description
         filtered = list(filter(lambda x: "MALE" not in x and "FEMALE" not in x, character))
         characters.append({k: v for k, v in zip(eq_dict, filtered)})
 
