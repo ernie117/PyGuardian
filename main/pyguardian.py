@@ -101,7 +101,6 @@ class PyGuardian:
         char_data = json_funcs.fetch_extended_char_info(char_data, equipment_details, guardian)
         return json_funcs.get_data_guardian_object(char_data, equipment_details)
 
-
     @staticmethod
     @log_me
     def prechecks(guardian, platform):

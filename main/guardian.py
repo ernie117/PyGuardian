@@ -1,9 +1,4 @@
-from collections import namedtuple
-
-Item = namedtuple("Item", "name, type, tier")
-Armour = namedtuple("Armour", "helmet, gauntlets, chest, greaves, class_item")
-Weapons = namedtuple("Item", "primary, secondary, heavy")
-Character_description = namedtuple("Description", "gender, race, class_, subclass")
+from pyguardian.utils.constants import Item, Character_description, Armour, Weapons
 
 
 class Guardian:

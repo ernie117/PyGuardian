@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from collections import namedtuple
 
 
 # Bungie API key stored as env variable
@@ -56,3 +57,9 @@ GUARDIAN_INIT_DICT = {
         "_sparrow": None,
         "_ship": None
 }
+
+# NamedTuples for storing Guardian class fields
+Item = namedtuple("Item", "name, type, tier")
+Armour = namedtuple("Armour", "helmet, gauntlets, chest, greaves, class_item")
+Weapons = namedtuple("Item", "primary, secondary, heavy")
+Character_description = namedtuple("Description", "gender, race, class_, subclass")
