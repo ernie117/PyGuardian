@@ -9,6 +9,9 @@ class Guardian:
     def __str__(self):
         return str(self.get_description())
 
+    def __repr__(self):
+        return str(self.get_description())
+
     def get_description(self):
         return Character_description(
             self.get_gender(), self.get_race(),

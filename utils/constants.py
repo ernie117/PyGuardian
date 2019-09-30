@@ -62,4 +62,4 @@ GUARDIAN_INIT_DICT = {
 Item = namedtuple("Item", "name, type, tier")
 Armour = namedtuple("Armour", "helmet, gauntlets, chest, greaves, class_item")
 Weapons = namedtuple("Item", "primary, secondary, heavy")
-Character_description = namedtuple("Description", "gender, race, class_, subclass")
+Character_description = namedtuple("Character", "gender, race, class_, subclass")
