@@ -3,12 +3,9 @@ from unittest import TestCase, mock
 from unittest.mock import patch
 
 from pyguardian.tests.resources.mock_classes import MockManifestSuccessfulResponse, \
-    MockManifestSuccessfulResponseNewURI, \
-    MockManifestUnsuccessfulResponse
+    MockManifestSuccessfulResponseNewURI
 from pyguardian.utils import constants
 from pyguardian.utils.check_manifest import CheckManifest
-from pyguardian.validation.pyguardian_exceptions import APIUnavailableException
-from utils.api_status import APIStatusChecker
 
 logging.disable(level=logging.CRITICAL)
 

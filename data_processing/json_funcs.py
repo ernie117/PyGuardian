@@ -335,7 +335,7 @@ def get_character_titles(char_object: dict):
     return [GENS[char_object["genderType"]], RACES[char_object["raceType"]], CLASSES[char_object["classType"]]]
 
 
-def check_response(*args):
+def check_response(*args: Union[List[dict], dict]):
     for response in args:
         if "ErrorStatus" in response.keys() and response["ErrorStatus"] == "UnhandledException":
             raise APIException(f"API is down: {response['Message']}")
