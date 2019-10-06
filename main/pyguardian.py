@@ -1,6 +1,10 @@
 """
 This facade class holds a collection of methods that offload all
 the heavy lifting of requesting and processing to other modules
+
+This class can also be instantiated and used as a fluent interface,
+gamertag and platform can be used to call further methods to request
+character data or equipment json data for the user's own needs
 """
 import logging
 import os
