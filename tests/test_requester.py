@@ -2,7 +2,7 @@ import logging
 from unittest import TestCase
 from unittest.mock import patch
 
-from pyguardian.main.requester import Requester
+from pyguardian.main.requester import Requester, APIUnavailableException
 from pyguardian.tests.resources.mock_classes import MockSearchDestinyPlayerSuccessfulResponse, \
     MockSearchDestinyPlayerUnsuccessfulResponse, MockSearchDestinyPlayerNoSuchPlayer, \
     MockSuccessfulCharacterDataRequest, MockUnsuccessfulCharacterDataRequest, \
@@ -34,11 +34,6 @@ class TestRequester(TestCase):
         self.assertEqual(requester.vault_info_url,
                          "https://www.bungie.net/Platform/Destiny2/playstation/" +
                          "Profile/1234567890987654321/?components=102")
-
-    @patch("pyguardian.main.requester.requests.get", return_value=MockSearchDestinyPlayerUnsuccessfulResponse())
-    def test_requester_unsuccessful_response_raises_APIException(self, mock_get):
-        with self.assertRaises(APIException):
-            self.setUpRequester()
 
     @patch("pyguardian.main.requester.requests.get", return_value=MockSearchDestinyPlayerNoSuchPlayer())
     def test_requester_no_such_player(self, mock_get):

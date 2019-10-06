@@ -13,8 +13,6 @@ class PyGuardianLogger:
                  file_name="default-log-file",
                  loglevel=logging.INFO):
 
-        log_file_path = constants.DATA_DIR + "/" + file_name
-        # TODO really would like this to not be here
         if not os.path.isdir(constants.DATA_DIR):
             os.makedirs(constants.DATA_DIR)
 

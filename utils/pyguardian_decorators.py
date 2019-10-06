@@ -22,6 +22,9 @@ def tabulate_me(pyguardian_static_method):
         data = pyguardian_static_method(*args, **kwargs)
         if pyguardian_static_method.__name__ in ("fetch_eq", "fetch_vault"):
             return tabulate(data, tablefmt="fancy_grid")
+        if isinstance(data, tuple):
+            for datum in data:
+                return tabulate(datum, tablefmt="fancy_grid")
 
         return tabulate(data, headers="keys", tablefmt="fancy_grid")
 

@@ -5,7 +5,7 @@ import requests
 from pyguardian.utils import constants
 from pyguardian.utils.pyguardian_decorators import log_me
 from pyguardian.utils.pyguardian_logging import PyGuardianLogger
-from pyguardian.validation.pyguardian_exceptions import APIUnavailableException
+from pyguardian.utils.api_status import APIStatusChecker
 
 
 class CheckManifest:
@@ -30,9 +30,7 @@ class CheckManifest:
         r = requests.get(constants.MANIFEST_URL,
                          headers=constants.HEADERS).json()
 
-        if r["ErrorStatus"] == "SystemDisabled":
-            CheckManifest.LOGGER.warn("Bungie API is down")
-            raise APIUnavailableException("API is down!")
+        _ = APIStatusChecker(r)
 
         return r["Response"]["mobileWorldContentPaths"]["en"]
 

@@ -55,7 +55,7 @@ def main(cli_args):
     elif args.response == "last":
         print(PyGuardian.fetch_last_time_played(args.guardian, args.platform))
     elif args.response == "kd":
-        print(PyGuardian.fetch_kd(args.guardian, args.platform))
+        print(PyGuardian.fetch_pvp_info(args.guardian, args.platform))
     elif args.download_manifest:
         check_manifest = CheckManifest()
         uri = check_manifest()

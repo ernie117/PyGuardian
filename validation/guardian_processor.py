@@ -1,6 +1,6 @@
 class GuardianProcessor:
 
-    PLATFORMS = {"xbox": "1", "playstation": "2", "pc": "4"}
+    PLATFORMS = {"xbox": "1", "playstation": "2", "pc": "3"}
 
     @staticmethod
     def process(guardian, platform) -> tuple:

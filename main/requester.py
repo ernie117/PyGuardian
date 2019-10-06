@@ -4,6 +4,7 @@ from pyguardian.utils import constants
 from pyguardian.utils.pyguardian_decorators import log_me
 from pyguardian.utils.pyguardian_logging import PyGuardianLogger
 from pyguardian.validation.pyguardian_exceptions import *
+from pyguardian.utils.api_status import APIStatusChecker
 
 
 class Requester:
@@ -31,10 +32,7 @@ class Requester:
                          + self.player_name,
                          headers=self.HEADERS).json()
 
-        if r["ErrorStatus"] == "SystemDisabled":
-            raise APIException("API is down!")
-        elif r["ErrorStatus"] == "UnhandledException":
-            raise APIException(f"API is down: {r['Message']}")
+        _ = APIStatusChecker(r)
 
         try:
             self.mem_id = r["Response"][0]["membershipId"]

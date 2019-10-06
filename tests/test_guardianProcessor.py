@@ -13,12 +13,12 @@ class TestGuardianProcessor(TestCase):
     def test_guardian_processor_returns_correct_platform_number_pc(self):
         processed_results = GuardianProcessor.process("ernie", "pc")
 
-        self.assertEqual(processed_results[1], "4")
+        self.assertEqual(processed_results[1], "3")
 
     def test_guardian_processor_returns_player_name_without_whitespace(self):
         processed_results = GuardianProcessor.process("   ernie  ", "pc     ")
 
-        self.assertEqual(processed_results, ("ernie", "4"))
+        self.assertEqual(processed_results, ("ernie", "3"))
 
     def test_guardian_processor_returns_correct_platform_number_playstation(self):
         processed_results = GuardianProcessor.process("ernie", "playstation")

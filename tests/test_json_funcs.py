@@ -1,4 +1,5 @@
 import json
+import logging
 from unittest import TestCase
 
 from pyguardian.data_processing.json_funcs import *
@@ -6,6 +7,8 @@ from pyguardian.tests.resources import test_constants
 
 
 class TestJsonFuncs(TestCase):
+
+    logging.disable(level=logging.CRITICAL)
 
     @classmethod
     def setUpClass(cls):

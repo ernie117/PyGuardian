@@ -4,6 +4,8 @@ from the Bungie API, extracting specific values and arranging
 them into data structures suitable for tabulation by the tabulate
 library
 """
+from typing import List, Union, Dict, AnyStr
+
 import dateutil.parser
 
 from pyguardian.validation.pyguardian_exceptions import PlayerNotFoundException, VaultAccessBlockedException, \
@@ -18,30 +20,8 @@ RACES = {0: "Human", 1: "Awoken", 2: "Exo", 3: "Unknown"}
 CLASSES = {0: "Titan", 1: "Hunter", 2: "Warlock", 3: "Unknown"}
 
 
-def json_miner(string, data):
-    queries = string.split(".")
-    query = queries[0]
-    value = None
-    try:
-        string = '.'.join(queries[1:])
-    except IndexError:
-        return data
-
-    if isinstance(data, dict):
-        value = data[query]
-        data = data[query]
-    elif isinstance(data, list):
-        value = data[int(query)]
-        data = data[int(query)]
-
-    if string:
-        return json_miner(string, data)
-
-    return value
-
-
 @log_me
-def fetch_eq_hashes(equipment_data, character_data, no_of_items=12):
+def fetch_eq_hashes(equipment_data: dict, character_data: dict) -> List[list]:
     check_response(equipment_data, character_data)
     root_str1 = "Response.characters.data."
     root_str2 = "Response.characterEquipment.data."
@@ -57,7 +37,7 @@ def fetch_eq_hashes(equipment_data, character_data, no_of_items=12):
         char_title = [string.upper() for string in get_character_titles(title)]
         element.append(char_title)
         try:
-            items = json_miner(f"{root_str2}{char}.items", equipment_data)[:no_of_items]
+            items = json_miner(f"{root_str2}{char}.items", equipment_data)
         except KeyError:
             raise NoPlayerEquipmentException(f"No equipment data found for {char}")
         element.extend([item["itemHash"] for item in items])
@@ -79,8 +59,6 @@ def fetch_character_eq_hashes(equipment_data, character_data, no_of_items=12):
         element = []
         item_hashes = []
         title = json_miner(f"{root_str1}{char}", character_data)
-        # Adding a title row that describes the character
-        # to distinguish between multiple characters
         char_title = [string.upper() for string in get_character_titles(title)]
         element.append(char_title)
         try:
@@ -131,7 +109,6 @@ def fetch_extended_char_info(character_data, equipment_data, guardian):
     check_response(character_data)
     root_str = "Response.characters.data."
 
-    char_dictionaries = []
     extended_char_dict = {
         "_gamertag": None,
         "_character_id": None,
@@ -152,6 +129,7 @@ def fetch_extended_char_info(character_data, equipment_data, guardian):
     }
 
     # Subclass is in equipment data rather than character data
+    # ¯\_(ツ)_/¯
     subclasses = []
     for char in equipment_data:
         for item in char:
@@ -162,6 +140,7 @@ def fetch_extended_char_info(character_data, equipment_data, guardian):
     characters = get_character_ids(root_str, character_data)
     query_strings = [root_str + char for char in characters]
 
+    char_dictionaries = []
     for i, char in enumerate(query_strings):
         stats_list = [guardian]
         stats = json_miner(char, character_data)
@@ -296,7 +275,6 @@ def fetch_kd(stats_json, char_data):
 
 @log_me
 def get_data_guardian_object(char_data, equip_data):
-    characters = []
     eq_dict = {
         "_primary": None,
         "_secondary": None,
@@ -311,18 +289,38 @@ def get_data_guardian_object(char_data, equip_data):
         "_ship": None
     }
 
+    characters = []
     for character in equip_data:
         # equipment list contains unwanted character description
-        filtered = list(filter(lambda x: "MALE" not in x and "FEMALE" not in x, character))
+        filtered = [hash_ for hash_ in character if "MALE" not in hash_ and "FEMALE" not in hash_]
         characters.append({k: v for k, v in zip(eq_dict, filtered)})
 
-    zipped = list(zip(char_data, characters))
+    return [Guardian({**char[0], **char[1]}) for char in list(zip(char_data, characters))]
 
-    final_characters = []
-    for char in zipped:
-        final_characters.append(Guardian({**char[0], **char[1]}))
 
-    return final_characters
+# Common utility functions
+
+
+def json_miner(string: str, data: Union[Dict, List]) -> Union[Dict, List[Dict], AnyStr]:
+    queries = string.split(".")
+    query = queries[0]
+    value = None
+    try:
+        string = '.'.join(queries[1:])
+    except IndexError:
+        return data
+
+    if isinstance(data, dict):
+        value = data[query]
+        data = data[query]
+    elif isinstance(data, list):
+        value = data[int(query)]
+        data = data[int(query)]
+
+    if string:
+        return json_miner(string, data)
+
+    return value
 
 
 def get_character_ids(root_str, char_data):

@@ -8,7 +8,7 @@ from pyguardian.tests.resources.mock_classes import MockManifestSuccessfulRespon
 from pyguardian.utils import constants
 from pyguardian.utils.check_manifest import CheckManifest
 from pyguardian.validation.pyguardian_exceptions import APIUnavailableException
-
+from utils.api_status import APIStatusChecker
 
 logging.disable(level=logging.CRITICAL)
 
@@ -23,11 +23,6 @@ class TestCheckManifest(TestCase):
     def test_get_manifest_url_returns_nested_URL(self, mock_get):
         self.assertEqual(self.check_manifest._get_manifest_uri(),
                          "/made-up-URL")
-
-    @patch("pyguardian.utils.check_manifest.requests.get", return_value=MockManifestUnsuccessfulResponse())
-    def test_get_manifest_url_API_down_raises_exception(self, mock_get):
-        self.assertRaises(APIUnavailableException,
-                          self.check_manifest._get_manifest_uri)
 
     @patch("builtins.open", mock.mock_open(read_data="/unique-uri"), create=True)
     def test_check_manifest_url_returns_None_for_unchanged_URI(self):
