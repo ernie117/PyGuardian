@@ -59,7 +59,7 @@ GUARDIAN_INIT_DICT = {
 }
 
 # NamedTuples for storing Guardian class fields
-Item = namedtuple("Item", "name, type, tier")
+Item = namedtuple("Item", "name, type, tier, screenshot")
 Armour = namedtuple("Armour", "helmet, gauntlets, chest, greaves, class_item")
 Weapons = namedtuple("Item", "primary, secondary, heavy")
 Character_description = namedtuple("Character", "gender, race, class_, subclass")

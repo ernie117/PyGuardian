@@ -1,8 +1,8 @@
 """
 A collection of pure functions used for parsing JSON returned
 from the Bungie API, extracting specific values and arranging
-them into data structures suitable for tabulation by the tabulate
-library
+them into data structures suitable for tabulate tables or
+marshalling into a Guardian class
 """
 from typing import List, Union, Dict, AnyStr
 
@@ -35,6 +35,7 @@ def fetch_eq_hashes(equipment_data: dict, character_data: dict) -> List[list]:
         # Adding a title row that describes the character
         # to distinguish between multiple characters
         char_title = [string.upper() for string in get_character_titles(title)]
+        char_title.append("SCREENSHOT - www.bungie.net +")
         element.append(char_title)
         try:
             items = json_miner(f"{root_str2}{char}.items", equipment_data)
