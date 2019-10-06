@@ -103,9 +103,9 @@ class PyGuardian:
         account = Requester(guardian, platform)
         char_data = account.fetch_character_info()
         equip_data = account.fetch_character_equip_info()
-        equipment_details = json_funcs.fetch_character_eq_hashes(equip_data, char_data)
+        equipment_details = json_funcs.fetch_character_eq_details(equip_data, char_data)
         char_data = json_funcs.fetch_extended_char_info(char_data, equipment_details, guardian)
-        return json_funcs.get_data_guardian_object(char_data, equipment_details)
+        return json_funcs.get_data_guardian_objects(char_data, equipment_details)
 
     @staticmethod
     @log_me

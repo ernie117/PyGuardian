@@ -47,7 +47,7 @@ def fetch_eq_hashes(equipment_data: dict, character_data: dict) -> List[list]:
 
 
 @log_me
-def fetch_character_eq_hashes(equipment_data, character_data, no_of_items=12):
+def fetch_character_eq_details(equipment_data: dict, character_data: dict) -> List[list]:
     check_response(equipment_data, character_data)
     root_str1 = "Response.characters.data."
     root_str2 = "Response.characterEquipment.data."
@@ -62,7 +62,7 @@ def fetch_character_eq_hashes(equipment_data, character_data, no_of_items=12):
         char_title = [string.upper() for string in get_character_titles(title)]
         element.append(char_title)
         try:
-            items = json_miner(f"{root_str2}{char}.items", equipment_data)[:no_of_items]
+            items = json_miner(f"{root_str2}{char}.items", equipment_data)
         except KeyError:
             raise NoPlayerEquipmentException(f"No equipment data found for {char}")
         element.extend([item["itemHash"] for item in items])
@@ -74,7 +74,7 @@ def fetch_character_eq_hashes(equipment_data, character_data, no_of_items=12):
 
 
 @log_me
-def fetch_char_info(character_data):
+def fetch_char_info(character_data: dict) -> List[dict]:
     check_response(character_data)
     root_str = "Response.characters.data."
 
@@ -105,7 +105,7 @@ def fetch_char_info(character_data):
 
 
 @log_me
-def fetch_extended_char_info(character_data, equipment_data, guardian):
+def fetch_extended_char_info(character_data: dict, equipment_data: List[list], guardian: str) -> List[dict]:
     check_response(character_data)
     root_str = "Response.characters.data."
 
@@ -163,7 +163,7 @@ def fetch_extended_char_info(character_data, equipment_data, guardian):
 
 
 @log_me
-def fetch_last_time_played(character_data):
+def fetch_last_time_played(character_data: dict) -> List[dict]:
     check_response(character_data)
     root_str = "Response.characters.data."
 
@@ -195,7 +195,7 @@ def fetch_last_time_played(character_data):
 
 
 @log_me
-def fetch_play_time(character_data):
+def fetch_play_time(character_data: dict) -> List[dict]:
     check_response(character_data)
     root_str = "Response.characters.data."
 
@@ -228,7 +228,7 @@ def fetch_play_time(character_data):
 
 
 @log_me
-def fetch_vault_hashes(vault_info):
+def fetch_vault_hashes(vault_info: dict) -> List[list]:
     check_response(vault_info)
     root_str = "Response.profileInventory.data.items"
 
@@ -243,7 +243,7 @@ def fetch_vault_hashes(vault_info):
 
 
 @log_me
-def fetch_kd(stats_json, char_data):
+def fetch_kd(stats_json: dict, char_data: dict) -> List[dict]:
     check_response(stats_json, char_data)
     root_str = "Response.characters.data."
     root_str_2 = "Response.characters"
@@ -274,7 +274,7 @@ def fetch_kd(stats_json, char_data):
 
 
 @log_me
-def get_data_guardian_object(char_data, equip_data):
+def get_data_guardian_objects(char_data: List[dict], equip_data: List[list]) -> List[Guardian]:
     eq_dict = {
         "_primary": None,
         "_secondary": None,
@@ -323,14 +323,14 @@ def json_miner(string: str, data: Union[Dict, List]) -> Union[Dict, List[Dict], 
     return value
 
 
-def get_character_ids(root_str, char_data):
+def get_character_ids(root_str: str, char_data: dict):
     try:
         return list(json_miner(root_str, char_data).keys())
     except KeyError:
         raise PlayerNotFoundException("No Destiny 2 information for this character")
 
 
-def get_character_titles(char_object):
+def get_character_titles(char_object: dict):
     return [GENS[char_object["genderType"]], RACES[char_object["raceType"]], CLASSES[char_object["classType"]]]
 
 
