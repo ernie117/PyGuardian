@@ -31,10 +31,10 @@ def fetch_eq_hashes(equipment_data: dict, character_data: dict) -> List[list]:
     item_hashes = []
     for char in characters:
         element = []
-        title = json_miner(f"{root_str1}{char}", character_data)
+        character_obj = json_miner(f"{root_str1}{char}", character_data)
         # Adding a title row that describes the character
         # to distinguish between multiple characters
-        char_title = [string.upper() for string in get_character_titles(title)]
+        char_title = [string.upper() for string in get_character_titles(character_obj)]
         char_title.append("SCREENSHOT - www.bungie.net +")
         element.append(char_title)
         try:
@@ -59,8 +59,8 @@ def fetch_character_eq_details(equipment_data: dict, character_data: dict) -> Li
     for char in characters:
         element = []
         item_hashes = []
-        title = json_miner(f"{root_str1}{char}", character_data)
-        char_title = [string.upper() for string in get_character_titles(title)]
+        character_obj = json_miner(f"{root_str1}{char}", character_data)
+        char_title = [string.upper() for string in get_character_titles(character_obj)]
         element.append(char_title)
         try:
             items = json_miner(f"{root_str2}{char}.items", equipment_data)
@@ -324,14 +324,14 @@ def json_miner(string: str, data: Union[Dict, List]) -> Union[Dict, List[Dict], 
     return value
 
 
-def get_character_ids(root_str: str, char_data: dict):
+def get_character_ids(root_str: str, char_data: dict) -> List:
     try:
         return list(json_miner(root_str, char_data).keys())
     except KeyError:
         raise PlayerNotFoundException("No Destiny 2 information for this character")
 
 
-def get_character_titles(char_object: dict):
+def get_character_titles(char_object: dict) -> List:
     return [GENS[char_object["genderType"]], RACES[char_object["raceType"]], CLASSES[char_object["classType"]]]
 
 
