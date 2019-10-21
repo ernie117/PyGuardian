@@ -13,7 +13,7 @@ from pyguardian.validation.pyguardian_exceptions import PlayerNotFoundException,
 from pyguardian.utils.pyguardian_decorators import log_me
 from pyguardian.main.guardian import Guardian
 from pyguardian.data_processing.hashes import InventoryManifest
-from utils.constants import GUARDIAN_OBJ_DICT
+from pyguardian.utils.constants import GUARDIAN_OBJ_DICT
 
 GENS = {0: "Male", 1: "Female", 2: "Unknown"}
 RACES = {0: "Human", 1: "Awoken", 2: "Exo", 3: "Unknown"}

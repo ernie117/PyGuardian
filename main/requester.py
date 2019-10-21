@@ -54,7 +54,8 @@ class Requester:
                 + self.platform
                 + "/Account/"
                 + self.mem_id
-                + "/Stats/"
+                + "/Stats"
+                + "?modes=AllPvP"
         )
 
         self.character_info_url = urls[0]
