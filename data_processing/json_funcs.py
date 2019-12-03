@@ -41,7 +41,6 @@ def fetch_eq_hashes(equipment_data: dict, character_data: dict) -> List[list]:
         # Adding a title row that describes the character
         # to distinguish between multiple characters
         char_title = [string.upper() for string in get_character_titles(character_obj)]
-        char_title.append("SCREENSHOT - www.bungie.net +")
         item_hashes.append(char_title)
         try:
             items = json_miner(f"{root_str2}{char}.items", equipment_data)

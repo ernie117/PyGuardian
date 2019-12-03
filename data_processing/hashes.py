@@ -48,8 +48,7 @@ class InventoryManifest:
                     item_info.append(
                         [self.data[hash_]["displayProperties"]["name"],
                          self.data[hash_]["itemTypeDisplayName"],
-                         self.data[hash_]["inventory"]["tierTypeName"],
-                         self.data[hash_]["screenshot"]]
+                         self.data[hash_]["inventory"]["tierTypeName"]]
                     )
                 except KeyError:
                     element = [self.data[hash_]["displayProperties"]["name"],
