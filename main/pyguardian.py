@@ -20,11 +20,11 @@ from pyguardian.utils.pyguardian_decorators import tabulate_me, log_me
 from pyguardian.utils.pyguardian_logging import PyGuardianLogger
 from pyguardian.validation.guardian_processor import GuardianProcessor
 from pyguardian.validation.input_validator import InputValidator
-from pyguardian.validation.pyguardian_exceptions import *
+from pyguardian.validation.pyguardian_exceptions import APIException, APIUnavailableException, \
+    CannotCreateStorageDirectories
 
 
 class PyGuardian:
-
     logging.disable(level=logging.CRITICAL)
 
     @staticmethod
@@ -146,4 +146,3 @@ class PyGuardian:
         InputValidator.validate(guardian, platform)
 
         return GuardianProcessor.process(guardian, platform)
-
