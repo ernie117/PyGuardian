@@ -18,7 +18,7 @@ TEST_EQ_HASHES = [
 ]
 
 EXPECTED_EQ_HASHES_CHAR_ONE = [
-    ["MALE", "EXO", "WARLOCK", "SCREENSHOT - www.bungie.net +"],
+    ["MALE", "EXO", "WARLOCK"],
     2712244741, 1887808042,
     1201830623, 381563628,
     3830828709, 3192591867,
@@ -30,7 +30,7 @@ EXPECTED_EQ_HASHES_CHAR_ONE = [
 ]
 
 EXPECTED_EQ_HASHES_CHAR_TWO = [
-    ["MALE", "HUMAN", "TITAN", "SCREENSHOT - www.bungie.net +"],
+    ["MALE", "HUMAN", "TITAN"],
     1457394911, 1678957659,
     1877183765, 1070180272,
     809007411, 201644247,
@@ -51,7 +51,7 @@ VAULT_HASHES = [
     1177810185, 2109561326, 950899352
 ]
 
-TEST_ITEM_RESULT = ["Bygones", "Pulse Rifle", "Legendary", "/common/destiny2_content/screenshots/2712244741.jpg"]
+TEST_ITEM_RESULT = ["Bygones", "Pulse Rifle", "Legendary"]
 EXPECTED_CHAR_INFO_KEYS = ["Character", "Power", "Mobility",
                            "Resilience", "Recovery", "Level"]
 EXPECTED_LAST_PLAYED_KEYS = ["Character", "Datetime", "Session"]
