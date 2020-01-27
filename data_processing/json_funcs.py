@@ -8,16 +8,19 @@ from typing import List, Union, Dict, AnyStr
 
 import dateutil.parser
 
-from pyguardian.validation.pyguardian_exceptions import PlayerNotFoundException, \
-        VaultAccessBlockedException, NoPlayerEquipmentException, APIException
-from pyguardian.utils.pyguardian_decorators import log_me
-from pyguardian.main.guardian import Guardian
 from pyguardian.data_processing.hashes import InventoryManifest
+from pyguardian.main.guardian import Guardian
 from pyguardian.utils.constants import GUARDIAN_OBJ_DICT
+from pyguardian.utils.pyguardian_decorators import log_me
+from pyguardian.validation.pyguardian_exceptions \
+    import PlayerNotFoundException, VaultAccessBlockedException, \
+    NoPlayerEquipmentException, APIException
 
 GENS = {0: "Male", 1: "Female", 2: "Unknown"}
 RACES = {0: "Human", 1: "Awoken", 2: "Exo", 3: "Unknown"}
 CLASSES = {0: "Titan", 1: "Hunter", 2: "Warlock", 3: "Unknown"}
+
+ROOT_STR_1 = "Response.characters.data."
 
 
 @log_me
@@ -29,25 +32,13 @@ def fetch_eq_hashes(equipment_data: dict, character_data: dict) -> List[list]:
     :return:
     """
     check_response(equipment_data, character_data)
-    root_str1 = "Response.characters.data."
-    root_str2 = "Response.characterEquipment.data."
 
-    characters = get_character_ids(root_str1, character_data)
+    characters = get_character_ids(ROOT_STR_1, character_data)
 
     character_item_hashes = []
     for char in characters:
-        item_hashes = []
-        character_obj = json_miner(f"{root_str1}{char}", character_data)
-        # Adding a title row that describes the character
-        # to distinguish between multiple characters
-        char_title = [string.upper() for string in get_character_titles(character_obj)]
-        item_hashes.append(char_title)
-        try:
-            items = json_miner(f"{root_str2}{char}.items", equipment_data)
-        except KeyError:
-            raise NoPlayerEquipmentException(f"No equipment data found for {char}")
-        item_hashes.extend([item["itemHash"] for item in items])
-        character_item_hashes.append(item_hashes)
+        character_item_hashes.append(
+            extract_item_hashes(character_data, equipment_data, char))
 
     return character_item_hashes
 
@@ -62,24 +53,12 @@ def fetch_character_eq_details(equipment_data: dict,
     :return:
     """
     check_response(equipment_data, character_data)
-    root_str1 = "Response.characters.data."
-    root_str2 = "Response.characterEquipment.data."
 
-    characters = get_character_ids(root_str1, character_data)
+    characters = get_character_ids(ROOT_STR_1, character_data)
 
     character_items_lists = []
     for char in characters:
-        element = []
-        item_hashes = []
-        character_obj = json_miner(f"{root_str1}{char}", character_data)
-        char_title = [string.upper() for string in get_character_titles(character_obj)]
-        element.append(char_title)
-        try:
-            items = json_miner(f"{root_str2}{char}.items", equipment_data)
-        except KeyError:
-            raise NoPlayerEquipmentException(f"No equipment data found for {char}")
-        element.extend([item["itemHash"] for item in items])
-        item_hashes.append(element)
+        item_hashes = extract_item_hashes(character_data, equipment_data, char)
         data = InventoryManifest(item_hashes)
         character_items_lists.append(data.get_full_item_details())
 
@@ -94,7 +73,6 @@ def fetch_char_info(character_data: dict) -> List[dict]:
     :return:
     """
     check_response(character_data)
-    root_str = "Response.characters.data."
 
     char_dictionaries = []
     char_dict = {
@@ -106,8 +84,8 @@ def fetch_char_info(character_data: dict) -> List[dict]:
         "Level": None
     }
 
-    characters = get_character_ids(root_str, character_data)
-    query_strings = [root_str + char for char in characters]
+    characters = get_character_ids(ROOT_STR_1, character_data)
+    query_strings = [ROOT_STR_1 + char for char in characters]
 
     for char in query_strings:
         stats_list = []
@@ -115,7 +93,8 @@ def fetch_char_info(character_data: dict) -> List[dict]:
         stats_list.append(" ".join(get_character_titles(stats)))
         stats = json_miner(f"{char}.stats", character_data)
         stats_list.extend(list(stats.values()))
-        stats_list.append(json_miner(f"{char}.levelProgression.level", character_data))
+        stats_list.append(
+            json_miner(f"{char}.levelProgression.level", character_data))
         char_dict = dict(zip(char_dict, stats_list))
         char_dictionaries.append(char_dict)
 
@@ -134,7 +113,6 @@ def fetch_extended_char_info(character_data: dict,
     :return:
     """
     check_response(character_data)
-    root_str = "Response.characters.data."
 
     extended_char_dict = {
         "_gamertag": None,
@@ -164,8 +142,8 @@ def fetch_extended_char_info(character_data: dict,
                 if "subclass" in element.lower():
                     subclasses.append(item[0])
 
-    characters = get_character_ids(root_str, character_data)
-    query_strings = [root_str + char for char in characters]
+    characters = get_character_ids(ROOT_STR_1, character_data)
+    query_strings = [ROOT_STR_1 + char for char in characters]
 
     char_dictionaries = []
     for i, char in enumerate(query_strings):
@@ -179,7 +157,8 @@ def fetch_extended_char_info(character_data: dict,
                            stats["minutesPlayedTotal"]])
         gender, race, class_ = get_character_titles(stats)
         stats_list.extend([gender, race, class_, subclasses[i]])
-        stats_list.append(json_miner(f"{char}.levelProgression.level", character_data))
+        stats_list.append(
+            json_miner(f"{char}.levelProgression.level", character_data))
         stats = json_miner(f"{char}.stats", character_data)
         stats_list.extend(list(stats.values()))
         stats_list.append(emblem_path)
@@ -197,9 +176,8 @@ def fetch_last_time_played(character_data: dict) -> List[dict]:
     :return:
     """
     check_response(character_data)
-    root_str = "Response.characters.data."
 
-    characters = get_character_ids(root_str, character_data)
+    characters = get_character_ids(ROOT_STR_1, character_data)
 
     char_dict = {
         "Character": None,
@@ -208,7 +186,7 @@ def fetch_last_time_played(character_data: dict) -> List[dict]:
     }
 
     char_dicts = []
-    data = json_miner(root_str, character_data)
+    data = json_miner(ROOT_STR_1, character_data)
     for char in characters:
         char_str = []
         char_info = data[char]
@@ -234,12 +212,12 @@ def fetch_play_time(character_data: dict) -> List[dict]:
     :return:
     """
     check_response(character_data)
-    root_str = "Response.characters.data."
 
-    characters = get_character_ids(root_str, character_data)
+    characters = get_character_ids(ROOT_STR_1, character_data)
 
-    char_mins = [int(json_miner(f"{root_str}{char}.minutesPlayedTotal", character_data))
-                 for char in characters]
+    char_mins = [
+        int(json_miner(f"{ROOT_STR_1}{char}.minutesPlayedTotal", character_data))
+        for char in characters]
 
     readable_times = (divmod(time, 60) for time in char_mins)
     readable_times = [f"{time[0]}h {time[1]}m" for time in readable_times]
@@ -248,7 +226,7 @@ def fetch_play_time(character_data: dict) -> List[dict]:
 
     char_titles = []
     for char in characters:
-        char_data = json_miner(f"{root_str}{char}", character_data)
+        char_data = json_miner(f"{ROOT_STR_1}{char}", character_data)
         char_titles.append(" ".join(get_character_titles(char_data)))
 
     char_dicts = []
@@ -281,7 +259,8 @@ def fetch_vault_hashes(vault_info: dict) -> List[list]:
         return [item_hashes]
 
     except KeyError:
-        raise VaultAccessBlockedException("Vault access blocked for this character")
+        raise VaultAccessBlockedException(
+            "Vault access blocked for this character")
 
 
 @log_me
@@ -293,18 +272,18 @@ def fetch_kd(stats_json: dict, char_data: dict) -> List[dict]:
     :return:
     """
     check_response(stats_json, char_data)
-    root_str = "Response.characters.data."
     root_str_2 = "Response.characters"
     root_str_3 = "results.allPvP.allTime.killsDeathsRatio.basic.displayValue"
     root_str_4 = ("Response.mergedAllCharacters.results.allPvP.allTime."
                   "killsDeathsRatio.basic.displayValue")
 
-    characters = get_character_ids(root_str, char_data)
+    characters = get_character_ids(ROOT_STR_1, char_data)
 
     char_titles = dict()
     for character in characters:
-        char_obj = json_miner(f"{root_str}{character}", char_data)
-        char_titles[char_obj["characterId"]] = " ".join(get_character_titles(char_obj))
+        char_obj = json_miner(f"{ROOT_STR_1}{character}", char_data)
+        char_titles[char_obj["characterId"]] = " ".join(
+            get_character_titles(char_obj))
 
     char_objects = json_miner(root_str_2, stats_json)
     character_kds = []
@@ -317,7 +296,8 @@ def fetch_kd(stats_json: dict, char_data: dict) -> List[dict]:
                 character_kds.append(character)
 
     character_kds.append({"Character": "Overall",
-                          "Kill/Death Ratio": json_miner(root_str_4, stats_json)})
+                          "Kill/Death Ratio": json_miner(root_str_4,
+                                                         stats_json)})
 
     return character_kds
 
@@ -345,7 +325,8 @@ def get_data_guardian_objects(char_data: List[dict],
 # Common utility functions
 
 
-def json_miner(string: str, data: Union[Dict, List]) -> Union[Dict, List[Dict], AnyStr]:
+def json_miner(string: str,
+               data: Union[Dict, List]) -> Union[Dict, List[Dict], AnyStr]:
     """
 
     :param string:
@@ -383,7 +364,8 @@ def get_character_ids(root_str: str, char_data: dict) -> List:
     try:
         return list(json_miner(root_str, char_data).keys())
     except KeyError:
-        raise PlayerNotFoundException("No Destiny 2 information for this character")
+        raise PlayerNotFoundException(
+            "No Destiny 2 information for this character")
 
 
 def get_character_titles(char_object: dict) -> List:
@@ -403,5 +385,39 @@ def check_response(*args: Union[List[dict], dict]) -> None:
     :param args:
     """
     for response in args:
-        if "ErrorStatus" in response.keys() and response["ErrorStatus"] == "UnhandledException":
+        if ("ErrorStatus" in response.keys() and
+                response["ErrorStatus"] == "UnhandledException"):
             raise APIException(f"API is down: {response['Message']}")
+
+
+def extract_item_hashes(character_json: dict,
+                        equipment_json: dict,
+                        character_id: str):
+    """
+
+
+    :param character_id:
+    :param equipment_json:
+    :param character_json:
+    :return:
+    """
+    root_str2 = "Response.characterEquipment.data."
+
+    item_hashes = []
+    character_obj = json_miner(f"{ROOT_STR_1}{character_id}", character_json)
+    # Adding a title row that describes the character
+    # to distinguish between multiple characters
+    char_title = [string.upper() for string in
+                  get_character_titles(character_obj)]
+    item_hashes.append(char_title)
+
+    try:
+        items = json_miner(f"{root_str2}{character_id}.items", equipment_json)
+
+    except KeyError:
+        raise NoPlayerEquipmentException(
+            f"No equipment data found for {character_id}")
+
+    item_hashes.extend([item["itemHash"] for item in items])
+
+    return item_hashes
