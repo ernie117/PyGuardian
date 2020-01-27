@@ -20,7 +20,8 @@ from pyguardian.utils.pyguardian_decorators import tabulate_me, log_me
 from pyguardian.utils.pyguardian_logging import PyGuardianLogger
 from pyguardian.validation.guardian_processor import GuardianProcessor
 from pyguardian.validation.input_validator import InputValidator
-from pyguardian.validation.pyguardian_exceptions import APIException, APIUnavailableException, \
+from pyguardian.validation.pyguardian_exceptions import APIException, \
+    APIUnavailableException, \
     CannotCreateStorageDirectories
 
 
@@ -107,8 +108,11 @@ class PyGuardian:
         account = Requester(guardian, platform)
         char_data = account.fetch_character_info()
         equip_data = account.fetch_character_equip_info()
-        equipment_details = json_funcs.fetch_character_eq_details(equip_data, char_data)
-        char_data = json_funcs.fetch_extended_char_info(char_data, equipment_details, guardian)
+        equipment_details = json_funcs.fetch_character_eq_details(equip_data,
+                                                                  char_data)
+        char_data = json_funcs.fetch_extended_char_info(char_data,
+                                                        equipment_details,
+                                                        guardian)
         return json_funcs.get_data_guardian_objects(char_data, equipment_details)
 
     @staticmethod

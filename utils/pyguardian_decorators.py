@@ -48,8 +48,7 @@ def log_me(function_to_log):
     @wraps(function_to_log)
     def wrapper(*args, **kwargs):
         log = PyGuardianLogger(inspect.getfile(function_to_log).split('/')[-1])
-        arg_types = inspect.getfullargspec(function_to_log)
-        log.info(f"{function_to_log.__name__}() started with args: {arg_types.args}")
+        log.info(f"{function_to_log.__name__}() started.")
         start = time.time()
         data = function_to_log(*args, **kwargs)
         finish = time.time()

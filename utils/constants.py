@@ -1,6 +1,6 @@
 import os
-from pathlib import Path
 from collections import namedtuple
+from pathlib import Path
 
 # Bungie API key stored as env variable
 BUNGIE_API_KEY = os.environ["BUNGIE_API"]
@@ -21,7 +21,8 @@ ZIP_FILE = MANIFEST_DIR + "/Destiny2Manifest.zip"
 MANIFEST_URL_ROOT = "https://www.bungie.net"
 
 # InventoryItemDefinition file path
-INVENTORY_JSON_FILE = str(Path.home()) + "/.pyguardian/DDB-Files/DestinyInventoryItemDefinition.json"
+INVENTORY_JSON_FILE = str(
+    Path.home()) + "/.pyguardian/DDB-Files/DestinyInventoryItemDefinition.json"
 
 # Default logging file path
 DEFAULT_LOGGING_PATH = str(Path.home()) + "/.pyguardian/" + "default-log-file"

@@ -10,12 +10,15 @@ from pyguardian.utils.check_manifest import CheckManifest
 
 def create_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument("guardian", type=str, nargs="?", action="store", default=None)
-    parser.add_argument("platform", type=str, nargs="?", action="store", default=None,
+    parser.add_argument("guardian", type=str, nargs="?", action="store",
+                        default=None)
+    parser.add_argument("platform", type=str, nargs="?", action="store",
+                        default=None,
                         choices=["pc",
                                  "playstation",
                                  "xbox"])
-    parser.add_argument("response", type=str, nargs="?", action="store", default=None,
+    parser.add_argument("response", type=str, nargs="?", action="store",
+                        default=None,
                         choices=["stats",
                                  "eq",
                                  "vault",
@@ -36,7 +39,8 @@ def main(cli_args):
     args = parser.parse_args(cli_args)
 
     # disable logging by default
-    logging.disable(level=logging.CRITICAL) if not args.log else logging.disable(logging.NOTSET)
+    logging.disable(level=logging.CRITICAL) if not args.log else logging.disable(
+        logging.NOTSET)
 
     if args.response == "stats":
         print(PyGuardian.fetch_stats(args.guardian, args.platform))

@@ -1,4 +1,5 @@
-from pyguardian.utils.constants import Item, Character_description, Armour, Weapons
+from pyguardian.utils.constants import Item, Character_description, Armour, \
+    Weapons
 
 
 class Guardian:

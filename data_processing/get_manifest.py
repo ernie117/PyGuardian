@@ -8,16 +8,16 @@ from time import sleep
 
 import requests
 
-from pyguardian.utils import constants
 from pyguardian.utils.pyguardian_decorators import log_me
-from pyguardian.utils.pyguardian_logging import PyGuardianLogger
+from pyguardian.utils.constants import JSON_DIR, MANIFEST_URL_ROOT, HEADERS, \
+    ZIP_FILE, MANIFEST_DIR
 
 
 class GetManifest:
 
     def __call__(self, manifest_uri):
 
-        self._get_manifest(constants.MANIFEST_URL_ROOT + manifest_uri)
+        self._get_manifest(MANIFEST_URL_ROOT + manifest_uri)
         manifest = self._unzip_and_rename()
         self._write_tables(manifest)
 
@@ -34,10 +34,10 @@ class GetManifest:
         bar_now = cols * '-'
         progress_bar = f"[{bar_now}]"
 
-        r = requests.get(manifest_url, headers=constants.HEADERS, stream=True)
+        r = requests.get(manifest_url, headers=HEADERS, stream=True)
         file_size = int(r.headers["Content-length"]) // 1024
 
-        with open(constants.ZIP_FILE, "wb") as f:
+        with open(ZIP_FILE, "wb") as f:
             chunk_cnt = 0
             chunk_size = 1024 * 1024
             dl_str = "Downloading...    "
@@ -46,7 +46,8 @@ class GetManifest:
             for chunk in r.iter_content(chunk_size=chunk_size):
                 f.write(chunk)
                 downloaded = (chunk_cnt * chunk_size) // 1024
-                print(f"\r{dl_str}{downloaded}KB/{file_size}KB {progress_bar}", end="")
+                print(f"\r{dl_str}{downloaded}KB/{file_size}KB {progress_bar}",
+                      end="")
                 sys.stdout.flush()
                 # Progress bar re-construction
                 progress_pct = (downloaded / file_size)
@@ -68,16 +69,16 @@ class GetManifest:
         Unzips the downloaded zipfile and extracts the SQL
         database, returns the database path
         """
-        with zipfile.ZipFile(constants.ZIP_FILE, "r") as f:
+        with zipfile.ZipFile(ZIP_FILE, "r") as f:
             manifest = f.namelist()[0]
             print("Unzipping manifest...")
-            f.extractall(constants.MANIFEST_DIR)
+            f.extractall(MANIFEST_DIR)
 
         print("Deleting zipfile...")
-        os.remove(constants.ZIP_FILE)
+        os.remove(ZIP_FILE)
         # TODO find most recent sql to write from
 
-        return constants.MANIFEST_DIR + "/" + manifest
+        return MANIFEST_DIR + "/" + manifest
 
     @staticmethod
     @log_me
@@ -105,10 +106,11 @@ class GetManifest:
 
                 finally:
                     tables = cur.fetchall()
-                    data = ((str(table[0]), json.loads(table[1])) for table in tables)
+                    data = ((str(table[0]), json.loads(table[1]))
+                            for table in tables)
                     table_dict = {element[0]: element[1] for element in data}
 
-                    with open(constants.JSON_DIR + "/" + entry + ".json", "w") as f:
+                    with open(JSON_DIR + "/" + entry + ".json", "w") as f:
                         json.dump(table_dict, f, indent=4)
 
                     print("- WRITING >> " + entry + ".json")

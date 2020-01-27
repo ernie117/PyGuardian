@@ -1,4 +1,5 @@
-from pyguardian.validation.pyguardian_exceptions import APIException, APIUnavailableException
+from pyguardian.validation.pyguardian_exceptions import APIException, \
+    APIUnavailableException
 
 
 class APIStatusChecker:
@@ -14,6 +15,8 @@ class APIStatusChecker:
         elif response["ErrorStatus"] == "UnhandledException" \
                 or response["ErrorStatus"] == "DestinyThrottledByGameServer" \
                 or response["ErrorStatus"] == "DestinyShardRelayClientTimeout":
-            raise APIException(f"API problem: {response['Message']} | {response['ThrottleSeconds']}")
+            raise APIException(
+                f"API problem: {response['Message']} | {response['ThrottleSeconds']}")
         elif response["ErrorStatus"] == "PerApplicationThrottleExceeded":
-            raise APIException(f"Getting throttled: {response['Message']} | {response['ThrottleSeconds']}")
+            raise APIException(
+                f"Getting throttled: {response['Message']} | {response['ThrottleSeconds']}")

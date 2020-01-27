@@ -1,10 +1,10 @@
 import requests
 
 from pyguardian.utils import constants
+from pyguardian.utils.api_status import APIStatusChecker
 from pyguardian.utils.pyguardian_decorators import log_me
 from pyguardian.utils.pyguardian_logging import PyGuardianLogger
 from pyguardian.validation.pyguardian_exceptions import *
-from pyguardian.utils.api_status import APIStatusChecker
 
 
 class Requester:
@@ -67,7 +67,8 @@ class Requester:
     def fetch_character_info(self, _headers=None):
 
         actual_headers = self.HEADERS if _headers is None else _headers
-        return requests.get(self.character_info_url, headers=actual_headers).json()
+        return requests.get(self.character_info_url,
+                            headers=actual_headers).json()
 
     @log_me
     def fetch_vault_info(self, _headers=None):
@@ -79,10 +80,12 @@ class Requester:
     def fetch_character_equip_info(self, _headers=None):
 
         actual_headers = self.HEADERS if _headers is None else _headers
-        return requests.get(self.character_equip_url, headers=actual_headers).json()
+        return requests.get(self.character_equip_url,
+                            headers=actual_headers).json()
 
     @log_me
     def fetch_historical_stats(self, _headers=None):
 
         actual_headers = self.HEADERS if _headers is None else _headers
-        return requests.get(self.historical_stats_url, headers=actual_headers).json()
+        return requests.get(self.historical_stats_url,
+                            headers=actual_headers).json()
