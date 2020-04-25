@@ -1,4 +1,6 @@
 import inspect
+import platform
+import re
 import time
 from functools import wraps
 
@@ -47,7 +49,8 @@ def log_me(function_to_log):
 
     @wraps(function_to_log)
     def wrapper(*args, **kwargs):
-        log = PyGuardianLogger(inspect.getfile(function_to_log).split('/')[-1])
+        delimiter = '\\' if platform.system().lower() == "windows" else '/'
+        log = PyGuardianLogger(inspect.getfile(function_to_log).split(delimiter)[-1])
         log.info(f"{function_to_log.__name__}() started.")
         start = time.time()
         data = function_to_log(*args, **kwargs)

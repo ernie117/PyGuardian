@@ -193,7 +193,7 @@ def fetch_last_time_played(character_data: dict) -> List[dict]:
         char_title = (" ".join(get_character_titles(char_info)))
         char_str.append(char_title)
         date = dateutil.parser.parse(data[char]["dateLastPlayed"])
-        date = date.strftime("%H:%M:%S -- %a %d/%m")
+        date = date.strftime("%H:%M:%S -- %a %Y-%m-%d")
         char_str.append(date)
         session = int(data[char]["minutesPlayedThisSession"])
         hours, minutes = divmod(session, 60)

@@ -40,7 +40,7 @@ class Requester:
             self.LOGGER.warn("No membershipId for this player")
             raise PlayerNotFoundException("Can't find that player")
 
-        self.LOGGER.info(f"Player '{self.player_name}' found \u2713")
+        self.LOGGER.info(f"Player '{self.player_name}' found.")
 
         urls = [constants.BASE
                 + self.platform
